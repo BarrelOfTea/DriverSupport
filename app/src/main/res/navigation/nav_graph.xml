@@ -3,12 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
+    app:startDestination="@id/devicesFlowFragment">
 
-    >
+    <action
+        android:id="@+id/action_global_mainFlowFragment"
+        app:destination="@id/mainFlowFragment"
+        app:popUpTo="@id/nav_graph" />
 
+    <action
+        android:id="@+id/action_global_settingsFlowFragment"
+        app:destination="@id/settingsFlowFragment"
+        app:popUpTo="@id/nav_graph" />
 
+    <action
+        android:id="@+id/action_global_devicesFlowFragment"
+        app:destination="@id/devicesFlowFragment"
+        app:popUpTo="@id/nav_graph" />
+
+    <fragment
+        android:id="@+id/mainFlowFragment"
+        android:name=""
+        android:label="flow_fragment_main"
+        tools:layout="@layout/flow_fragment_main" />
+
+    <fragment
+        android:id="@+id/settingsFlowFragment"
+        android:name=""
+        android:label="flow_fragment_sign"
+        tools:layout="@layout/flow_fragment_settings" />
+
+    <fragment
+        android:id="@+id/devicesFlowFragment"
+        android:name=""
+        android:label="flow_fragment_level"
+        tools:layout="@layout/flow_fragment_devices" />
 
 </navigation>
 
-
-    <!--app:startDestination="@id/signInFragment"-->

@@ -3,12 +3,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/devices_graph"
-
+    app:startDestination="@id/devicesFragment"
     >
 
+
+    <fragment
+        android:id="@+id/devicesFragment"
+        android:name=""
+        android:label="flow_fragment_devices"
+        tools:layout="@layout/fragment_devices">
+
+        <action
+            android:id="@+id/action_devices_to_camera"
+            app:destination="@id/cameraConnectFragment" >
+        </action>
+
+        <action
+            android:id="@+id/action_devices_to_band"
+            app:destination="@id/bandConnectFragment" >
+        </action>
+
+        <action
+            android:id="@+id/action_devices_to_led"
+            app:destination="@id/ledConnectFragment" >
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/cameraConnectFragment"
+        android:name=""
+        android:label="flow_fragment_camera"
+        tools:layout="@layout/fragment_devices_camera">
+
+        <action
+            android:id="@+id/action_to_devices"
+            app:destination="@id/devicesFragment" >
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/bandConnectFragment"
+        android:name=""
+        android:label="flow_fragment_band"
+        tools:layout="@layout/fragment_devices_fitness_band">
+
+        <action
+            android:id="@+id/action_to_devices"
+            app:destination="@id/devicesFragment" >
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ledConnectFragment"
+        android:name=""
+        android:label="flow_fragment_led"
+        tools:layout="@layout/fragment_devices_led">
+
+        <action
+            android:id="@+id/action_to_devices"
+            app:destination="@id/devicesFragment" >
+        </action>
+
+    </fragment>
 
 
 </navigation>
 
-
-<!--app:startDestination="@id/signInFragment"-->
