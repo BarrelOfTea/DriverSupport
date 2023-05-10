@@ -203,4 +203,10 @@
 
     </LinearLayout>
 
+    <include layout="@layout/item_signal"
+        android:id="@+id/signal_main_alarm"/>
+
+    <include layout="@layout/item_signal"
+        android:id="@+id/signal_main_led"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

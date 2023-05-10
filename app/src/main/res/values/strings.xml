@@ -16,4 +16,8 @@
     <string name="prediction">Prediction:</string>
     <string name="pulse">Pulse:</string>
     <string name="movement">Movement:</string>
+    <string name="change_light_color">Change light color</string>
+    <string name="change_alarm_volume">Change alarm volume</string>
+    <string name="change_alarm_sound">Change alarm sound</string>
+    <string name="delete_data">Delete data</string>
 </resources>
