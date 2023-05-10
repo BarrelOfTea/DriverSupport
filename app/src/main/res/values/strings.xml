@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">DriverSupport</string>
+    <string name="camera_instruction">To connect a camera follow these instructions:
+        1. Choose Wi-Fi that corresponds to your camera and connect to it.
+        2. Turn on Location.</string>
+    <string name="led_instruction">To connect a led controller follow these instructions:
+        1. Turn on Bluetooth and choose your device.
+        2. Turn on Location.</string>
+    <string name="fitness_band_instruction">To connect a fitness band follow these instructions:
+        1. Turn on Bluetooth and choose your device.
+        2. Press OK on the band.
+        3. Turn on Location.</string>
+</resources>
