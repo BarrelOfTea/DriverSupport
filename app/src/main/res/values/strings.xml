@@ -10,4 +10,10 @@
         1. Turn on Bluetooth and choose your device.
         2. Press OK on the band.
         3. Turn on Location.</string>
+    <string name="devices">Devices</string>
+    <string name="get_started">Get started</string>
+    <string name="current_state">Current state:</string>
+    <string name="prediction">Prediction:</string>
+    <string name="pulse">Pulse:</string>
+    <string name="movement">Movement:</string>
 </resources>
