@@ -17,12 +17,39 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="@dimen/header_margin"/>
 
+    <!--
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_devices"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
         android:layout_marginTop="@dimen/header_margin"/>
+        -->
+
+
+    <include
+        android:id="@+id/camera_device_item"
+        layout="@layout/item_device"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.85"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <include
+        android:id="@+id/band_device_item"
+        layout="@layout/item_device"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.85"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <include
+        android:id="@+id/led_device_item"
+        layout="@layout/item_device"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.85"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <Button
         android:id="@+id/button"
