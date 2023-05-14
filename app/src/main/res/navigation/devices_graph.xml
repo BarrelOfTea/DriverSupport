@@ -8,8 +8,8 @@
 
     <fragment
         android:id="@+id/devicesFragment"
-        android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.DevicesFlowFragment"
-        android:label="flow_fragment_devices"
+        android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.DevicesFragment"
+        android:label="fragment_devices"
         tools:layout="@layout/fragment_devices">
 
         <action
@@ -32,7 +32,7 @@
     <fragment
         android:id="@+id/cameraConnectFragment"
         android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.InstructionCameraFragment"
-        android:label="flow_fragment_camera"
+        android:label="fragment_camera"
         tools:layout="@layout/fragment_devices_camera">
 
         <action
@@ -45,7 +45,7 @@
     <fragment
         android:id="@+id/bandConnectFragment"
         android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.InstructionBandFragment"
-        android:label="flow_fragment_band"
+        android:label="fragment_band"
         tools:layout="@layout/fragment_devices_fitness_band">
 
         <action
@@ -58,7 +58,7 @@
     <fragment
         android:id="@+id/ledConnectFragment"
         android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.InstructionLedFragment"
-        android:label="flow_fragment_led"
+        android:label="fragment_led"
         tools:layout="@layout/fragment_devices_led">
 
         <action

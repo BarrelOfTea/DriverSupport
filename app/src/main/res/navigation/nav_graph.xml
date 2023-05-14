@@ -3,39 +3,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/devicesFlowFragment">
+    app:startDestination="@id/navigation_devices">
 
     <action
         android:id="@+id/action_global_mainFlowFragment"
-        app:destination="@id/mainFlowFragment"
+        app:destination="@id/navigation_main"
         app:popUpTo="@id/nav_graph" />
 
     <action
         android:id="@+id/action_global_settingsFlowFragment"
-        app:destination="@id/settingsFlowFragment"
+        app:destination="@id/navigation_settings"
         app:popUpTo="@id/nav_graph" />
 
     <action
         android:id="@+id/action_global_devicesFlowFragment"
-        app:destination="@id/devicesFlowFragment"
+        app:destination="@id/navigation_devices"
         app:popUpTo="@id/nav_graph" />
 
     <fragment
-        android:id="@+id/mainFlowFragment"
+        android:id="@+id/navigation_main"
         android:name="com.example.driversupport.presentation.ui.fragments.mainflow.MainFlowFragment"
         android:label="flow_fragment_main"
         tools:layout="@layout/flow_fragment_main" />
 
     <fragment
-        android:id="@+id/settingsFlowFragment"
+        android:id="@+id/navigation_settings"
         android:name="com.example.driversupport.presentation.ui.fragments.settingsflow.SettingsFlowFragment"
-        android:label="flow_fragment_sign"
+        android:label="flow_fragment_settings"
         tools:layout="@layout/flow_fragment_settings" />
 
     <fragment
-        android:id="@+id/devicesFlowFragment"
+        android:id="@+id/navigation_devices"
         android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.DevicesFlowFragment"
-        android:label="flow_fragment_level"
+        android:label="flow_fragment_devices"
         tools:layout="@layout/flow_fragment_devices" />
 
 </navigation>

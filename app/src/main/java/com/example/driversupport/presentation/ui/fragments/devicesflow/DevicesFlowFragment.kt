@@ -15,11 +15,13 @@ class DevicesFlowFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-//        return super.onCreateView(inflater, container, savedInstanceState)
+        super.onCreateView(inflater, container, savedInstanceState)
         var view = inflater.inflate(R.layout.flow_fragment_devices, container, false)
         val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_devices) as NavHostFragment
         val navController = navHostFragment.navController
-        navController.setGraph(R.navigation.devices_graph)
+        val navGraph = navController.navInflater.inflate(R.navigation.devices_graph)
+//        navController.setGraph(R.navigation.devices_graph)
+        navController.graph = navGraph
         return view
     }
 
