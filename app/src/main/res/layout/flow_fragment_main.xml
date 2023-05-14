@@ -11,12 +11,11 @@
         android:id="@+id/state_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:paddingBottom="@dimen/small_margin"
-        android:paddingTop="@dimen/small_margin">
+        android:paddingTop="@dimen/small_margin"
+        android:paddingBottom="@dimen/small_margin">
 
         <TextView
             android:layout_width="wrap_content"
@@ -100,6 +99,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:text="TextView"
+                android:clickable="false"
                 app:layout_constraintStart_toEndOf="@+id/videoView"
                 app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
@@ -109,13 +109,15 @@
 
     <!--fitness band-->
     <LinearLayout
+        android:id="@+id/box_main_band"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/box_main_camera"
         android:orientation="vertical"
-        android:background="@drawable/rounded_back">
+        android:background="@drawable/rounded_back"
+        android:layout_marginTop="@dimen/small_margin">
 
         <TextView
             android:id="@+id/tv_main_band_header"
@@ -196,18 +198,51 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:text="TextView"
+                android:clickable="false"
                 app:layout_constraintStart_toEndOf="@+id/grid"
                 app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+
     </LinearLayout>
 
-    <include layout="@layout/item_signal"
-        android:id="@+id/signal_main_alarm"/>
 
-    <include layout="@layout/item_signal"
-        android:id="@+id/signal_main_led"/>
+    <!--includes-->
+
+    <LinearLayout
+        android:id="@+id/box_main_signal_sound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/box_main_band"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/small_margin">
+
+        <include layout="@layout/item_signal"
+            android:id="@+id/signal_main_alarm"/>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/box_main_signal_led"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/box_main_signal_sound"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/small_margin">
+
+
+        <include layout="@layout/item_signal"
+            android:id="@+id/signal_main_led"/>
+
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

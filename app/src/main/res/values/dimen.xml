@@ -26,4 +26,6 @@
     <dimen name="drawer_width">200dp</dimen>
     <dimen name="drawer_top_margin">80dp</dimen>
 
+    <dimen name="button_height">60dp</dimen>
+
 </resources>
