@@ -23,19 +23,19 @@
     <fragment
         android:id="@+id/navigation_main"
         android:name="com.example.driversupport.presentation.ui.fragments.mainflow.MainFlowFragment"
-        android:label="flow_fragment_main"
+        android:label="@string/main"
         tools:layout="@layout/flow_fragment_main" />
 
     <fragment
         android:id="@+id/navigation_settings"
         android:name="com.example.driversupport.presentation.ui.fragments.settingsflow.SettingsFlowFragment"
-        android:label="flow_fragment_settings"
+        android:label="@string/settings"
         tools:layout="@layout/flow_fragment_settings" />
 
     <fragment
         android:id="@+id/navigation_devices"
         android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.DevicesFlowFragment"
-        android:label="flow_fragment_devices"
+        android:label="@string/devices"
         tools:layout="@layout/flow_fragment_devices" />
 
 </navigation>

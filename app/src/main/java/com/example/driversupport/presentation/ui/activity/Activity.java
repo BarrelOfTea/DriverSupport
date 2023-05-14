@@ -19,6 +19,7 @@ public class Activity extends AppCompatActivity {
         Log.v("aaa", "main activity is created from java class");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity);
+
     }
 
 

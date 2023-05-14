@@ -35,11 +35,6 @@
         android:label="fragment_camera"
         tools:layout="@layout/fragment_devices_camera">
 
-        <action
-            android:id="@+id/action_to_devices"
-            app:destination="@id/devicesFragment" >
-        </action>
-
     </fragment>
 
     <fragment
@@ -47,11 +42,6 @@
         android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.InstructionBandFragment"
         android:label="fragment_band"
         tools:layout="@layout/fragment_devices_fitness_band">
-
-        <action
-            android:id="@+id/action_to_devices"
-            app:destination="@id/devicesFragment" >
-        </action>
 
     </fragment>
 
@@ -61,13 +51,19 @@
         android:label="fragment_led"
         tools:layout="@layout/fragment_devices_led">
 
+    </fragment>
+
+
+</navigation>
+
+
+<!--
+
         <action
             android:id="@+id/action_to_devices"
             app:destination="@id/devicesFragment" >
         </action>
 
-    </fragment>
 
-
-</navigation>
+-->
 
