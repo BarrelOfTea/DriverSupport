@@ -2,7 +2,7 @@ package com.barreloftea.cameraservice;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.opencv.core.Core;
+//import org.opencv.core.Core;
 
 public class MainActivity   {
 

@@ -72,11 +72,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!--
             <ImageView
                 android:id="@+id/videoView"
                 android:layout_width="@dimen/video_width"
                 android:layout_height="@dimen/video_height"
                 android:src="@drawable/baseline_wifi_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+                -->
+            <com.alexvas.rtsp.widget.RtspSurfaceView
+                android:id="@+id/videoView"
+                android:layout_width="@dimen/video_width"
+                android:layout_height="@dimen/video_height"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

@@ -8,14 +8,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
-import org.opencv.android.Utils
-import org.opencv.core.Core
-import org.opencv.core.Mat
-import org.opencv.videoio.VideoCapture
-import org.opencv.videoio.Videoio
+//import org.opencv.android.Utils
+//import org.opencv.core.Core
+//import org.opencv.core.Mat
+//import org.opencv.videoio.VideoCapture
+//import org.opencv.videoio.Videoio
 
 
-class MainFlowFragment: Fragment() {
+/*class MainFlowFragment: Fragment() {
 
     val rtspLink = "rtsp://192.168.0.1:554/livestream/12"
     lateinit var capture : VideoCapture
@@ -70,6 +70,73 @@ class MainFlowFragment: Fragment() {
         super.onDestroy()
          if (capture != null) {
             capture.release()
+        }
+    }
+
+
+
+}*/
+
+
+import android.net.Uri
+import android.util.Log
+import com.alexvas.rtsp.widget.RtspSurfaceView;
+
+
+class MainFlowFragment: Fragment() {
+
+    private val link = "rtsp://192.168.0.1:554/livestream/12"
+    private val uri = Uri.parse(link)
+
+    private val rtspStatusListener = object: RtspSurfaceView.RtspStatusListener {
+        override fun onRtspFirstFrameRendered() {
+
+            Log.v("AAA", "onRtspFirstFrameRendered")
+        }
+
+        override fun onRtspStatusConnected() {
+
+            Log.v("AAA", "onRtspStatusConnected")
+        }
+
+        override fun onRtspStatusConnecting() {
+            Log.v("AAA", "onRtspStatusConnecting")
+        }
+
+        override fun onRtspStatusDisconnected() {
+
+            Log.v("AAA", "onRtspStatusDisconnected")
+        }
+
+        override fun onRtspStatusFailed(message: String?) {
+            Log.v("AAA", "onRtspStatusFailed")
+        }
+
+        override fun onRtspStatusFailedUnauthorized() {
+            Log.v("AAA", "onRtspStatusFailedUnauthorized")
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+
+        return inflater.inflate(R.layout.flow_fragment_main, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        var svVideo = view.findViewById<RtspSurfaceView>(R.id.videoView)
+        svVideo.setStatusListener(rtspStatusListener)
+
+        if (!svVideo.isStarted()) {
+            svVideo.init(uri, "", "", "rtsp-client-android")
+            svVideo.debug = false
+            svVideo.start(true, false)
         }
     }
 
