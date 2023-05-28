@@ -1,5 +1,6 @@
 package com.barreloftea.driversupport.presentation.ui.fragments.mainflow
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -80,10 +81,13 @@ import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
 
 import android.net.Uri
 import android.util.Log
+import android.widget.Button
 import com.alexvas.rtsp.widget.RtspSurfaceView;
+import com.barreloftea.driversupport.service.DriverSupportService
 
 
 class MainFlowFragment: Fragment() {
+
 
     private val link = "rtsp://192.168.0.1:554/livestream/12"
     private val uri = Uri.parse(link)
@@ -131,6 +135,10 @@ class MainFlowFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         var svVideo = view.findViewById<RtspSurfaceView>(R.id.videoView)
+        var button = view.findViewById<Button>(R.id.tv_main_state);
+        button.setOnClickListener {
+            stopService(view)
+        }
         svVideo.setStatusListener(rtspStatusListener)
 
         if (!svVideo.isStarted()) {
@@ -138,8 +146,19 @@ class MainFlowFragment: Fragment() {
             svVideo.debug = false
             svVideo.start(true, false)
         }
+        startService(view)
     }
 
+
+    public fun startService(v: View){
+        var serviceIntent = Intent(activity, DriverSupportService::class.java)
+        activity?.startService(serviceIntent)
+    }
+
+    public fun stopService(v: View){
+        var serviceIntent = Intent(activity, DriverSupportService::class.java)
+        activity?.stopService(serviceIntent)
+    }
 
 
 }
