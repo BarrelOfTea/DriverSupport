@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/devicesFragment"
-        android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.DevicesFragment"
+        android:name="com.barreloftea.driversupport.presentation.ui.fragments.devicesflow.DevicesFragment"
         android:label="fragment_devices"
         tools:layout="@layout/fragment_devices">
 
@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/cameraConnectFragment"
-        android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.InstructionCameraFragment"
+        android:name="com.barreloftea.driversupport.presentation.ui.fragments.devicesflow.InstructionCameraFragment"
         android:label="fragment_camera"
         tools:layout="@layout/fragment_devices_camera">
 
@@ -39,7 +39,7 @@
 
     <fragment
         android:id="@+id/bandConnectFragment"
-        android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.InstructionBandFragment"
+        android:name="com.barreloftea.driversupport.presentation.ui.fragments.devicesflow.InstructionBandFragment"
         android:label="fragment_band"
         tools:layout="@layout/fragment_devices_fitness_band">
 
@@ -47,7 +47,7 @@
 
     <fragment
         android:id="@+id/ledConnectFragment"
-        android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.InstructionLedFragment"
+        android:name="com.barreloftea.driversupport.presentation.ui.fragments.devicesflow.InstructionLedFragment"
         android:label="fragment_led"
         tools:layout="@layout/fragment_devices_led">
 

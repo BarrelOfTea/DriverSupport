@@ -22,19 +22,19 @@
 
     <fragment
         android:id="@+id/navigation_main"
-        android:name="com.example.driversupport.presentation.ui.fragments.mainflow.MainFlowFragment"
+        android:name="com.barreloftea.driversupport.presentation.ui.fragments.mainflow.MainFlowFragment"
         android:label="@string/main"
         tools:layout="@layout/flow_fragment_main" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.example.driversupport.presentation.ui.fragments.settingsflow.SettingsFlowFragment"
+        android:name="com.barreloftea.driversupport.presentation.ui.fragments.settingsflow.SettingsFlowFragment"
         android:label="@string/settings"
         tools:layout="@layout/flow_fragment_settings" />
 
     <fragment
         android:id="@+id/navigation_devices"
-        android:name="com.example.driversupport.presentation.ui.fragments.devicesflow.DevicesFlowFragment"
+        android:name="com.barreloftea.driversupport.presentation.ui.fragments.devicesflow.DevicesFlowFragment"
         android:label="@string/devices"
         tools:layout="@layout/flow_fragment_devices" />
 
