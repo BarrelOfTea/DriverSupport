@@ -1,14 +1,12 @@
 package com.barreloftea.driversupport.presentation.ui.fragments.mainflow
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.barreloftea.driversupport.R
-import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
 //import org.opencv.android.Utils
 //import org.opencv.core.Core
 //import org.opencv.core.Mat
@@ -82,15 +80,19 @@ import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
 import android.net.Uri
 import android.util.Log
 import android.widget.Button
+import androidx.lifecycle.ViewModelProvider
 import com.alexvas.rtsp.widget.RtspSurfaceView;
-import com.barreloftea.driversupport.service.DriverSupportService
+import com.barreloftea.driversupport.presentation.service.DriverSupportService
 
 
 class MainFlowFragment: Fragment() {
 
+    private var startNewService = false
+
 
     private val link = "rtsp://192.168.0.1:554/livestream/12"
     private val uri = Uri.parse(link)
+    private lateinit var viewModel : MainViewModel
 
     private val rtspStatusListener = object: RtspSurfaceView.RtspStatusListener {
         override fun onRtspFirstFrameRendered() {
@@ -121,6 +123,14 @@ class MainFlowFragment: Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        if (arguments!=null){
+            if (requireArguments().getBoolean("startnew")) startNewService = true
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -135,10 +145,10 @@ class MainFlowFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         var svVideo = view.findViewById<RtspSurfaceView>(R.id.videoView)
-        var button = view.findViewById<Button>(R.id.tv_main_state);
-        button.setOnClickListener {
-            stopService(view)
-        }
+//        var button = view.findViewById<Button>(R.id.tv_main_state);
+//        button.setOnClickListener {
+//            stopService()
+//        }
         svVideo.setStatusListener(rtspStatusListener)
 
         if (!svVideo.isStarted()) {
@@ -146,19 +156,27 @@ class MainFlowFragment: Fragment() {
             svVideo.debug = false
             svVideo.start(true, false)
         }
-        startService(view)
+
+        if (startNewService) {
+            startService()
+            startNewService=false
+        }
     }
 
 
-    public fun startService(v: View){
+    private fun startService(){
         var serviceIntent = Intent(activity, DriverSupportService::class.java)
         activity?.startService(serviceIntent)
     }
 
-    public fun stopService(v: View){
-        var serviceIntent = Intent(activity, DriverSupportService::class.java)
-        activity?.stopService(serviceIntent)
+    override fun onPause() {
+        super.onPause()
+        Log.v("aaa", "mainfragment is paused");
     }
 
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.v("aaa", "mainfragment is destroyed");
+    }
 }

@@ -56,7 +56,7 @@
 
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/button_get_started"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/button_height"
         android:layout_marginBottom="@dimen/header_margin"

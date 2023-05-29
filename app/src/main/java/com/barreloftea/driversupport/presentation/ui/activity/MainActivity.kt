@@ -1,17 +1,20 @@
 package com.barreloftea.driversupport.presentation.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import com.barreloftea.driversupport.R
-import com.google.android.material.navigation.NavigationView
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.barreloftea.driversupport.R
+import com.barreloftea.driversupport.presentation.service.DriverSupportService
+import com.google.android.material.navigation.NavigationView
 
 
 class MainActivity : AppCompatActivity() {
@@ -60,5 +63,18 @@ class MainActivity : AppCompatActivity() {
         navController.graph = navGraph
     }
 
-
+    override fun onPause() {
+        super.onPause()
+        Log.v("aaa", "activity is PAUSED")
+    }
+    fun stopService(){
+        //NOTICE delete that if you want to keep service running even if activity is destroyed
+        var serviceIntent = Intent(this, DriverSupportService::class.java)
+        stopService(serviceIntent)
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        stopService()
+        Log.v("aaa", "activity is DESTROYED")
+    }
 }

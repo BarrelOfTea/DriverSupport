@@ -28,7 +28,7 @@
 
         </activity>
 
-        <service android:name=".service.DriverSupportService"/>
+        <service android:name=".presentation.service.DriverSupportService"/>
 
     </application>
 
