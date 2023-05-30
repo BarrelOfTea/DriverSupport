@@ -1,4 +1,4 @@
-package com.barreloftea.cameraservice;
+package com.barreloftea.driversupport.cameraservice.service;
 
 public class CameraServiceFactory {
 

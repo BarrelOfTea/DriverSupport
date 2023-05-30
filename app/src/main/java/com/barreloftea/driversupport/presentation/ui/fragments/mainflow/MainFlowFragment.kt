@@ -82,12 +82,15 @@ import android.util.Log
 import android.widget.Button
 import androidx.lifecycle.ViewModelProvider
 import com.alexvas.rtsp.widget.RtspSurfaceView;
+import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
+import com.barreloftea.driversupport.databinding.FragmentDevicesBinding
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
 
 
 class MainFlowFragment: Fragment() {
 
     private var startNewService = false
+    private lateinit var binding : FlowFragmentMainBinding
 
 
     private val link = "rtsp://192.168.0.1:554/livestream/12"
@@ -126,7 +129,7 @@ class MainFlowFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        if (arguments!=null){
+        arguments?.let{
             if (requireArguments().getBoolean("startnew")) startNewService = true
         }
     }
@@ -137,24 +140,19 @@ class MainFlowFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-
-        return inflater.inflate(R.layout.flow_fragment_main, container, false)
+        binding = FlowFragmentMainBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var svVideo = view.findViewById<RtspSurfaceView>(R.id.videoView)
-//        var button = view.findViewById<Button>(R.id.tv_main_state);
-//        button.setOnClickListener {
-//            stopService()
-//        }
-        svVideo.setStatusListener(rtspStatusListener)
+        binding.videoView.setStatusListener(rtspStatusListener)
 
-        if (!svVideo.isStarted()) {
-            svVideo.init(uri, "", "", "rtsp-client-android")
-            svVideo.debug = false
-            svVideo.start(true, false)
+        if (!binding.videoView.isStarted()) {
+            binding.videoView.init(uri, "", "", "rtsp-client-android")
+            binding.videoView.debug = false
+            binding.videoView.start(true, false)
         }
 
         if (startNewService) {
@@ -166,6 +164,7 @@ class MainFlowFragment: Fragment() {
 
     private fun startService(){
         var serviceIntent = Intent(activity, DriverSupportService::class.java)
+        //TODO consider startForegroundService
         activity?.startService(serviceIntent)
     }
 

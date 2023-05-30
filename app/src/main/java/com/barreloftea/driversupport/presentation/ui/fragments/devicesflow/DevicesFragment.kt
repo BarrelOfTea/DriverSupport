@@ -9,11 +9,14 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import com.barreloftea.driversupport.R
+import com.barreloftea.driversupport.databinding.FragmentDevicesBinding
 import com.barreloftea.driversupport.presentation.navutils.activityNavController
 import com.barreloftea.driversupport.presentation.navutils.navigateSafely
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
 
 class DevicesFragment(): Fragment() {
+
+    private lateinit var binding : FragmentDevicesBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -21,13 +24,13 @@ class DevicesFragment(): Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        return inflater.inflate(R.layout.fragment_devices, container, false)
+        binding = FragmentDevicesBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var button = view.findViewById<Button>(R.id.button_get_started);
-        button.setOnClickListener {
+        binding.buttonGetStarted.setOnClickListener {
             //startService()
             //TODO write logic from viewmodel, then navigate
             var bundle = Bundle()

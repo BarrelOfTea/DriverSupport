@@ -39,6 +39,7 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':processor')
     implementation "androidx.annotation:annotation:$androidXAnnotationVersion"
     api "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"
 }
