@@ -80,55 +80,33 @@ import com.barreloftea.driversupport.R
 import android.net.Uri
 import android.util.Log
 import android.widget.Button
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.alexvas.rtsp.widget.RtspSurfaceView;
 import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
 import com.barreloftea.driversupport.databinding.FragmentDevicesBinding
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class MainFlowFragment: Fragment() {
 
     private var startNewService = false
     private lateinit var binding : FlowFragmentMainBinding
 
 
-    private val link = "rtsp://192.168.0.1:554/livestream/12"
-    private val uri = Uri.parse(link)
-    private lateinit var viewModel : MainViewModel
+//    private val link = "rtsp://192.168.0.1:554/livestream/12"
+//    private val uri = Uri.parse(link)
 
-    private val rtspStatusListener = object: RtspSurfaceView.RtspStatusListener {
-        override fun onRtspFirstFrameRendered() {
 
-            Log.v("AAA", "onRtspFirstFrameRendered")
-        }
+    private val viewModel : MainViewModel by viewModels()
 
-        override fun onRtspStatusConnected() {
 
-            Log.v("AAA", "onRtspStatusConnected")
-        }
-
-        override fun onRtspStatusConnecting() {
-            Log.v("AAA", "onRtspStatusConnecting")
-        }
-
-        override fun onRtspStatusDisconnected() {
-
-            Log.v("AAA", "onRtspStatusDisconnected")
-        }
-
-        override fun onRtspStatusFailed(message: String?) {
-            Log.v("AAA", "onRtspStatusFailed")
-        }
-
-        override fun onRtspStatusFailedUnauthorized() {
-            Log.v("AAA", "onRtspStatusFailedUnauthorized")
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        //viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         arguments?.let{
             if (requireArguments().getBoolean("startnew")) startNewService = true
         }
@@ -147,13 +125,13 @@ class MainFlowFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.videoView.setStatusListener(rtspStatusListener)
-
-        if (!binding.videoView.isStarted()) {
-            binding.videoView.init(uri, "", "", "rtsp-client-android")
-            binding.videoView.debug = false
-            binding.videoView.start(true, false)
-        }
+//        binding.videoView.setStatusListener(rtspStatusListener)
+//
+//        if (!binding.videoView.isStarted()) {
+//            binding.videoView.init(uri, "", "", "rtsp-client-android")
+//            binding.videoView.debug = false
+//            binding.videoView.start(true, false)
+//        }
 
         if (startNewService) {
             startService()
@@ -166,6 +144,7 @@ class MainFlowFragment: Fragment() {
         var serviceIntent = Intent(activity, DriverSupportService::class.java)
         //TODO consider startForegroundService
         activity?.startService(serviceIntent)
+
     }
 
     override fun onPause() {

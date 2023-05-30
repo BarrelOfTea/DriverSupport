@@ -15,8 +15,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
 import com.google.android.material.navigation.NavigationView
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration

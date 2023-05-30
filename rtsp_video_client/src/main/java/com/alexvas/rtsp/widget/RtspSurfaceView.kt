@@ -17,6 +17,9 @@ import com.alexvas.rtsp.codec.FrameQueue
 import com.alexvas.rtsp.codec.VideoDecodeThread
 import com.alexvas.utils.NetUtils
 import java.net.Socket
+import java.nio.ByteBuffer
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
 
@@ -45,6 +48,7 @@ open class RtspSurfaceView: SurfaceView {
     private var audioChannelCount: Int = 0
     private var audioCodecConfig: ByteArray? = null
     private var firstFrameRendered = false
+    public var connected = false
 
     interface RtspStatusListener {
         fun onRtspStatusConnecting()
@@ -179,7 +183,7 @@ open class RtspSurfaceView: SurfaceView {
         this.userAgent = userAgent
     }
 
-    fun start(requestVideo: Boolean, requestAudio: Boolean) {
+    fun start(requestVideo: Boolean, requestAudio: Boolean){
         if (DEBUG) Log.v(TAG, "start(requestVideo=$requestVideo, requestAudio=$requestAudio)")
         if (rtspThread != null) rtspThread?.stopAsync()
         this.requestVideo = requestVideo
@@ -187,6 +191,10 @@ open class RtspSurfaceView: SurfaceView {
         rtspThread = RtspThread()
         rtspThread!!.name = "RTSP IO thread [${getUriName()}]"
         rtspThread!!.start()
+    }
+
+    fun getVideoQueue(): ArrayBlockingQueue<ByteBuffer> {
+        return videoDecodeThread!!.videoQueue
     }
 
     fun stop() {
@@ -249,6 +257,7 @@ open class RtspSurfaceView: SurfaceView {
     }
 
     private fun onRtspClientConnected() {
+        connected = true
         if (DEBUG) Log.v(TAG, "onRtspClientConnected()")
         if (videoMimeType.isNotEmpty()) {
             firstFrameRendered = false

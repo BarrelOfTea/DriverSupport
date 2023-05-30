@@ -8,7 +8,9 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.barreloftea.driversupport.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DevicesFlowFragment : Fragment() {
 
     override fun onCreateView(

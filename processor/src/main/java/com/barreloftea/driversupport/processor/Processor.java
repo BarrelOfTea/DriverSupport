@@ -1,14 +1,25 @@
 package com.barreloftea.driversupport.processor;
 
+import android.util.Log;
+
 import com.barreloftea.driversupport.cameraservice.service.CameraService;
 import com.barreloftea.driversupport.cameraservice.service.CameraServiceFactory;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.inject.Inject;
+
+
 public class Processor extends Thread{
 
     //TODO consider using AtomicBoolean if you will access it from multiple threads
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
+    private CameraService cameraService;
+
+    @Inject
+    public Processor(CameraService c){
+        cameraService = c;
+    }
 
 
     public void stopAsync(){
@@ -29,8 +40,9 @@ public class Processor extends Thread{
 //            }
 //        }
 
-        CameraService cameraService = CameraServiceFactory.getCameraService();
+        //CameraService cameraService = CameraServiceFactory.getCameraService();
         cameraService.start();
+        Log.v("aaa", "camera service started");
 
 
     }

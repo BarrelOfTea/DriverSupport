@@ -5,6 +5,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.Log;
 
+import com.barreloftea.driversupport.cameraservice.interfaces.VideoRepository;
 import com.barreloftea.driversupport.cameraservice.utils.DrawContours;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -17,12 +18,21 @@ import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 
+import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CameraService extends Thread {
 
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
+    VideoRepository videoRepository;
+    ArrayBlockingQueue<ByteBuffer> queue;
+
+    public CameraService(VideoRepository rep){
+        videoRepository = rep;
+        queue = rep.getVideoQueue();
+    }
 
 
     int eyeFlag;
@@ -55,6 +65,7 @@ public class CameraService extends Thread {
     @Override
     public void run() {
         while(!exitFlag.get()){
+            ByteBuffer byteBuffer = queue.poll(); //NOTICE you can change overload of method here too
             long startTime = System.nanoTime();
             InputImage image = InputImage.fromByteBuffer(
                     byteBuffer,
@@ -104,23 +115,23 @@ public class CameraService extends Thread {
 
                                             notBlinkFlag++;
 
-                                            if ((LEOP+REOP)/2 < activity.params.getEOP()) {
-                                                eyeFlag++;
-                                                notBlinkFlag = 0;
-                                                Log.v(null, "you blinked");
-                                            }
-                                            else {
-                                                eyeFlag = 0;
-                                            }
-
-                                            if (eyeFlag>=EYE_THRESH){
-                                                activity.enableAlert("WAKE UP! FIND A SPOT TO HAVE REST");
-                                                Log.v(null, "REASON closed eyes");
-                                            }
-                                            if (notBlinkFlag > NO_BLINK_TH){
-                                                activity.enableAlert("WAKE UP! YOU ARE SLEEPING WITH OPEN EYES");
-                                                Log.v(null, "REASON always open eyes");
-                                            }
+//                                            if ((LEOP+REOP)/2 < activity.params.getEOP()) {
+//                                                eyeFlag++;
+//                                                notBlinkFlag = 0;
+//                                                Log.v(null, "you blinked");
+//                                            }
+//                                            else {
+//                                                eyeFlag = 0;
+//                                            }
+//
+//                                            if (eyeFlag>=EYE_THRESH){
+//                                                activity.enableAlert("WAKE UP! FIND A SPOT TO HAVE REST");
+//                                                Log.v(null, "REASON closed eyes");
+//                                            }
+//                                            if (notBlinkFlag > NO_BLINK_TH){
+//                                                activity.enableAlert("WAKE UP! YOU ARE SLEEPING WITH OPEN EYES");
+//                                                Log.v(null, "REASON always open eyes");
+//                                            }
 
                                         /*long endTime2 = System.nanoTime();
                                         long timePassed2 = endTime2 - startTime;
@@ -129,28 +140,28 @@ public class CameraService extends Thread {
                                         /*long endTime3 = System.nanoTime();
                                         long timePassed3 = endTime3 - startTime;
                                         Log.v(null, "Execution time after mor: " + timePassed3 / 1000000);*/
-                                            if (MOR > activity.params.getMOR()) mouthFlag++;
-                                            else {
-                                                mouthFlag = 0;
-                                            }
-                                            Log.v(null, "mouthflag is "+mouthFlag+" with mor "+MOR);
-                                            if (mouthFlag>=MOUTH_THRESH){
-                                                activity.enableWarning("YOU ARE SLEEPY! DRIVE TO THE CLOSEST PARKING TO HAVE SOME REST");
-                                                Log.v(null, "REASON yawn");
-                                            }
-
-                                            if(eyeFlag<EYE_THRESH && mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH) activity.resetText();
-
-                                            float nl = getNL(noseCon);
-                                            if (nl < activity.params.getNL()) noseFlag++;
-                                            else {
-                                                noseFlag = 0;
-                                            }
-                                            Log.v(null, "nose flag is "+noseFlag+" with nose length "+nl);
-                                            if (noseFlag >= EYE_THRESH){
-                                                activity.enableAlert("YOU ARE DOZING OFF! DRIVE TO THE CLOSEST PARKING LOT");
-                                                Log.v(null, "REASON dosed off");
-                                            }
+//                                            if (MOR > activity.params.getMOR()) mouthFlag++;
+//                                            else {
+//                                                mouthFlag = 0;
+//                                            }
+//                                            Log.v(null, "mouthflag is "+mouthFlag+" with mor "+MOR);
+//                                            if (mouthFlag>=MOUTH_THRESH){
+//                                                activity.enableWarning("YOU ARE SLEEPY! DRIVE TO THE CLOSEST PARKING TO HAVE SOME REST");
+//                                                Log.v(null, "REASON yawn");
+//                                            }
+//
+//                                            if(eyeFlag<EYE_THRESH && mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH) activity.resetText();
+//
+//                                            float nl = getNL(noseCon);
+//                                            if (nl < activity.params.getNL()) noseFlag++;
+//                                            else {
+//                                                noseFlag = 0;
+//                                            }
+//                                            Log.v(null, "nose flag is "+noseFlag+" with nose length "+nl);
+//                                            if (noseFlag >= EYE_THRESH){
+//                                                activity.enableAlert("YOU ARE DOZING OFF! DRIVE TO THE CLOSEST PARKING LOT");
+//                                                Log.v(null, "REASON dosed off");
+//                                            }
 
                                             //log(LEOP, REOP, MOR, rotY, rotZ, nl);
 
@@ -165,7 +176,7 @@ public class CameraService extends Thread {
                             .addOnCompleteListener(
                                     task -> {
                                         //activity.preview.setRotation(image.getImageInfo().getRotationDegrees());
-                                        activity.setPreview(bitmap);
+                                        //activity.setPreview(bitmap);
 
                                         //image.close();
 

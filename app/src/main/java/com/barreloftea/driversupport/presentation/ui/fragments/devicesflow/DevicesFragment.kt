@@ -13,7 +13,10 @@ import com.barreloftea.driversupport.databinding.FragmentDevicesBinding
 import com.barreloftea.driversupport.presentation.navutils.activityNavController
 import com.barreloftea.driversupport.presentation.navutils.navigateSafely
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class DevicesFragment(): Fragment() {
 
     private lateinit var binding : FragmentDevicesBinding

@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.Surface
 import com.google.android.exoplayer2.util.Util
 import java.nio.ByteBuffer
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -19,6 +21,7 @@ class VideoDecodeThread (
         private val onFrameRenderedListener: OnFrameRenderedListener) : Thread() {
 
     private var exitFlag: AtomicBoolean = AtomicBoolean(false)
+    var videoQueue : ArrayBlockingQueue<ByteBuffer> = ArrayBlockingQueue(200)
 
     fun stopAsync() {
         if (DEBUG) Log.v(TAG, "stopAsync()")
@@ -26,6 +29,9 @@ class VideoDecodeThread (
         // Wake up sleep() code
         interrupt()
     }
+
+
+
 
     private fun getDecoderSafeWidthHeight(decoder: MediaCodec): Pair<Int, Int> {
         val capabilities = decoder.codecInfo.getCapabilitiesForType(mimeType).videoCapabilities
@@ -88,8 +94,16 @@ class VideoDecodeThread (
                     MediaCodec.INFO_OUTPUT_FORMAT_CHANGED -> Log.d(TAG, "Decoder format changed: ${decoder.outputFormat}")
                     MediaCodec.INFO_TRY_AGAIN_LATER -> if (DEBUG) Log.d(TAG, "No output from decoder available")
                     else -> {
-                        if (outIndex >= 0)
-                            decoder.releaseOutputBuffer(outIndex, bufferInfo.size != 0 && !exitFlag.get())
+                        if (outIndex >= 0) {
+                            val outputBuffer: ByteBuffer = decoder.getOutputBuffer(outIndex)!!
+                            //val bufferFormat: MediaFormat = decoder.getOutputFormat(outIndex)
+                            videoQueue.offer(outputBuffer, 10, TimeUnit.MILLISECONDS) //NOTICE change that to just offer(buffer) if needed
+                            decoder.releaseOutputBuffer(
+                                outIndex,
+                                //bufferInfo.size != 0 && !exitFlag.get()
+                                false
+                            )
+                        }
                     }
                 }
 

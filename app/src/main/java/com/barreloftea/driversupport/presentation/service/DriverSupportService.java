@@ -19,9 +19,17 @@ import com.barreloftea.driversupport.presentation.ui.fragments.mainflow.MainFlow
 import com.barreloftea.driversupport.processor.Processor;
 import com.barreloftea.driversupport.processor.ProcessorFactory;
 
+import javax.inject.Inject;
+
 public class DriverSupportService extends Service {
 
     Processor processor;
+
+    @Inject
+    public DriverSupportService(Processor p){
+        processor = p;
+    }
+
 
     @Override
     public void onCreate() {
@@ -31,14 +39,14 @@ public class DriverSupportService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Content title")
-                .setContentText("Content text")
+                .setContentTitle("Your status is monitored")
+                .setContentText("Open app to see details and configure devices")
                 .setSmallIcon(R.drawable.ds)
                 .setContentIntent(pendingIntent)
                 .build();
 
         startForeground(1, notification);
-        processor = ProcessorFactory.getProcessor();
+        //processor = ProcessorFactory.getProcessor();
         //TODO consider how to reset params if changed on every Get Started click
         processor.start();
     }
