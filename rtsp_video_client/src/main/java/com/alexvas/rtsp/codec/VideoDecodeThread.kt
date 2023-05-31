@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
 class VideoDecodeThread (
-        private val surface: Surface,
         private val mimeType: String,
         private val width: Int,
         private val height: Int,
@@ -57,7 +56,7 @@ class VideoDecodeThread (
             decoder.setOnFrameRenderedListener(onFrameRenderedListener, null)
 
             if (DEBUG) Log.d(TAG, "Configuring surface ${widthHeight.first}x${widthHeight.second} w/ '$mimeType', max instances: ${decoder.codecInfo.getCapabilitiesForType(mimeType).maxSupportedInstances}")
-            decoder.configure(format, surface, null, 0)
+            decoder.configure(format, null, null, 0)
 
             // TODO: add scale option (ie: FIT, SCALE_CROP, SCALE_NO_CROP)
             //decoder.setVideoScalingMode(MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)

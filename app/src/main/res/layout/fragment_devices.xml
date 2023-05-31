@@ -17,16 +17,18 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="@dimen/header_margin"/>
 
-    <!--
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_devices"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="@dimen/header_margin"/>
-        -->
 
-    <LinearLayout
+
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,7 +54,7 @@
         android:id="@+id/led_device_item"
         layout="@layout/item_device"/>
 
-    </LinearLayout>
+    </LinearLayout>-->
 
 
     <Button

@@ -23,7 +23,7 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
 
-open class RtspSurfaceView: SurfaceView {
+open class RtspSurfaceView(){
 
     var debug: Boolean = false
 
@@ -155,7 +155,7 @@ open class RtspSurfaceView: SurfaceView {
         }
     }
 
-    constructor(context: Context) : super(context) {
+    /*constructor(context: Context) : super(context) {
         initView(context, null, 0)
     }
 
@@ -169,7 +169,7 @@ open class RtspSurfaceView: SurfaceView {
 
     private fun initView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
         holder.addCallback(surfaceCallback)
-    }
+    }*/
 
     fun init(uri: Uri, username: String?, password: String?) {
         init(uri, username, password, null)
@@ -267,8 +267,7 @@ open class RtspSurfaceView: SurfaceView {
                     firstFrameRendered = true
                 }
             Log.i(TAG, "Starting video decoder with mime type \"$videoMimeType\"")
-            videoDecodeThread = VideoDecodeThread(
-                holder.surface, videoMimeType, surfaceWidth, surfaceHeight, videoFrameQueue, onFrameRenderedListener)
+            videoDecodeThread = VideoDecodeThread(videoMimeType, surfaceWidth, surfaceHeight, videoFrameQueue, onFrameRenderedListener)
             videoDecodeThread!!.name = "RTSP video thread [${getUriName()}]"
             videoDecodeThread!!.start()
         }

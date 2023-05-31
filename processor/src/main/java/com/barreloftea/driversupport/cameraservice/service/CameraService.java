@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.barreloftea.driversupport.cameraservice.interfaces.VideoRepository;
 import com.barreloftea.driversupport.cameraservice.utils.DrawContours;
+import com.barreloftea.driversupport.processor.common.ImageBuffer;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -74,6 +75,8 @@ public class CameraService extends Thread {
                     /* rotation degrees */ 0,
                     InputImage.IMAGE_FORMAT_NV21 // or IMAGE_FORMAT_YV12
             );
+            bitmap = Bitmap.createBitmap(480, 360, Bitmap.Config.ARGB_8888);
+            bitmap.copyPixelsFromBuffer(byteBuffer);
 
             Task<List<Face>> result =
                     detector.process(image)
@@ -178,6 +181,7 @@ public class CameraService extends Thread {
                                         //activity.preview.setRotation(image.getImageInfo().getRotationDegrees());
                                         //activity.setPreview(bitmap);
 
+                                        ImageBuffer.imageQueue.offer(bitmap);
                                         //image.close();
 
                                         long endTime = System.nanoTime();

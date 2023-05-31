@@ -80,12 +80,14 @@ import com.barreloftea.driversupport.R
 import android.net.Uri
 import android.util.Log
 import android.widget.Button
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.alexvas.rtsp.widget.RtspSurfaceView;
 import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
 import com.barreloftea.driversupport.databinding.FragmentDevicesBinding
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
+import com.barreloftea.driversupport.processor.common.ImageBuffer
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -137,6 +139,12 @@ class MainFlowFragment: Fragment() {
             startService()
             startNewService=false
         }
+
+//        Thread(Runnable {
+//            while(ImageBuffer.isProcessorRunning.get())
+//                binding.videoView.setImageBitmap(ImageBuffer.imageQueue.poll());
+//        }).start()
+
     }
 
 

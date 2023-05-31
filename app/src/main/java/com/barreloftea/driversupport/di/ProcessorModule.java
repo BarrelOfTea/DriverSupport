@@ -8,6 +8,7 @@ import com.alexvas.repository.VideoRepositoryImpl;
 import com.barreloftea.driversupport.cameraservice.interfaces.VideoRepository;
 import com.barreloftea.driversupport.cameraservice.service.CameraService;
 import com.barreloftea.driversupport.processor.Processor;
+import com.barreloftea.driversupport.usecases.GetConnectedDevicesUC;
 
 import javax.inject.Singleton;
 
@@ -18,7 +19,7 @@ import dagger.hilt.android.components.ViewModelComponent;
 import dagger.hilt.components.SingletonComponent;
 
 @Module
-//@InstallIn(ViewModelComponent.class)
+@InstallIn(SingletonComponent.class)
 public class ProcessorModule {
 
     @Provides
@@ -33,6 +34,11 @@ public class ProcessorModule {
     @Singleton
     public static Processor provideProcessor(CameraService cameraService){
         return new Processor(cameraService);
+    }
+
+    @Provides
+    public static GetConnectedDevicesUC provideGetConnectedDevicesUC(){
+        return new GetConnectedDevicesUC();
     }
 
 }

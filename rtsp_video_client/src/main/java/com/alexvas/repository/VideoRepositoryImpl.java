@@ -49,7 +49,8 @@ public class VideoRepositoryImpl implements VideoRepository {
         }
     };
 
-    public VideoRepositoryImpl(){
+    public VideoRepositoryImpl(RtspSurfaceView surfaceView){
+        rtspSurfaceView = surfaceView;
         rtspSurfaceView.setStatusListener(rtspStatusListener);
     }
 

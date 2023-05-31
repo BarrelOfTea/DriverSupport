@@ -8,33 +8,41 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.alexvas.repository.VideoRepositoryImpl;
+import com.alexvas.rtsp.widget.RtspSurfaceView;
 import com.barreloftea.driversupport.R;
-import com.barreloftea.driversupport.presentation.ui.activity.MainActivity;
+import com.barreloftea.driversupport.cameraservice.service.CameraService;
 import com.barreloftea.driversupport.presentation.ui.fragments.mainflow.MainFlowFragment;
 import com.barreloftea.driversupport.processor.Processor;
 import com.barreloftea.driversupport.processor.ProcessorFactory;
 
+
+import java.util.Arrays;
+
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class DriverSupportService extends Service {
 
+//    @Inject
     Processor processor;
 
-    @Inject
-    public DriverSupportService(Processor p){
-        processor = p;
-    }
+//    @Inject
+//    public DriverSupportService(Processor p){
+//        processor = p;
+//    }
 
 
     @Override
     public void onCreate() {
-        Log.v("aaa", "service is created");
-        super.onCreate();
+
+        //super.onCreate();
         Intent notificationIntent = new Intent(this, MainFlowFragment.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
@@ -46,15 +54,18 @@ public class DriverSupportService extends Service {
                 .build();
 
         startForeground(1, notification);
-        //processor = ProcessorFactory.getProcessor();
+        Log.v("aaa", "service is created");
+        processor = new Processor(new CameraService(new VideoRepositoryImpl(new RtspSurfaceView())));
+
+
         //TODO consider how to reset params if changed on every Get Started click
-        processor.start();
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v("aaa", "service is started");
-
+        processor.start();
         return START_STICKY;
     }
 
@@ -62,7 +73,7 @@ public class DriverSupportService extends Service {
     public void onDestroy() {
         Log.v("aaa", "service is destroyed");
         super.onDestroy();
-        if (processor!=null) processor.stopAsync();
+        //if (processor!=null) processor.stopAsync();
     }
 
     @Nullable

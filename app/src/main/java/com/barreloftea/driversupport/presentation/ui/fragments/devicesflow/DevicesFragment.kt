@@ -5,21 +5,33 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.databinding.FragmentDevicesBinding
 import com.barreloftea.driversupport.presentation.navutils.activityNavController
 import com.barreloftea.driversupport.presentation.navutils.navigateSafely
+import com.barreloftea.driversupport.presentation.recyclerview.DeviceAdapter
+import com.barreloftea.driversupport.presentation.recyclerview.ViewHolderClickListener
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class DevicesFragment(): Fragment() {
+class DevicesFragment(): Fragment(), ViewHolderClickListener {
 
     private lateinit var binding : FragmentDevicesBinding
+    private lateinit var adapter : DeviceAdapter
+    private val viewModel : DevicesSharedViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.devicesLD.observe(this){data ->
+            adapter.setData(data)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,6 +40,16 @@ class DevicesFragment(): Fragment() {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentDevicesBinding.inflate(inflater, container, false)
+
+        val levelsRecyclerView: RecyclerView = binding.recyclerViewDevices
+        val layoutManager = LinearLayoutManager(activity)
+        levelsRecyclerView.layoutManager = layoutManager
+        val scrollposition =
+            (levelsRecyclerView.layoutManager as LinearLayoutManager?)!!.findFirstCompletelyVisibleItemPosition()
+        levelsRecyclerView.scrollToPosition(scrollposition)
+        adapter = DeviceAdapter(this)
+        levelsRecyclerView.adapter = adapter
+
         return binding.root
     }
 
@@ -45,5 +67,9 @@ class DevicesFragment(): Fragment() {
     private fun startService(){
         var serviceIntent = Intent(activity, DriverSupportService::class.java)
         activity?.startService(serviceIntent)
+    }
+
+    override fun onViewHolderClick(id: Int) {
+        TODO("Not yet implemented")
     }
 }
