@@ -194,6 +194,7 @@ open class RtspSurfaceView(){
     }
 
     fun getVideoQueue(): ArrayBlockingQueue<ByteBuffer> {
+        while(videoDecodeThread==null) {Log.v("aaa", "waiting for a VDT to be created")}
         return videoDecodeThread!!.videoQueue
     }
 

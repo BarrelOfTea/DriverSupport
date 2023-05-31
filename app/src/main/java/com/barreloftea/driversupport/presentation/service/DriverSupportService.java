@@ -31,7 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class DriverSupportService extends Service {
 
 //    @Inject
-    Processor processor;
+//    Processor processor;
 
 //    @Inject
 //    public DriverSupportService(Processor p){
@@ -55,8 +55,8 @@ public class DriverSupportService extends Service {
 
         startForeground(1, notification);
         Log.v("aaa", "service is created");
-        processor = new Processor(new CameraService(new VideoRepositoryImpl(new RtspSurfaceView())));
-
+        //processor = new Processor(new CameraService(new VideoRepositoryImpl(new RtspSurfaceView())));
+        new CameraService(new VideoRepositoryImpl(new RtspSurfaceView())).start();
 
         //TODO consider how to reset params if changed on every Get Started click
 
@@ -65,7 +65,7 @@ public class DriverSupportService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v("aaa", "service is started");
-        processor.start();
+        //processor.start();
         return START_STICKY;
     }
 
