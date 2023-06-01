@@ -29,7 +29,9 @@ class DevicesFragment(): Fragment(), ViewHolderClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.devicesLD.observe(this){data ->
-            adapter.setData(data)
+            data?.let {
+                adapter.setData(it)
+            }
         }
     }
 

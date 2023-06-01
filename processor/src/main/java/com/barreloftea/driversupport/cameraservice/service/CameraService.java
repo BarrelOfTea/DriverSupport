@@ -66,7 +66,12 @@ public class CameraService extends Thread {
     @Override
     public void run() {
         while(!exitFlag.get()){
-            ByteBuffer byteBuffer = queue.poll(); //NOTICE you can change overload of method here too
+            ByteBuffer byteBuffer = null; //NOTICE you can change overload of method here too
+            try {
+                byteBuffer = queue.take();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             long startTime = System.nanoTime();
             InputImage image = InputImage.fromByteBuffer(
                     byteBuffer,
@@ -182,6 +187,7 @@ public class CameraService extends Thread {
                                         //activity.setPreview(bitmap);
 
                                         ImageBuffer.imageQueue.offer(bitmap);
+                                        Log.v("aaa", "IMGAE IS PROCESSED SUCCESSFULLY");
                                         //image.close();
 
                                         long endTime = System.nanoTime();
