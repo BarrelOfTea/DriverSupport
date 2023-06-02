@@ -16,16 +16,6 @@ import dagger.hilt.components.SingletonComponent;
 @InstallIn(SingletonComponent.class)
 public class RtspModule {
 
-    @Provides
-    //@Singleton
-    //TODO i am not sure yet whether to make it a singleton or not
-    public static VideoRepository provideVideoRepository(RtspSurfaceView view){
-        return new VideoRepositoryImpl(view);
-    }
 
-    @Provides
-    public static RtspSurfaceView provideRtspSurfaceView(){
-        return new RtspSurfaceView();
-    }
 
 }

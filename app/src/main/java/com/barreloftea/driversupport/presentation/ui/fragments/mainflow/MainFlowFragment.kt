@@ -96,22 +96,16 @@ class MainFlowFragment: Fragment() {
 
     private var startNewService = false
     private lateinit var binding : FlowFragmentMainBinding
-
-
-//    private val link = "rtsp://192.168.0.1:554/livestream/12"
-//    private val uri = Uri.parse(link)
-
-
     private val viewModel : MainViewModel by viewModels()
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         arguments?.let{
             if (requireArguments().getBoolean("startnew")) startNewService = true
         }
+
     }
 
     override fun onCreateView(
@@ -121,39 +115,24 @@ class MainFlowFragment: Fragment() {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FlowFragmentMainBinding.inflate(inflater, container, false)
+        viewModel.imageLD.observe(viewLifecycleOwner){bitmap ->
+            bitmap?.let {
+                binding.videoView.setImageBitmap(bitmap);
+            }
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        binding.videoView.setStatusListener(rtspStatusListener)
-//
-//        if (!binding.videoView.isStarted()) {
-//            binding.videoView.init(uri, "", "", "rtsp-client-android")
-//            binding.videoView.debug = false
-//            binding.videoView.start(true, false)
-//        }
-
         if (startNewService) {
-            startService()
+            viewModel.startService(requireActivity())
             startNewService=false
         }
-
-//        Thread(Runnable {
-//            while(ImageBuffer.isProcessorRunning.get())
-//                binding.videoView.setImageBitmap(ImageBuffer.imageQueue.poll());
-//        }).start()
-
     }
 
 
-    private fun startService(){
-        var serviceIntent = Intent(activity, DriverSupportService::class.java)
-        //TODO consider startForegroundService
-        activity?.startService(serviceIntent)
-
-    }
 
     override fun onPause() {
         super.onPause()
@@ -166,3 +145,24 @@ class MainFlowFragment: Fragment() {
         Log.v("aaa", "mainfragment is destroyed");
     }
 }
+
+
+
+/*private fun startService(){
+    var serviceIntent = Intent(activity, DriverSupportService::class.java)
+    activity?.startService(serviceIntent)
+}*/
+
+
+//    private val link = "rtsp://192.168.0.1:554/livestream/12"
+//    private val uri = Uri.parse(link)
+
+
+
+//        binding.videoView.setStatusListener(rtspStatusListener)
+//
+//        if (!binding.videoView.isStarted()) {
+//            binding.videoView.init(uri, "", "", "rtsp-client-android")
+//            binding.videoView.debug = false
+//            binding.videoView.start(true, false)
+//        }

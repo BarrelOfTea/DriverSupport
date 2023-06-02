@@ -23,7 +23,6 @@ class DevicesFlowFragment : Fragment() {
         val navHostFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_devices) as NavHostFragment
         val navController = navHostFragment.navController
         val navGraph = navController.navInflater.inflate(R.navigation.devices_graph)
-//        navController.setGraph(R.navigation.devices_graph)
         navController.graph = navGraph
         return view
     }

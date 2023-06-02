@@ -8,9 +8,6 @@ import android.util.Log;
 import com.barreloftea.driversupport.cameraservice.interfaces.VideoRepository;
 import com.barreloftea.driversupport.cameraservice.utils.DrawContours;
 import com.barreloftea.driversupport.processor.common.ImageBuffer;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
@@ -45,8 +42,6 @@ public class CameraService extends Thread {
     static final int NO_BLINK_TH = 80;
     static final float ROUND = 0.6f;
 
-    //private YUVtoRGB translator = new YUVtoRGB();
-
     private DrawContours drawer = new DrawContours();
 
     private Bitmap bitmap;
@@ -56,35 +51,32 @@ public class CameraService extends Thread {
             .build();
     private FaceDetector detector = FaceDetection.getClient(realTimeOpts);
 
-    void stopAsync(){
+    public void stopAsync(){
         exitFlag.set(true);
         interrupt();
-
+        Log.v("aaa", "camara thread is stopped");
     }
 
 
     @Override
     public void run() {
         while(!exitFlag.get()){
-            ByteBuffer byteBuffer = null; //NOTICE you can change overload of method here too
+            ByteBuffer byteBuffer; //NOTICE you can change overload of method here too
             try {
                 byteBuffer = queue.take();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
             long startTime = System.nanoTime();
-            InputImage image = InputImage.fromByteBuffer(
-                    byteBuffer,
-                    /* image width */ 480,
-                    /* image height */ 360,
-                    /* rotation degrees */ 0,
+            InputImage inputImage = InputImage.fromByteBuffer(
+                    byteBuffer,1280, 720, 0,
                     InputImage.IMAGE_FORMAT_NV21 // or IMAGE_FORMAT_YV12
             );
-            bitmap = Bitmap.createBitmap(480, 360, Bitmap.Config.ARGB_8888);
+            bitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
             bitmap.copyPixelsFromBuffer(byteBuffer);
 
             Task<List<Face>> result =
-                    detector.process(image)
+                    detector.process(inputImage)
                             .addOnSuccessListener(
                                     faces -> {
                                         Log.v(null, faces.size() + " FACES WERE DETECTED");

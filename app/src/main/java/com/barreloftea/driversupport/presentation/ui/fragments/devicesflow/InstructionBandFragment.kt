@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.barreloftea.driversupport.R
+import dagger.hilt.android.AndroidEntryPoint
 
 class InstructionBandFragment(): Fragment() {
 

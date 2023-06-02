@@ -18,6 +18,4 @@ class DevicesSharedViewModel @Inject constructor(getDevisesUseCase : GetConnecte
         devicesLD.value = getDevisesUC.execute()
     }
 
-
-
 }

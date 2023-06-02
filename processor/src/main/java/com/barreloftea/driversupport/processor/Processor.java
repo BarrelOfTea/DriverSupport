@@ -25,14 +25,33 @@ public class Processor extends Thread {
 
 
     public void stopAsync(){
-        interrupt();
         exitFlag.set(true);
         ImageBuffer.isProcessorRunning.set(false);
+        Log.v("aaa", "processor thread is stopped");
+        interrupt();
     }
 
 
     @Override
     public void run() {
+
+        cameraService.start();
+        ImageBuffer.isProcessorRunning.set(true);
+        Log.v("aaa", "camera service started");
+
+        while(!exitFlag.get()){
+           // Log.v("bbb", "processor thread is running");
+        }
+
+        ImageBuffer.isProcessorRunning.set(false);
+        if (cameraService!=null) cameraService.stopAsync();
+    }
+
+
+}
+
+
+
 //        for (int i=0;i<200;i++) {
 //            if (exitFlag.get()) break;
 //            try {
@@ -43,15 +62,4 @@ public class Processor extends Thread {
 //            }
 //        }
 
-        //CameraService cameraService = CameraServiceFactory.getCameraService();
-
-
-
-//
-        cameraService.start();
-        ImageBuffer.isProcessorRunning.set(true);
-        Log.v("aaa", "camera service started");
-
-
-    }
-}
+//CameraService cameraService = CameraServiceFactory.getCameraService();
