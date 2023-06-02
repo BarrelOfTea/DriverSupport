@@ -1,5 +1,6 @@
 package com.alexvas.repository;
 
+import android.media.Image;
 import android.net.Uri;
 
 import androidx.annotation.Nullable;

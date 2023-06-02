@@ -1,5 +1,7 @@
 package com.barreloftea.driversupport.cameraservice.interfaces;
 
+import android.media.Image;
+
 import java.nio.ByteBuffer;
 import java.util.concurrent.ArrayBlockingQueue;
 
