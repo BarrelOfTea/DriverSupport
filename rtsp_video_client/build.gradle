@@ -43,4 +43,5 @@ dependencies {
     implementation project(path: ':processor')
     implementation "androidx.annotation:annotation:$androidXAnnotationVersion"
     api "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"
+    implementation 'com.google.android.gms:play-services-mlkit-face-detection:17.1.0'
 }

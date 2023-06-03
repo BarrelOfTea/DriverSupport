@@ -2,18 +2,14 @@ package com.alexvas.rtsp.codec
 
 import android.R.attr.bitmap
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageFormat
-import android.graphics.Rect
-import android.graphics.YuvImage
 import android.media.Image
 import android.media.MediaCodec
 import android.media.MediaCodec.OnFrameRenderedListener
 import android.media.MediaFormat
 import android.util.Log
+import com.barreloftea.driversupport.models.ImageByteData
 import com.google.android.exoplayer2.util.Util
-import java.io.ByteArrayOutputStream
-import java.io.IOException
+import com.google.mlkit.vision.common.InputImage
 import java.nio.ByteBuffer
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
@@ -28,7 +24,7 @@ class VideoDecodeThread (
         private val onFrameRenderedListener: OnFrameRenderedListener) : Thread() {
 
     private var exitFlag: AtomicBoolean = AtomicBoolean(false)
-    var videoQueue : ArrayBlockingQueue<Bitmap> = ArrayBlockingQueue(200)
+    var videoQueue : ArrayBlockingQueue<InputImage> = ArrayBlockingQueue(60)
 
     fun stopAsync() {
         if (DEBUG) Log.v(TAG, "stopAsync()")
@@ -105,39 +101,16 @@ class VideoDecodeThread (
                             //val outputBuffer: ByteBuffer = decoder.getOutputBuffer(outIndex)!!
                             //
                             var image = decoder.getOutputImage(outIndex)
-                            val bufferFormat: MediaFormat = decoder.getOutputFormat(outIndex)
+                            //val bufferFormat: MediaFormat = decoder.getOutputFormat(outIndex)
                             image?.let {
 
-                                val yuvImage = YuvImage(
-                                    YUV_420_888toNV21(image),
-                                    ImageFormat.NV21,
-                                    width,
-                                    height,
-                                    null
-                                )
+                                videoQueue.offer(InputImage.fromMediaImage(image, 0), 10, TimeUnit.MILLISECONDS)
 
-                                val stream = ByteArrayOutputStream()
-                                yuvImage.compressToJpeg(Rect(0, 0, width, height), 80, stream)
-                                var bitmap = BitmapFactory.decodeByteArray(
-                                    stream.toByteArray(),
-                                    0,
-                                    stream.size()
-                                )
-                                try {
-                                    stream.close()
-                                } catch (e: IOException) {
-                                    e.printStackTrace()
-                                }
-
-                                bitmap?.let {
-                                    videoQueue.offer(bitmap, 10, TimeUnit.MILLISECONDS)
-                                }?: run {
-                                    Log.v("aaa", "bitmap is null")
-                                }
-
+                                image.close()
                             } ?: run {
                                 Log.v("aaa", "image is null")
                             }
+
                              //NOTICE change that to just offer(buffer) if needed
                             decoder.releaseOutputBuffer(
                                 outIndex,

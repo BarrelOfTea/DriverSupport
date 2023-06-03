@@ -38,8 +38,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
 
-    implementation 'org.tensorflow:tensorflow-lite-task-vision-play-services:0.4.2'
-    implementation 'com.google.android.gms:play-services-tflite-gpu:16.1.0'
+    //implementation 'org.tensorflow:tensorflow-lite-task-vision-play-services:0.4.2'
+    //implementation 'com.google.android.gms:play-services-tflite-gpu:16.1.0'
+    //TODO return tglite dependency
 
 
     implementation 'com.google.android.gms:play-services-mlkit-face-detection:17.1.0'

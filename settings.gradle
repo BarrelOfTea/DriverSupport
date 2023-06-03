@@ -16,6 +16,5 @@ dependencyResolutionManagement {
 rootProject.name = "DriverSupport"
 include ':app'
 include ':cameraservice'
-include ':openCV'
 include ':rtsp_video_client'
 include ':processor'

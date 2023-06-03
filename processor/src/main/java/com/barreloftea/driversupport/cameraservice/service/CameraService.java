@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.barreloftea.driversupport.cameraservice.interfaces.VideoRepository;
 import com.barreloftea.driversupport.cameraservice.utils.DrawContours;
+import com.barreloftea.driversupport.models.ImageByteData;
 import com.barreloftea.driversupport.processor.common.ImageBuffer;
 import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.common.InputImage;
@@ -20,6 +21,7 @@ import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,7 +30,7 @@ public class CameraService extends Thread {
 
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
     VideoRepository videoRepository;
-    ArrayBlockingQueue<Bitmap> queue;
+    ArrayBlockingQueue<InputImage> queue;
     ImageBuffer imageBuffer;
 
     public CameraService(VideoRepository rep){
@@ -70,9 +72,11 @@ public class CameraService extends Thread {
         while(!exitFlag.get()){
             //ByteBuffer byteBuffer; //NOTICE you can change overload of method here too
             //Image image;
+            //ImageByteData ibd = null;
+            InputImage inputImage = null;
             try {
                 //byteBuffer = queue.take();
-                bitmap = queue.take();
+                inputImage = queue.take();
                 Log.v("aaa", "image is taken from queue");
             } catch (InterruptedException e) {
                 //throw new RuntimeException(e);
@@ -86,13 +90,15 @@ public class CameraService extends Thread {
             bitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
             bitmap.copyPixelsFromBuffer(byteBuffer);*/
 
-            InputImage inputImage = InputImage.fromBitmap(bitmap, 0);
-
+            //InputImage inputImage = InputImage.fromBitmap(bitmap, 0);
+            //InputImage inputImage = InputImage.fromByteArray(ibd.getBytes(), ibd.getWidth(), ibd.getHeight(), ibd.getRotationDegrees(), ibd.getFormat());
+            assert inputImage != null;
+            bitmap = inputImage.getBitmapInternal();
             Task<List<Face>> result =
                     detector.process(inputImage)
                             .addOnSuccessListener(
                                     faces -> {
-                                        Log.v(null, faces.size() + " FACES WERE DETECTED");
+                                        Log.v("aaa", faces.size() + " FACES WERE DETECTED");
 
                                         for (Face face : faces){
                                             Rect bounds = face.getBoundingBox();
@@ -185,7 +191,7 @@ public class CameraService extends Thread {
 
                                     })
                             .addOnFailureListener(
-                                    e -> System.out.println("there was an error processing an image"))
+                                    e -> Log.v("aaa", "IMAGE PROCESSING FAILED"+ Arrays.toString(e.getStackTrace())+ e.getMessage()))
                             .addOnCompleteListener(
                                     task -> {
                                         //activity.preview.setRotation(image.getImageInfo().getRotationDegrees());
@@ -195,6 +201,7 @@ public class CameraService extends Thread {
                                         imageBuffer.setFrame(bitmap);
                                         Log.v("aaa", "IMGAE IS PROCESSED SUCCESSFULLY");
                                         //image.close();
+
 
                                         long endTime = System.nanoTime();
                                         long timePassed = endTime - startTime;

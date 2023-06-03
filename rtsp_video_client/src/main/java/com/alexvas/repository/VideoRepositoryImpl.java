@@ -8,6 +8,8 @@ import androidx.annotation.Nullable;
 
 import com.alexvas.rtsp.widget.RtspSurfaceView;
 import com.barreloftea.driversupport.cameraservice.interfaces.VideoRepository;
+import com.barreloftea.driversupport.models.ImageByteData;
+import com.google.mlkit.vision.common.InputImage;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -70,8 +72,8 @@ public class VideoRepositoryImpl implements VideoRepository {
     }
 
     @Override
-    public ArrayBlockingQueue<Bitmap> getVideoQueue() {
-        ArrayBlockingQueue<Bitmap> videoQueue=null;
+    public ArrayBlockingQueue<InputImage> getVideoQueue() {
+        ArrayBlockingQueue<InputImage> videoQueue=null;
         if (!rtspSurfaceView.isStarted()) {
             rtspSurfaceView.start(true, false);
             while (!rtspSurfaceView.getConnected()){}

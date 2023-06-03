@@ -18,6 +18,8 @@ import com.alexvas.rtsp.codec.AudioDecodeThread
 import com.alexvas.rtsp.codec.FrameQueue
 import com.alexvas.rtsp.codec.VideoDecodeThread
 import com.alexvas.utils.NetUtils
+import com.barreloftea.driversupport.models.ImageByteData
+import com.google.mlkit.vision.common.InputImage
 import java.net.Socket
 import java.nio.ByteBuffer
 import java.util.concurrent.ArrayBlockingQueue
@@ -195,7 +197,7 @@ open class RtspSurfaceView(){
         rtspThread!!.start()
     }
 
-    fun getVideoQueue(): ArrayBlockingQueue<Bitmap> {
+    fun getVideoQueue(): ArrayBlockingQueue<InputImage> {
         while(videoDecodeThread==null) {Log.v("aaa", "waiting for a VDT to be created")}
         return videoDecodeThread!!.videoQueue
     }
