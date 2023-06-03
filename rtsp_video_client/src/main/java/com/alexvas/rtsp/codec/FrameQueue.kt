@@ -21,7 +21,7 @@ class FrameQueue(frameQueueSize: Int) {
         if (queue.offer(frame, 5, TimeUnit.MILLISECONDS)) {
             return true
         }
-        Log.w(TAG, "Cannot add frame, queue is full")
+        //Log.w(TAG, "Cannot add frame, queue is full")
         return false
     }
 

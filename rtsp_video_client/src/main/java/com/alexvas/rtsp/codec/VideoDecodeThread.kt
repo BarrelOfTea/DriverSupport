@@ -1,16 +1,24 @@
 package com.alexvas.rtsp.codec
 
+import android.R.attr.bitmap
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageFormat
+import android.graphics.Rect
+import android.graphics.YuvImage
+import android.media.Image
 import android.media.MediaCodec
 import android.media.MediaCodec.OnFrameRenderedListener
 import android.media.MediaFormat
 import android.util.Log
 import com.google.android.exoplayer2.util.Util
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+
 
 class VideoDecodeThread (
         private val mimeType: String,
@@ -95,18 +103,48 @@ class VideoDecodeThread (
                     else -> {
                         if (outIndex >= 0) {
                             //val outputBuffer: ByteBuffer = decoder.getOutputBuffer(outIndex)!!
-                            //val bufferFormat: MediaFormat = decoder.getOutputFormat(outIndex)
+                            //
                             var image = decoder.getOutputImage(outIndex)
-                            val buffer: ByteBuffer = image!!.planes[0].buffer
-                            val bytes = ByteArray(buffer.capacity())
-                            buffer.get(bytes)
-                            var bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, null)
-                            videoQueue.offer(bitmap, 10, TimeUnit.MILLISECONDS) //NOTICE change that to just offer(buffer) if needed
+                            val bufferFormat: MediaFormat = decoder.getOutputFormat(outIndex)
+                            image?.let {
+
+                                val yuvImage = YuvImage(
+                                    YUV_420_888toNV21(image),
+                                    ImageFormat.NV21,
+                                    width,
+                                    height,
+                                    null
+                                )
+
+                                val stream = ByteArrayOutputStream()
+                                yuvImage.compressToJpeg(Rect(0, 0, width, height), 80, stream)
+                                var bitmap = BitmapFactory.decodeByteArray(
+                                    stream.toByteArray(),
+                                    0,
+                                    stream.size()
+                                )
+                                try {
+                                    stream.close()
+                                } catch (e: IOException) {
+                                    e.printStackTrace()
+                                }
+
+                                bitmap?.let {
+                                    videoQueue.offer(bitmap, 10, TimeUnit.MILLISECONDS)
+                                }?: run {
+                                    Log.v("aaa", "bitmap is null")
+                                }
+
+                            } ?: run {
+                                Log.v("aaa", "image is null")
+                            }
+                             //NOTICE change that to just offer(buffer) if needed
                             decoder.releaseOutputBuffer(
                                 outIndex,
                                 //bufferInfo.size != 0 && !exitFlag.get()
                                 false
                             )
+                            Log.v("aaa", "image sent for processing")
                         }
                     }
                 }
@@ -139,6 +177,24 @@ class VideoDecodeThread (
 
         if (DEBUG) Log.d(TAG, "$name stopped")
     }
+
+
+    private fun YUV_420_888toNV21(image: Image): ByteArray? {
+        val nv21: ByteArray
+        val yBuffer = image.planes[0].buffer
+        val uBuffer = image.planes[1].buffer
+        val vBuffer = image.planes[2].buffer
+        val ySize = yBuffer.remaining()
+        val uSize = uBuffer.remaining()
+        val vSize = vBuffer.remaining()
+        nv21 = ByteArray(ySize + uSize + vSize)
+        //U and V are swapped
+        yBuffer[nv21, 0, ySize]
+        vBuffer[nv21, ySize, vSize]
+        uBuffer[nv21, ySize + vSize, uSize]
+        return nv21
+    }
+
 
     companion object {
         private val TAG: String = VideoDecodeThread::class.java.simpleName

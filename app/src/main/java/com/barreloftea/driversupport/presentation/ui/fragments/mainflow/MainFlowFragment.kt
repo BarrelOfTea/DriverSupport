@@ -130,6 +130,13 @@ class MainFlowFragment: Fragment() {
             viewModel.startService(requireActivity())
             startNewService=false
         }
+
+        requireActivity().runOnUiThread {
+            while (ImageBuffer.isProcessorRunning.get()) {
+                Log.v("aaa", "image is about to set to an imageview")
+                binding.videoView.setImageBitmap(ImageBuffer.imageQueue.poll())
+            }
+        }
     }
 
 

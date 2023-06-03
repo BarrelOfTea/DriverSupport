@@ -72,7 +72,6 @@ public class DriverSupportService extends Service {
         Log.v("aaa", "service is destroyed");
         super.onDestroy();
         if (processor!=null) processor.stopAsync();
-        //TODO remember about stopping threads in onDestroys
     }
 
     @Nullable

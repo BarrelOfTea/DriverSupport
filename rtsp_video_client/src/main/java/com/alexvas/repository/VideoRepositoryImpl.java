@@ -16,8 +16,10 @@ import java.util.concurrent.BlockingQueue;
 public class VideoRepositoryImpl implements VideoRepository {
 
     RtspSurfaceView rtspSurfaceView;
-    private String link = "rtsp://192.168.0.1:554/livestream/12";
-    private Uri uri = Uri.parse(link);
+    private String link;
+    private Uri uri;
+    private String password;
+    private String username;
 
     private RtspSurfaceView.RtspStatusListener rtspStatusListener = new RtspSurfaceView.RtspStatusListener() {
         @Override
@@ -52,15 +54,27 @@ public class VideoRepositoryImpl implements VideoRepository {
     }
 
     @Override
+    public void setParams(String l, String pass, String uname){
+        link = l;
+        username = uname;
+        password = pass;
+        uri = Uri.parse(link);
+    }
+
+    @Override
+    public void prepare(){
+        if (!rtspSurfaceView.isStarted() && link!=null) {
+            rtspSurfaceView.init(uri, username, password);
+            rtspSurfaceView.setDebug(false);
+        }
+    }
+
+    @Override
     public ArrayBlockingQueue<Bitmap> getVideoQueue() {
         ArrayBlockingQueue<Bitmap> videoQueue=null;
         if (!rtspSurfaceView.isStarted()) {
-            rtspSurfaceView.init(uri, "", "", "rtsp-client-android");
-            rtspSurfaceView.setDebug(false);
             rtspSurfaceView.start(true, false);
-            while (!rtspSurfaceView.getConnected()){
-
-            }
+            while (!rtspSurfaceView.getConnected()){}
             videoQueue = rtspSurfaceView.getVideoQueue();
         }
         return videoQueue;

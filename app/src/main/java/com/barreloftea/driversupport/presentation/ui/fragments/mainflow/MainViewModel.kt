@@ -24,6 +24,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
                     imageLD.value = ImageBuffer.imageQueue.poll()
             }
         }).start()*/
+
     }
 
 

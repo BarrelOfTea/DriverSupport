@@ -31,6 +31,8 @@ public class CameraService extends Thread {
 
     public CameraService(VideoRepository rep){
         videoRepository = rep;
+        videoRepository.setParams("rtsp://192.168.0.1:554/livestream/12", "", "");
+        videoRepository.prepare();
         queue = rep.getVideoQueue();
     }
 
@@ -68,8 +70,10 @@ public class CameraService extends Thread {
             try {
                 //byteBuffer = queue.take();
                 bitmap = queue.take();
+                Log.v("aaa", "image is taken from queue");
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
+                Log.v("aaa", "no bitmap available in queue");
             }
             long startTime = System.nanoTime();
             /*InputImage inputImage = InputImage.fromByteBuffer(
