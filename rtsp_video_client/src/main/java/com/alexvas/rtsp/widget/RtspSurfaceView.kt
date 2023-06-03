@@ -1,6 +1,7 @@
 package com.alexvas.rtsp.widget
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.media.Image
 import android.media.MediaCodec
 import android.media.MediaFormat
@@ -194,7 +195,7 @@ open class RtspSurfaceView(){
         rtspThread!!.start()
     }
 
-    fun getVideoQueue(): ArrayBlockingQueue<ByteBuffer> {
+    fun getVideoQueue(): ArrayBlockingQueue<Bitmap> {
         while(videoDecodeThread==null) {Log.v("aaa", "waiting for a VDT to be created")}
         return videoDecodeThread!!.videoQueue
     }

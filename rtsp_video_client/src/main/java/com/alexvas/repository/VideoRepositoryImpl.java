@@ -1,5 +1,6 @@
 package com.alexvas.repository;
 
+import android.graphics.Bitmap;
 import android.media.Image;
 import android.net.Uri;
 
@@ -23,27 +24,22 @@ public class VideoRepositoryImpl implements VideoRepository {
         public void onRtspFirstFrameRendered() {
 
         }
-
         @Override
         public void onRtspStatusFailed(@Nullable String message) {
 
         }
-
         @Override
         public void onRtspStatusFailedUnauthorized() {
 
         }
-
         @Override
         public void onRtspStatusDisconnected() {
 
         }
-
         @Override
         public void onRtspStatusConnected() {
 
         }
-
         @Override
         public void onRtspStatusConnecting() {
 
@@ -56,8 +52,8 @@ public class VideoRepositoryImpl implements VideoRepository {
     }
 
     @Override
-    public ArrayBlockingQueue<ByteBuffer> getVideoQueue() {
-        ArrayBlockingQueue<ByteBuffer> videoQueue=null;
+    public ArrayBlockingQueue<Bitmap> getVideoQueue() {
+        ArrayBlockingQueue<Bitmap> videoQueue=null;
         if (!rtspSurfaceView.isStarted()) {
             rtspSurfaceView.init(uri, "", "", "rtsp-client-android");
             rtspSurfaceView.setDebug(false);

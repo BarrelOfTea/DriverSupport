@@ -1,8 +1,10 @@
 package com.barreloftea.driversupport.cameraservice.service;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.media.Image;
 import android.util.Log;
 
 import com.barreloftea.driversupport.cameraservice.interfaces.VideoRepository;
@@ -25,7 +27,7 @@ public class CameraService extends Thread {
 
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
     VideoRepository videoRepository;
-    ArrayBlockingQueue<ByteBuffer> queue;
+    ArrayBlockingQueue<Bitmap> queue;
 
     public CameraService(VideoRepository rep){
         videoRepository = rep;
@@ -61,19 +63,23 @@ public class CameraService extends Thread {
     @Override
     public void run() {
         while(!exitFlag.get()){
-            ByteBuffer byteBuffer; //NOTICE you can change overload of method here too
+            //ByteBuffer byteBuffer; //NOTICE you can change overload of method here too
+            //Image image;
             try {
-                byteBuffer = queue.take();
+                //byteBuffer = queue.take();
+                bitmap = queue.take();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
             long startTime = System.nanoTime();
-            InputImage inputImage = InputImage.fromByteBuffer(
+            /*InputImage inputImage = InputImage.fromByteBuffer(
                     byteBuffer,1280, 720, 0,
                     InputImage.IMAGE_FORMAT_NV21 // or IMAGE_FORMAT_YV12
             );
             bitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
-            bitmap.copyPixelsFromBuffer(byteBuffer);
+            bitmap.copyPixelsFromBuffer(byteBuffer);*/
+
+            InputImage inputImage = InputImage.fromBitmap(bitmap, 0);
 
             Task<List<Face>> result =
                     detector.process(inputImage)
