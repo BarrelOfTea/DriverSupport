@@ -3,7 +3,10 @@ package com.barreloftea.driversupport.presentation.ui.fragments.mainflow
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,23 +18,24 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor() : ViewModel() {
 
-    var imageLD = MutableLiveData<Bitmap>()
+    //var imageLD = MutableLiveData<Bitmap>()
 
-    init {
-        /*Thread(Runnable {
+    /*init {
+        Thread(Runnable {
             while(ImageBuffer.isProcessorRunning.get()) {
                 Log.v("aaa", "")
                     imageLD.value = ImageBuffer.imageQueue.poll()
             }
-        }).start()*/
+        }).start()
 
-    }
+    }*/
 
 
     fun startService(activity : FragmentActivity){
         var serviceIntent = Intent(activity, DriverSupportService::class.java)
         //TODO consider startForegroundService
-        activity?.startService(serviceIntent)
+        //activity?.startService(serviceIntent)
+        ContextCompat.startForegroundService(activity, serviceIntent)
     }
 
 

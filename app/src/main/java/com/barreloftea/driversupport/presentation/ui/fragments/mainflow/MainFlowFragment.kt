@@ -1,6 +1,7 @@
 package com.barreloftea.driversupport.presentation.ui.fragments.mainflow
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -84,6 +85,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.alexvas.rtsp.widget.RtspSurfaceView;
+import com.barreloftea.driversupport.cameraservice.interfaces.FrameListener
 import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
 import com.barreloftea.driversupport.databinding.FragmentDevicesBinding
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
@@ -92,11 +94,12 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class MainFlowFragment: Fragment() {
+class MainFlowFragment: Fragment(), FrameListener {
 
     private var startNewService = false
     private lateinit var binding : FlowFragmentMainBinding
     private val viewModel : MainViewModel by viewModels()
+    private lateinit var imageBuffer: ImageBuffer
 
 
 
@@ -115,11 +118,13 @@ class MainFlowFragment: Fragment() {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FlowFragmentMainBinding.inflate(inflater, container, false)
-        viewModel.imageLD.observe(viewLifecycleOwner){bitmap ->
+        /*viewModel.imageLD.observe(viewLifecycleOwner){bitmap ->
             bitmap?.let {
                 binding.videoView.setImageBitmap(bitmap);
             }
-        }
+        }*/
+        imageBuffer = ImageBuffer.getInstance()
+        imageBuffer.setFrameListener(this)
         return binding.root
     }
 
@@ -131,12 +136,13 @@ class MainFlowFragment: Fragment() {
             startNewService=false
         }
 
-        requireActivity().runOnUiThread {
+        /*requireActivity().runOnUiThread {
+            Log.v("aaa", "inside runonuithread block")
             while (ImageBuffer.isProcessorRunning.get()) {
                 Log.v("aaa", "image is about to set to an imageview")
                 binding.videoView.setImageBitmap(ImageBuffer.imageQueue.poll())
             }
-        }
+        }*/
     }
 
 
@@ -149,7 +155,14 @@ class MainFlowFragment: Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        imageBuffer.unsetFrameListener()
         Log.v("aaa", "mainfragment is destroyed");
+    }
+
+    override fun onFrame(bitmap: Bitmap?) {
+        //requireActivity().runOnUiThread{
+            binding.videoView.setImageBitmap(bitmap)
+        //}
     }
 }
 

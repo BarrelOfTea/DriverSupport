@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.media.Image;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.barreloftea.driversupport.cameraservice.interfaces.VideoRepository;
@@ -28,12 +29,14 @@ public class CameraService extends Thread {
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
     VideoRepository videoRepository;
     ArrayBlockingQueue<Bitmap> queue;
+    ImageBuffer imageBuffer;
 
     public CameraService(VideoRepository rep){
         videoRepository = rep;
         videoRepository.setParams("rtsp://192.168.0.1:554/livestream/12", "", "");
         videoRepository.prepare();
         queue = rep.getVideoQueue();
+        imageBuffer = ImageBuffer.getInstance();
     }
 
 
@@ -188,7 +191,8 @@ public class CameraService extends Thread {
                                         //activity.preview.setRotation(image.getImageInfo().getRotationDegrees());
                                         //activity.setPreview(bitmap);
 
-                                        ImageBuffer.imageQueue.offer(bitmap);
+                                        //ImageBuffer.imageQueue.offer(bitmap);
+                                        imageBuffer.setFrame(bitmap);
                                         Log.v("aaa", "IMGAE IS PROCESSED SUCCESSFULLY");
                                         //image.close();
 
