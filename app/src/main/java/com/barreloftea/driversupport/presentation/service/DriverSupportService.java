@@ -45,9 +45,9 @@ public class DriverSupportService extends Service {
 
         startForeground(1, notification);
         Log.v("aaa", "service is created");
-        //processor = new Processor(new CameraService(new VideoRepositoryImpl(new RtspSurfaceView())));
+        //processor = new Processor(new ImageProcessor(new VideoRepositoryImpl(new RtspSurfaceView())));
         processor.start();
-        //new CameraService(new VideoRepositoryImpl(new RtspSurfaceView())).start();
+        //new ImageProcessor(new VideoRepositoryImpl(new RtspSurfaceView())).start();
 
         //TODO consider how to reset params if changed on every Get Started click
 

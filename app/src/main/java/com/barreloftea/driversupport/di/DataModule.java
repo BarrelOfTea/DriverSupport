@@ -7,7 +7,7 @@ import dagger.hilt.components.SingletonComponent;
 
 @Module
 @InstallIn(SingletonComponent.class)
-public class RtspModule {
+public class DataModule {
 
 
 

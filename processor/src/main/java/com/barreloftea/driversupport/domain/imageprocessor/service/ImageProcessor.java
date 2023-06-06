@@ -21,14 +21,14 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class CameraService extends Thread {
+public class ImageProcessor extends Thread {
 
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
     VideoRepository videoRepository;
     ArrayBlockingQueue<InputImage> queue;
     ImageBuffer imageBuffer;
 
-    public CameraService(VideoRepository rep){
+    public ImageProcessor(VideoRepository rep){
         videoRepository = rep;
         videoRepository.setParams("rtsp://192.168.0.1:554/livestream/12", "", "");
         videoRepository.prepare();
