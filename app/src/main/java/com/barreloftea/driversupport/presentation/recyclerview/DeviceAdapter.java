@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.barreloftea.driversupport.R;
-import com.barreloftea.driversupport.models.Device;
+import com.barreloftea.driversupport.domain.models.Device;
 
 public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder>{
 

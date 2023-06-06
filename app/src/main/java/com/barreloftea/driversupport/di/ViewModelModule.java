@@ -1,11 +1,10 @@
 package com.barreloftea.driversupport.di;
 
-import com.barreloftea.driversupport.usecases.GetConnectedDevicesUC;
+import com.barreloftea.driversupport.domain.usecases.GetConnectedDevicesUC;
 
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
-import dagger.hilt.android.components.ServiceComponent;
 import dagger.hilt.android.components.ViewModelComponent;
 
 

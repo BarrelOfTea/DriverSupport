@@ -1,29 +1,21 @@
 package com.alexvas.rtsp.widget
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.media.Image
 import android.media.MediaCodec
 import android.media.MediaFormat
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceHolder
-import android.view.SurfaceView
 import com.alexvas.rtsp.RtspClient
 import com.alexvas.rtsp.RtspClient.SdpInfo
 import com.alexvas.rtsp.codec.AudioDecodeThread
 import com.alexvas.rtsp.codec.FrameQueue
 import com.alexvas.rtsp.codec.VideoDecodeThread
 import com.alexvas.utils.NetUtils
-import com.barreloftea.driversupport.models.ImageByteData
 import com.google.mlkit.vision.common.InputImage
 import java.net.Socket
-import java.nio.ByteBuffer
 import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
 

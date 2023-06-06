@@ -1,19 +1,14 @@
 package com.alexvas.repository;
 
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 
 import androidx.annotation.Nullable;
 
 import com.alexvas.rtsp.widget.RtspSurfaceView;
-import com.barreloftea.driversupport.cameraservice.interfaces.VideoRepository;
-import com.barreloftea.driversupport.models.ImageByteData;
+import com.barreloftea.driversupport.domain.imageprocessor.interfaces.VideoRepository;
 import com.google.mlkit.vision.common.InputImage;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 public class VideoRepositoryImpl implements VideoRepository {
 

@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'com.barreloftea.cameraservice'
+    namespace 'com.barreloftea.imageprocessor'
     compileSdk 33
 
     defaultConfig {

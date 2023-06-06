@@ -1,13 +1,10 @@
 package com.alexvas.rtsp.codec
 
-import android.R.attr.bitmap
-import android.graphics.Bitmap
 import android.media.Image
 import android.media.MediaCodec
 import android.media.MediaCodec.OnFrameRenderedListener
 import android.media.MediaFormat
 import android.util.Log
-import com.barreloftea.driversupport.models.ImageByteData
 import com.google.android.exoplayer2.util.Util
 import com.google.mlkit.vision.common.InputImage
 import java.nio.ByteBuffer

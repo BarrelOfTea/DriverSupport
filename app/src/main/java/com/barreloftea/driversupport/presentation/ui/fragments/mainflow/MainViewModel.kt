@@ -1,17 +1,10 @@
 package com.barreloftea.driversupport.presentation.ui.fragments.mainflow
 
-import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
-import com.barreloftea.driversupport.processor.common.ImageBuffer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

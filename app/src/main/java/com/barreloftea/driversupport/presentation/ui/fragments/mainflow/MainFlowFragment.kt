@@ -1,13 +1,11 @@
 package com.barreloftea.driversupport.presentation.ui.fragments.mainflow
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.barreloftea.driversupport.R
 //import org.opencv.android.Utils
 //import org.opencv.core.Core
 //import org.opencv.core.Mat
@@ -78,23 +76,17 @@ import com.barreloftea.driversupport.R
 }*/
 
 
-import android.net.Uri
 import android.util.Log
-import android.widget.Button
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import com.alexvas.rtsp.widget.RtspSurfaceView;
-import com.barreloftea.driversupport.cameraservice.interfaces.FrameListener
+import com.barreloftea.driversupport.domain.imageprocessor.interfaces.FrameListener
 import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
-import com.barreloftea.driversupport.databinding.FragmentDevicesBinding
-import com.barreloftea.driversupport.presentation.service.DriverSupportService
-import com.barreloftea.driversupport.processor.common.ImageBuffer
+import com.barreloftea.driversupport.domain.processor.common.ImageBuffer
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class MainFlowFragment: Fragment(), FrameListener {
+class MainFlowFragment: Fragment(),
+    FrameListener {
 
     private var startNewService = false
     private lateinit var binding : FlowFragmentMainBinding

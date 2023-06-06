@@ -3,7 +3,7 @@ package com.barreloftea.driversupport.presentation.ui.fragments.mainflow;
 import android.os.Handler;
 import android.os.Message;
 
-import com.barreloftea.driversupport.processor.common.ImageBuffer;
+import com.barreloftea.driversupport.domain.processor.common.ImageBuffer;
 
 public class ImageSetterRunable implements Runnable{
 

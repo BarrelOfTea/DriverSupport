@@ -11,24 +11,11 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStore;
 
-import com.alexvas.repository.VideoRepositoryImpl;
-import com.alexvas.rtsp.widget.RtspSurfaceView;
 import com.barreloftea.driversupport.R;
-import com.barreloftea.driversupport.app.App;
-import com.barreloftea.driversupport.cameraservice.service.CameraService;
 import com.barreloftea.driversupport.presentation.ui.activity.MainActivity;
-import com.barreloftea.driversupport.presentation.ui.fragments.mainflow.MainFlowFragment;
-import com.barreloftea.driversupport.presentation.ui.fragments.mainflow.MainViewModel;
-import com.barreloftea.driversupport.processor.Processor;
-import com.barreloftea.driversupport.processor.ProcessorFactory;
+import com.barreloftea.driversupport.domain.processor.Processor;
 
-
-import java.util.Arrays;
 
 import javax.inject.Inject;
 
