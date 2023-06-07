@@ -31,21 +31,30 @@ public class ServiceModule {
     }
 
 
-//    @Provides
-//    public static Processor provideProcessor(ImageProcessor cameraService){
-//        return new Processor(cameraService);
-//    }
+    @Provides
+    public static Processor provideProcessor(ImageProcessor cameraService){
+        return new Processor(cameraService);
+    }
 
 //    @Provides
 //    public static Processor provideProcessor(PulseProcessor pulseProcessor){
 //        return new Processor(pulseProcessor);
 //    }
 
+//    @Provides
+//    public static Processor provideProcessor(LedController c){
+//        return new Processor(c);
+//    }
+
     @Provides
-    public static Processor provideProcessor(LedController c){
-        return new Processor(c);
+    public static PulseProcessor providePulseProcessor(){
+        return new PulseProcessor();
     }
 
+    @Provides
+    public static LedController provideLedController(LedRepository ledRepository){
+        return new LedController(ledRepository);
+    }
     @Provides
     //TODO i am not sure yet whether to make it a singleton or not
     public static VideoRepository provideVideoRepository(RtspSurfaceView view){

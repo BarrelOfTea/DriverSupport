@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.barreloftea.driversupport'
+    namespace 'com.barreloftea.driversupport.domain'
     compileSdk 33
 
     defaultConfig {

@@ -1,12 +1,21 @@
 package com.alexvas.rtsp.codec
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageFormat
+import android.graphics.Rect
+import android.graphics.YuvImage
 import android.media.Image
 import android.media.MediaCodec
 import android.media.MediaCodec.OnFrameRenderedListener
+import android.media.MediaCodecInfo
 import android.media.MediaFormat
 import android.util.Log
+import android.util.Log.VERBOSE
 import com.google.android.exoplayer2.util.Util
 import com.google.mlkit.vision.common.InputImage
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
@@ -21,7 +30,7 @@ class VideoDecodeThread (
         private val onFrameRenderedListener: OnFrameRenderedListener) : Thread() {
 
     private var exitFlag: AtomicBoolean = AtomicBoolean(false)
-    var videoQueue : ArrayBlockingQueue<InputImage> = ArrayBlockingQueue(60)
+    var videoQueue : ArrayBlockingQueue<Bitmap> = ArrayBlockingQueue(60)
 
     fun stopAsync() {
         if (DEBUG) Log.v(TAG, "stopAsync()")
@@ -53,6 +62,7 @@ class VideoDecodeThread (
             val decoder = MediaCodec.createDecoderByType(mimeType)
             val widthHeight = getDecoderSafeWidthHeight(decoder)
             val format = MediaFormat.createVideoFormat(mimeType, widthHeight.first, widthHeight.second)
+            //val codecImageFormat = getImageFormatFromCodecType(mime);
 
             decoder.setOnFrameRenderedListener(onFrameRenderedListener, null)
 
@@ -66,7 +76,6 @@ class VideoDecodeThread (
             if (DEBUG) Log.d(TAG, "Started surface decoder")
 
             val bufferInfo = MediaCodec.BufferInfo()
-
             // Main loop
             while (!exitFlag.get()) {
                 val inIndex: Int = decoder.dequeueInputBuffer(DEQUEUE_INPUT_TIMEOUT_US)
@@ -74,7 +83,6 @@ class VideoDecodeThread (
                     // fill inputBuffers[inputBufferIndex] with valid data
                     val byteBuffer: ByteBuffer? = decoder.getInputBuffer(inIndex)
                     byteBuffer?.rewind()
-
                     // Preventing BufferOverflowException
                     // if (length > byteBuffer.limit()) throw DecoderFatalException("Error")
 
@@ -88,7 +96,6 @@ class VideoDecodeThread (
                         decoder.queueInputBuffer(inIndex, frame.offset, frame.length, frame.timestamp, 0)
                     }
                 }
-
                 if (exitFlag.get()) break
                 when (val outIndex = decoder.dequeueOutputBuffer(bufferInfo, DEQUEUE_OUTPUT_BUFFER_TIMEOUT_US)) {
                     MediaCodec.INFO_OUTPUT_FORMAT_CHANGED -> Log.d(TAG, "Decoder format changed: ${decoder.outputFormat}")
@@ -96,18 +103,43 @@ class VideoDecodeThread (
                     else -> {
                         if (outIndex >= 0) {
                             //val outputBuffer: ByteBuffer = decoder.getOutputBuffer(outIndex)!!
+                            //val bufferFormat: MediaFormat = decoder.getOutputFormat(outIndex)
                             //
                             var image = decoder.getOutputImage(outIndex)
-                            //val bufferFormat: MediaFormat = decoder.getOutputFormat(outIndex)
+
+
                             image?.let {
 
-                                videoQueue.offer(InputImage.fromMediaImage(image, 0), 10, TimeUnit.MILLISECONDS)
+                                val yuvImage = YuvImage(
+                                    YUV_420_888toNV21(image),
+                                    ImageFormat.NV21,
+                                    1280,
+                                    720,
+                                    null
+                                )
 
-                                image.close()
+                                val stream = ByteArrayOutputStream()
+                                yuvImage.compressToJpeg(Rect(0, 0, 1280, 720), 80, stream)
+                                var bitmap = BitmapFactory.decodeByteArray(
+                                    stream.toByteArray(),
+                                    0,
+                                    stream.size()
+                                )
+                                try {
+                                    stream.close()
+                                } catch (e:IOException) {
+                                    e.printStackTrace()
+                                }
+
+                                bitmap?.let {
+                                    videoQueue.offer(bitmap, 10, TimeUnit.MILLISECONDS)
+                                }?: run {
+                                    Log.v("aaa", "bitmap is null")
+                                }
+
                             } ?: run {
                                 Log.v("aaa", "image is null")
                             }
-
                              //NOTICE change that to just offer(buffer) if needed
                             decoder.releaseOutputBuffer(
                                 outIndex,
@@ -147,6 +179,29 @@ class VideoDecodeThread (
 
         if (DEBUG) Log.d(TAG, "$name stopped")
     }
+
+    /*private fun getImageFormatFromCodecType(mimeType: String): Int {
+        // TODO: Need pick a codec first, then get the codec info, will revisit for future.
+        val codecInfo: MediaCodecInfo = getCodecInfoByType(mimeType)
+        //if (VERBOSE) Log.v(TAG, "found decoder: " + codecInfo.getName())
+        val colorFormat: Int = selectDecoderOutputColorFormat(codecInfo, mimeType)
+        /*if (VERBOSE) Log.v(
+            TAG,
+            "found decoder output color format: $colorFormat"
+        )*/
+        return when (colorFormat) {
+            MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar ->                 // TODO: This is fishy, OMX YUV420P is not identical as YV12, U and V planes are
+                // swapped actually. It should give YV12 if producer is setup first, that is, after
+                // Configuring the Surface (provided by ImageReader object) into codec, but this
+                // is Chicken-egg issue, do the translation on behalf of driver here:)
+                ImageFormat.YV12
+
+            MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar ->                 // same as above.
+                ImageFormat.NV21
+
+            else -> colorFormat
+        }
+    }*/
 
 
     private fun YUV_420_888toNV21(image: Image): ByteArray? {

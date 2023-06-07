@@ -1,5 +1,6 @@
 package com.alexvas.repository;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import androidx.annotation.Nullable;
@@ -67,8 +68,8 @@ public class VideoRepositoryImpl implements VideoRepository {
     }
 
     @Override
-    public ArrayBlockingQueue<InputImage> getVideoQueue() {
-        ArrayBlockingQueue<InputImage> videoQueue=null;
+    public ArrayBlockingQueue<Bitmap> getVideoQueue() {
+        ArrayBlockingQueue<Bitmap> videoQueue=null;
         if (!rtspSurfaceView.isStarted()) {
             rtspSurfaceView.start(true, false);
             while (!rtspSurfaceView.getConnected()){}

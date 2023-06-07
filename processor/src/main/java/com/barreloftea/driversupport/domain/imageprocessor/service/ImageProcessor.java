@@ -3,6 +3,8 @@ package com.barreloftea.driversupport.domain.imageprocessor.service;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.barreloftea.driversupport.domain.imageprocessor.interfaces.VideoRepository;
@@ -16,6 +18,12 @@ import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -25,7 +33,7 @@ public class ImageProcessor extends Thread {
 
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
     VideoRepository videoRepository;
-    ArrayBlockingQueue<InputImage> queue;
+    ArrayBlockingQueue<Bitmap> queue;
     ImageBuffer imageBuffer;
 
     public ImageProcessor(VideoRepository rep){
@@ -68,10 +76,10 @@ public class ImageProcessor extends Thread {
             //ByteBuffer byteBuffer; //NOTICE you can change overload of method here too
             //Image image;
             //ImageByteData ibd = null;
-            InputImage inputImage = null;
+            //InputImage inputImage = null;
             try {
                 //byteBuffer = queue.take();
-                inputImage = queue.take();
+                bitmap = queue.take();
                 Log.v("aaa", "image is taken from queue");
             } catch (InterruptedException e) {
                 //throw new RuntimeException(e);
@@ -85,10 +93,10 @@ public class ImageProcessor extends Thread {
             bitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
             bitmap.copyPixelsFromBuffer(byteBuffer);*/
 
-            //InputImage inputImage = InputImage.fromBitmap(bitmap, 0);
+            InputImage inputImage = InputImage.fromBitmap(bitmap, 0);
             //InputImage inputImage = InputImage.fromByteArray(ibd.getBytes(), ibd.getWidth(), ibd.getHeight(), ibd.getRotationDegrees(), ibd.getFormat());
-            assert inputImage != null;
-            bitmap = inputImage.getBitmapInternal();
+
+            //bitmap = inputImage.getBitmapInternal();
             Task<List<Face>> result =
                     detector.process(inputImage)
                             .addOnSuccessListener(
@@ -194,6 +202,30 @@ public class ImageProcessor extends Thread {
 
                                         //ImageBuffer.imageQueue.offer(bitmap);
                                         imageBuffer.setFrame(bitmap);
+
+
+                                        File sdIconStorageDir = new File(Environment.getExternalStorageDirectory()
+                                                .getAbsolutePath() + "/Pictures");
+
+                                        if (!sdIconStorageDir.exists()) {
+                                            sdIconStorageDir.mkdirs();
+                                        }
+                                        try {
+                                            String filePath = sdIconStorageDir + File.separator + "imagetest.jpg";
+                                            Log.v("aaa", filePath);
+                                            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+                                            BufferedOutputStream bos = new BufferedOutputStream(fileOutputStream);
+                                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                                            bos.flush();
+                                            bos.close();
+
+                                        } catch (FileNotFoundException e) {
+                                            Log.w("TAG", "Error saving image file: " + e.getMessage());
+                                        } catch (IOException e) {
+                                            Log.w("TAG", "Error saving image file: " + e.getMessage());
+                                        }
+
+
                                         Log.v("aaa", "IMGAE IS PROCESSED SUCCESSFULLY");
                                         //image.close();
 
