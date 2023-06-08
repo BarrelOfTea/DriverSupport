@@ -113,8 +113,8 @@ class VideoDecodeThread (
                                 val yuvImage = YuvImage(
                                     YUV_420_888toNV21(image),
                                     ImageFormat.NV21,
-                                    1280,
-                                    720,
+                                    480,
+                                    360,
                                     null
                                 )
 
@@ -213,17 +213,70 @@ class VideoDecodeThread (
         val ySize = yBuffer.remaining()
         val uSize = uBuffer.remaining()
         val vSize = vBuffer.remaining()
-        nv21 = ByteArray(ySize + uSize + vSize)
+        /*nv21 = ByteArray(ySize + uSize + vSize)
         //U and V are swapped
         yBuffer[nv21, 0, ySize]
         vBuffer[nv21, ySize, vSize]
         uBuffer[nv21, ySize + vSize, uSize]
         yBuffer.clear()
         uBuffer.clear()
-        vBuffer.clear()
+        vBuffer.clear()*/
+
+
+        val yBytes = ByteArray(ySize)
+        yBuffer.get(yBytes)
+        val uBytes = ByteArray(uSize)
+        uBuffer.get(uBytes)
+        val vBytes = ByteArray(vSize)
+        vBuffer.get(vBytes)
+
+        // Downscale the Y, U, and V planes to the desired resolution
+        val downscaledYBytes = downscaleYPlane(yBytes, 1280, 720, 480, 360)
+        val downscaledUBytes = downscaleUVPlane(uBytes, 1280 / 2, 720 / 2, 480 / 2, 360 / 2)
+        val downscaledVBytes = downscaleUVPlane(vBytes, 1280 / 2, 720 / 2, 480 / 2, 360 / 2)
+
+        // Convert the downscaled YUV data to NV21 format
+        nv21 = ByteArray(480 * 360 + (480 / 2) * (360 / 2) * 2)
+        System.arraycopy(downscaledYBytes, 0, nv21, 0, downscaledYBytes.size)
+        for (i in downscaledVBytes.indices) {
+            nv21[downscaledYBytes.size + i * 2] = downscaledVBytes[i]
+            nv21[downscaledYBytes.size + i * 2 + 1] = downscaledUBytes[i]
+        }
+
+
+
         return nv21
     }
 
+    private fun downscaleYPlane(src: ByteArray, srcWidth: Int, srcHeight: Int,
+                                dstWidth: Int, dstHeight: Int): ByteArray {
+        val dst = ByteArray(dstWidth * dstHeight)
+
+        for (y in 0 until dstHeight) {
+            for (x in 0 until dstWidth) {
+                val srcX = x * srcWidth / dstWidth
+                val srcY = y * srcHeight / dstHeight
+                dst[y * dstWidth + x] = src[srcY * srcWidth + srcX]
+            }
+        }
+
+        return dst
+    }
+
+    private fun downscaleUVPlane(src: ByteArray, srcWidth: Int, srcHeight: Int,
+                                 dstWidth: Int, dstHeight: Int): ByteArray {
+        val dst = ByteArray(dstWidth * dstHeight)
+
+        for (y in 0 until dstHeight) {
+            for (x in 0 until dstWidth) {
+                val srcX = x * srcWidth / dstWidth
+                val srcY = y * srcHeight / dstHeight
+                dst[y * dstWidth + x] = src[srcY * srcWidth + srcX]
+            }
+        }
+
+        return dst
+    }
 
     companion object {
         private val TAG: String = VideoDecodeThread::class.java.simpleName
