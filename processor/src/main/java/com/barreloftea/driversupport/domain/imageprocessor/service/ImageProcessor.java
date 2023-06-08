@@ -57,6 +57,7 @@ public class ImageProcessor extends Thread {
     private DrawContours drawer = new DrawContours();
 
     private Bitmap bitmap;
+    InputImage inputImage;
     private FaceDetectorOptions realTimeOpts = new FaceDetectorOptions.Builder()
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
             .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
@@ -93,10 +94,11 @@ public class ImageProcessor extends Thread {
             bitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
             bitmap.copyPixelsFromBuffer(byteBuffer);*/
 
-            InputImage inputImage = InputImage.fromBitmap(bitmap, 0);
+            inputImage = InputImage.fromBitmap(bitmap, 0);
             //InputImage inputImage = InputImage.fromByteArray(ibd.getBytes(), ibd.getWidth(), ibd.getHeight(), ibd.getRotationDegrees(), ibd.getFormat());
 
             //bitmap = inputImage.getBitmapInternal();
+
             Task<List<Face>> result =
                     detector.process(inputImage)
                             .addOnSuccessListener(
@@ -203,32 +205,8 @@ public class ImageProcessor extends Thread {
                                         //ImageBuffer.imageQueue.offer(bitmap);
                                         imageBuffer.setFrame(bitmap);
 
-
-                                        File sdIconStorageDir = new File(Environment.getExternalStorageDirectory()
-                                                .getAbsolutePath() + "/Pictures");
-
-                                        if (!sdIconStorageDir.exists()) {
-                                            sdIconStorageDir.mkdirs();
-                                        }
-                                        try {
-                                            String filePath = sdIconStorageDir + File.separator + "imagetest.jpg";
-                                            Log.v("aaa", filePath);
-                                            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
-                                            BufferedOutputStream bos = new BufferedOutputStream(fileOutputStream);
-                                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-                                            bos.flush();
-                                            bos.close();
-
-                                        } catch (FileNotFoundException e) {
-                                            Log.w("TAG", "Error saving image file: " + e.getMessage());
-                                        } catch (IOException e) {
-                                            Log.w("TAG", "Error saving image file: " + e.getMessage());
-                                        }
-
-
                                         Log.v("aaa", "IMGAE IS PROCESSED SUCCESSFULLY");
                                         //image.close();
-
 
                                         long endTime = System.nanoTime();
                                         long timePassed = endTime - startTime;
@@ -236,7 +214,7 @@ public class ImageProcessor extends Thread {
 
                                     }
                             );
-
+                    inputImage = null;
         }
     }
 

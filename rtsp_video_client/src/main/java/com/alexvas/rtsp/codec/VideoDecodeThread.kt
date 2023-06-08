@@ -119,7 +119,7 @@ class VideoDecodeThread (
                                 )
 
                                 val stream = ByteArrayOutputStream()
-                                yuvImage.compressToJpeg(Rect(0, 0, 1280, 720), 80, stream)
+                                yuvImage.compressToJpeg(Rect(0, 0, 480, 360), 80, stream)
                                 var bitmap = BitmapFactory.decodeByteArray(
                                     stream.toByteArray(),
                                     0,
@@ -136,10 +136,11 @@ class VideoDecodeThread (
                                 }?: run {
                                     Log.v("aaa", "bitmap is null")
                                 }
-
+                                image.close();
                             } ?: run {
                                 Log.v("aaa", "image is null")
                             }
+
                              //NOTICE change that to just offer(buffer) if needed
                             decoder.releaseOutputBuffer(
                                 outIndex,
@@ -217,6 +218,9 @@ class VideoDecodeThread (
         yBuffer[nv21, 0, ySize]
         vBuffer[nv21, ySize, vSize]
         uBuffer[nv21, ySize + vSize, uSize]
+        yBuffer.clear()
+        uBuffer.clear()
+        vBuffer.clear()
         return nv21
     }
 

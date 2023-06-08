@@ -33,8 +33,9 @@ public class ImageBuffer {
     public static AtomicBoolean isProcessorRunning = new AtomicBoolean(false);
 
     public synchronized void setFrame(Bitmap b){
-        if (frameListener!=null)
+        if (frameListener!=null) {
             frameListener.onFrame(b);
+        }
     }
 
 }
