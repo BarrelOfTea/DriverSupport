@@ -128,6 +128,20 @@ class MainFlowFragment: Fragment(),
             startNewService=false
         }
 
+        Thread{
+            val holder = binding.videoView.holder
+            val canvas = holder.lockCanvas()
+            while(true) {
+                val bitmap = imageBuffer.imageQueue.take()
+                requireActivity().runOnUiThread {
+                    if (canvas != null && bitmap != null) {
+                        canvas.drawBitmap(bitmap, 0f, 0f, null);
+                        holder.unlockCanvasAndPost(canvas);
+                    }
+                }
+            }
+        }.start()
+
         /*requireActivity().runOnUiThread {
             Log.v("aaa", "inside runonuithread block")
             while (ImageBuffer.isProcessorRunning.get()) {
@@ -153,7 +167,13 @@ class MainFlowFragment: Fragment(),
 
     override fun onFrame(bitmap: Bitmap?) {
         //requireActivity().runOnUiThread{
-            binding.videoView.setImageBitmap(bitmap)
+            //binding.videoView.setImageBitmap(bitmap)
+            var holder = binding.videoView.holder
+            var canvas = holder.lockCanvas()
+            if (canvas != null && bitmap != null) {
+                canvas.drawBitmap(bitmap, 0f, 0f, null);
+                holder.unlockCanvasAndPost(canvas);
+            }
         //}
     }
 }

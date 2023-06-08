@@ -37,7 +37,8 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull DeviceAdapter.ViewHolder holder, int position) {
         holder.getDeviceNameTextView().setText(devices[position].getName());
-        if (devices[position].isConnected()) //TODO set minus not when not connected but when no device is returned
+        holder.setPosition(position);
+        if (devices[position].isSaved())
             holder.getDevicePlusIcon().setImageResource(R.drawable.baseline_remove_24);
     }
 
@@ -50,16 +51,21 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
 
         private final TextView device_name;
         private final ImageView plus_view;
+        private int position;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             device_name = itemView.findViewById(R.id.tv_device_name);
             plus_view = itemView.findViewById(R.id.icon_device_add);
             itemView.setOnClickListener(v -> {
-                //parentFragment.onViewHolderClick(answerID);
+                parentFragment.onViewHolderClick(devices[position]);
             });
 
 
+        }
+
+        public void setPosition(int pos){
+            this.position = pos;
         }
 
         public TextView getDeviceNameTextView() {

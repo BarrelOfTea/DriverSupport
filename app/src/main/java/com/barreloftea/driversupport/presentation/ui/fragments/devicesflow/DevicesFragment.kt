@@ -1,21 +1,24 @@
 package com.barreloftea.driversupport.presentation.ui.fragments.devicesflow
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.databinding.FragmentDevicesBinding
+import com.barreloftea.driversupport.domain.models.Device
+import com.barreloftea.driversupport.domain.models.WiFiDeviceM
+import com.barreloftea.driversupport.domain.processor.common.Constants
 import com.barreloftea.driversupport.presentation.navutils.activityNavController
 import com.barreloftea.driversupport.presentation.navutils.navigateSafely
 import com.barreloftea.driversupport.presentation.recyclerview.DeviceAdapter
 import com.barreloftea.driversupport.presentation.recyclerview.ViewHolderClickListener
-import com.barreloftea.driversupport.presentation.service.DriverSupportService
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -25,6 +28,7 @@ class DevicesFragment(): Fragment(), ViewHolderClickListener {
     private lateinit var binding : FragmentDevicesBinding
     private lateinit var adapter : DeviceAdapter
     private val viewModel : DevicesSharedViewModel by viewModels()
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +37,7 @@ class DevicesFragment(): Fragment(), ViewHolderClickListener {
                 adapter.setData(it)
             }
         }
+        viewModel.updateDevices()
     }
 
     override fun onCreateView(
@@ -64,14 +69,27 @@ class DevicesFragment(): Fragment(), ViewHolderClickListener {
             bundle.putBoolean("startnew", true)
             activityNavController().navigateSafely(R.id.action_global_mainFlowFragment, bundle)
         }
+        navController = findNavController()
     }
 
-    private fun startService(){
-        var serviceIntent = Intent(activity, DriverSupportService::class.java)
-        activity?.startService(serviceIntent)
-    }
-
-    override fun onViewHolderClick(id: Int) {
-        TODO("Not yet implemented")
+    override fun onViewHolderClick(device : Device) {
+        if (device.type.equals(Constants.TYPE_CAMERA)){
+            var bundle = Bundle()
+            if (device is WiFiDeviceM) {
+                bundle.putString(Constants.RTSP_LINK, device.rtsp_link)
+                bundle.putString(Constants.RTSP_USERNAME, device.username)
+                bundle.putString(Constants.RTSP_LINK, device.password)
+            }
+            navController.navigateSafely(R.id.action_devices_to_camera, bundle)
+        } else {
+            navController.navigateSafely(R.id.action_devices_to_bluetooth)
+        }
     }
 }
+
+
+
+/*private fun startService(){
+    var serviceIntent = Intent(activity, DriverSupportService::class.java)
+    activity?.startService(serviceIntent)
+}*/

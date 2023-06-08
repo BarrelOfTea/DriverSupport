@@ -29,7 +29,7 @@ public class ImageBuffer {
         frameListener = null;
     }
 
-    public static ArrayBlockingQueue<Bitmap> imageQueue = new ArrayBlockingQueue<>(200);
+    public ArrayBlockingQueue<Bitmap> imageQueue = new ArrayBlockingQueue<>(200);
     public static AtomicBoolean isProcessorRunning = new AtomicBoolean(false);
 
     public synchronized void setFrame(Bitmap b){

@@ -2,7 +2,8 @@ package com.barreloftea.driversupport.domain.models;
 
 public interface Device {
     String getName();
-    int getID();
-    boolean isConnected();
+    boolean isSaved();
+
+    String getType();
 
 }

@@ -18,14 +18,14 @@
         </action>
 
         <action
-            android:id="@+id/action_devices_to_band"
-            app:destination="@id/bandConnectFragment" >
+            android:id="@+id/action_devices_to_bluetooth"
+            app:destination="@id/bluetoothConnectFragment" >
         </action>
 
-        <action
+        <!--<action
             android:id="@+id/action_devices_to_led"
             app:destination="@id/ledConnectFragment" >
-        </action>
+        </action>-->
 
     </fragment>
 
@@ -38,20 +38,20 @@
     </fragment>
 
     <fragment
-        android:id="@+id/bandConnectFragment"
-        android:name="com.barreloftea.driversupport.presentation.ui.fragments.devicesflow.InstructionBandFragment"
+        android:id="@+id/bluetoothConnectFragment"
+        android:name="com.barreloftea.driversupport.presentation.ui.fragments.devicesflow.InstructionBluetoothFragment"
         android:label="fragment_band"
-        tools:layout="@layout/fragment_devices_fitness_band">
+        tools:layout="@layout/fragment_devices_bluetooth_device">
 
     </fragment>
 
-    <fragment
+    <!--<fragment
         android:id="@+id/ledConnectFragment"
         android:name="com.barreloftea.driversupport.presentation.ui.fragments.devicesflow.InstructionLedFragment"
         android:label="fragment_led"
         tools:layout="@layout/fragment_devices_led">
 
-    </fragment>
+    </fragment>-->
 
 
 </navigation>

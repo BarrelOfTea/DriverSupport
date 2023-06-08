@@ -40,7 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:clickable="false"
-            android:text="TextView"
+            android:backgroundTint="@color/red"
+            android:text="Спит"
             android:textSize="@dimen/normal_text_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -64,7 +65,7 @@
             android:id="@+id/tv_main_camera_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/camera"
             android:textSize="@dimen/sub_header_text_size"
             android:paddingBottom="@dimen/small_margin"/>
 
@@ -73,7 +74,7 @@
             android:layout_height="wrap_content">
 
 
-            <ImageView
+            <SurfaceView
                 android:id="@+id/videoView"
                 android:layout_width="@dimen/video_width"
                 android:layout_height="@dimen/video_height"
@@ -107,7 +108,8 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:text="TextView"
+                android:backgroundTint="@color/red"
+                android:text="Спит"
                 android:clickable="false"
                 app:layout_constraintStart_toEndOf="@+id/videoView"
                 app:layout_constraintTop_toBottomOf="@+id/textView3" />
@@ -132,7 +134,7 @@
             android:id="@+id/tv_main_band_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/fitness_band"
             android:textSize="@dimen/sub_header_text_size"
             android:paddingBottom="@dimen/small_margin"/>
 
@@ -164,7 +166,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/header_text_size"
                     android:layout_gravity="end"
-                    android:text="00"
+                    android:text="87"
                     android:layout_column="1"
                     android:layout_row="0"/>
 
@@ -181,7 +183,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/normal_text_size"
-                    android:text="Slight"
+                    android:text="Рекдое"
                     android:layout_gravity="end"
                     android:layout_column="1"
                     android:layout_row="1"/>
@@ -206,7 +208,8 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:text="TextView"
+                android:text="Спит"
+                android:backgroundTint="@color/red"
                 android:clickable="false"
                 app:layout_constraintStart_toEndOf="@+id/grid"
                 app:layout_constraintTop_toBottomOf="@+id/textView5" />
@@ -219,7 +222,7 @@
 
     <!--includes-->
 
-    <LinearLayout
+    <!--<LinearLayout
         android:id="@+id/box_main_signal_sound"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -251,7 +254,63 @@
             android:id="@+id/signal_main_led"/>
 
 
-    </LinearLayout>
+    </LinearLayout>-->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/box_main_signal_sound"
+        app:layout_constraintTop_toBottomOf="@id/box_main_band"
+        android:background="@drawable/rounded_back">
+
+        <TextView
+            android:id="@+id/tv_sound_signal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sound_signal"
+            android:textSize="@dimen/normal_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_sound_signal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/box_main_signal_light"
+        app:layout_constraintTop_toBottomOf="@id/box_main_signal_sound"
+        android:background="@drawable/rounded_back">
+
+        <TextView
+            android:id="@+id/tv_light_signal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sound_signal"
+            android:textSize="@dimen/normal_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_light_signal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

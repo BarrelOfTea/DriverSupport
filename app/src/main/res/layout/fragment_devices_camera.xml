@@ -5,8 +5,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <TextView
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_camera_rtsp_link"
+            android:hint="@string/rtsp_link"
+            android:layout_marginBottom="@dimen/normal_margin"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_camera_rtsp_username"
+            android:hint="@string/rtsp_username"
+            android:layout_marginBottom="@dimen/normal_margin"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_camera_rtsp_password"
+            android:hint="@string/rtsp_password"
+            android:layout_marginBottom="@dimen/normal_margin"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:layout_gravity="center_horizontal"/>
+
+
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+<!--
+
+<TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,4 +93,4 @@
         app:layout_constraintTop_toBottomOf="@id/horizontal_guideline" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+-->

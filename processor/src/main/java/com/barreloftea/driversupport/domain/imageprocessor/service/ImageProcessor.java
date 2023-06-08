@@ -202,8 +202,8 @@ public class ImageProcessor extends Thread {
                                         //activity.preview.setRotation(image.getImageInfo().getRotationDegrees());
                                         //activity.setPreview(bitmap);
 
-                                        //ImageBuffer.imageQueue.offer(bitmap);
-                                        imageBuffer.setFrame(bitmap);
+                                        imageBuffer.imageQueue.offer(bitmap);
+                                        //imageBuffer.setFrame(bitmap);
 
                                         Log.v("aaa", "IMGAE IS PROCESSED SUCCESSFULLY");
                                         //image.close();

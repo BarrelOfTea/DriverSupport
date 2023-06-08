@@ -10,16 +10,23 @@
         1. Turn on Bluetooth and choose your device.
         2. Press OK on the band.
         3. Turn on Location.</string>
-    <string name="devices">Devices</string>
-    <string name="get_started">Get started</string>
-    <string name="current_state">Current state:</string>
-    <string name="prediction">Prediction:</string>
-    <string name="pulse">Pulse:</string>
-    <string name="movement">Movement:</string>
-    <string name="change_light_color">Change light color</string>
-    <string name="change_alarm_volume">Change alarm volume</string>
-    <string name="change_alarm_sound">Change alarm sound</string>
-    <string name="delete_data">Delete data</string>
-    <string name="settings">Settings</string>
-    <string name="main">Main</string>
+    <string name="devices">Устройства</string>
+    <string name="get_started">Начать</string>
+    <string name="current_state">Состояние:</string>
+    <string name="prediction">Прогноз:</string>
+    <string name="pulse">Пульс:</string>
+    <string name="movement">Движение:</string>
+    <string name="change_light_color">Сменить цвет света</string>
+    <string name="change_alarm_volume">Изменить громкость сингала</string>
+    <string name="change_alarm_sound">Изменить звук сингала</string>
+    <string name="delete_data">Удалить данные</string>
+    <string name="settings">Настройки</string>
+    <string name="main">Главная</string>
+    <string name="fitness_band">Браслет</string>
+    <string name="camera">Камера</string>
+    <string name="sound_signal">Звуковой сигнал</string>
+    <string name="rtsp_link">RTSP link</string>
+    <string name="rtsp_username">RTSP username</string>
+    <string name="rtsp_password">RTSP password</string>
+    <string name="save">Сохранить</string>
 </resources>

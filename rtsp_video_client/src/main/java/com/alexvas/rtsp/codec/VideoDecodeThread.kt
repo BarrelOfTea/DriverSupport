@@ -231,9 +231,9 @@ class VideoDecodeThread (
         vBuffer.get(vBytes)
 
         // Downscale the Y, U, and V planes to the desired resolution
-        val downscaledYBytes = downscaleYPlane(yBytes, 1280, 720, 480, 360)
-        val downscaledUBytes = downscaleUVPlane(uBytes, 1280 / 2, 720 / 2, 480 / 2, 360 / 2)
-        val downscaledVBytes = downscaleUVPlane(vBytes, 1280 / 2, 720 / 2, 480 / 2, 360 / 2)
+        var downscaledYBytes = downscaleYPlane(yBytes, 1280, 720, 480, 360)
+        var downscaledUBytes = downscaleUVPlane(uBytes, 1280 / 2, 720 / 2, 480 / 2, 360 / 2)
+        var downscaledVBytes = downscaleUVPlane(vBytes, 1280 / 2, 720 / 2, 480 / 2, 360 / 2)
 
         // Convert the downscaled YUV data to NV21 format
         nv21 = ByteArray(480 * 360 + (480 / 2) * (360 / 2) * 2)
@@ -243,6 +243,9 @@ class VideoDecodeThread (
             nv21[downscaledYBytes.size + i * 2 + 1] = downscaledUBytes[i]
         }
 
+        yBuffer.clear()
+        uBuffer.clear()
+        vBuffer.clear()
 
 
         return nv21
