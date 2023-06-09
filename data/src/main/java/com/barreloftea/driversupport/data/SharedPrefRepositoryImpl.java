@@ -43,4 +43,12 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
 
         return devices;
     }
+
+    @Override
+    public void saveWiFiDevice(String deviceName, String link, String username, String password) {
+        sharedPreferences.edit().putString(Constants.WIFI_NAME, deviceName).apply();
+        sharedPreferences.edit().putString(Constants.RTSP_LINK, link).apply();
+        sharedPreferences.edit().putString(Constants.RTSP_USERNAME, username).apply();
+        sharedPreferences.edit().putString(Constants.RTSP_PASSWORD, password).apply();
+    }
 }

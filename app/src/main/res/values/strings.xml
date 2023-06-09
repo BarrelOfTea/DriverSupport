@@ -25,8 +25,9 @@
     <string name="fitness_band">Браслет</string>
     <string name="camera">Камера</string>
     <string name="sound_signal">Звуковой сигнал</string>
-    <string name="rtsp_link">RTSP link</string>
-    <string name="rtsp_username">RTSP username</string>
-    <string name="rtsp_password">RTSP password</string>
+    <string name="rtsp_link">Ссылка RTSP</string>
+    <string name="rtsp_username">Имя пользователя RTSP</string>
+    <string name="rtsp_password">Пароль RTSP</string>
     <string name="save">Сохранить</string>
+    <string name="device_name">Имя устройства</string>
 </resources>

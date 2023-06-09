@@ -2,6 +2,7 @@ package com.barreloftea.driversupport.di;
 
 import com.barreloftea.driversupport.domain.usecases.GetBluetoothDevicesUC;
 import com.barreloftea.driversupport.domain.usecases.GetSavedDevicesUC;
+import com.barreloftea.driversupport.domain.usecases.SaveWiFiDeviceUC;
 import com.barreloftea.driversupport.domain.usecases.interfaces.BluetoothRepository;
 import com.barreloftea.driversupport.domain.usecases.interfaces.SharedPrefRepository;
 
@@ -25,5 +26,9 @@ public class ViewModelModule {
         return new GetBluetoothDevicesUC(repository);
     }
 
+    @Provides
+    public static SaveWiFiDeviceUC provideSaveWiFiDeviceUC(SharedPrefRepository repository){
+        return new SaveWiFiDeviceUC(repository);
+    }
 
 }
