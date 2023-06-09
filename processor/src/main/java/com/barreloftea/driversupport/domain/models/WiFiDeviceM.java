@@ -1,5 +1,9 @@
 package com.barreloftea.driversupport.domain.models;
 
+import android.os.Parcel;
+
+import androidx.annotation.NonNull;
+
 public class WiFiDeviceM implements Device{
     public WiFiDeviceM() {
     }
@@ -51,4 +55,14 @@ public class WiFiDeviceM implements Device{
     public String getPassword() {
         return password;
     }
+
+    /*@Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+
+    }*/
 }

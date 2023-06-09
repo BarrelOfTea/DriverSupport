@@ -18,12 +18,13 @@ import com.barreloftea.driversupport.domain.processor.common.Constants
 import com.barreloftea.driversupport.presentation.navutils.activityNavController
 import com.barreloftea.driversupport.presentation.navutils.navigateSafely
 import com.barreloftea.driversupport.presentation.recyclerview.DeviceAdapter
-import com.barreloftea.driversupport.presentation.recyclerview.ViewHolderClickListener
+import com.barreloftea.driversupport.presentation.recyclerview.DeviceViewHolderClickListener
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class DevicesFragment(): Fragment(), ViewHolderClickListener {
+class DevicesFragment(): Fragment(),
+    DeviceViewHolderClickListener {
 
     private lateinit var binding : FragmentDevicesBinding
     private lateinit var adapter : DeviceAdapter
@@ -76,6 +77,8 @@ class DevicesFragment(): Fragment(), ViewHolderClickListener {
         if (device.type.equals(Constants.TYPE_CAMERA)){
             var bundle = Bundle()
             if (device is WiFiDeviceM) {
+                //TODO try passing Parcelable
+                bundle.putString(Constants.WIFI_NAME, device.name)
                 bundle.putString(Constants.RTSP_LINK, device.rtsp_link)
                 bundle.putString(Constants.RTSP_USERNAME, device.username)
                 bundle.putString(Constants.RTSP_LINK, device.password)

@@ -1,5 +1,9 @@
 package com.barreloftea.driversupport.domain.models;
 
+import android.os.Parcel;
+
+import androidx.annotation.NonNull;
+
 public class BluetoothDeviceM implements Device{
 
     public BluetoothDeviceM(){
@@ -37,4 +41,14 @@ public class BluetoothDeviceM implements Device{
     public String getType() {
         return type;
     }
+
+    /*@Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+
+    }*/
 }

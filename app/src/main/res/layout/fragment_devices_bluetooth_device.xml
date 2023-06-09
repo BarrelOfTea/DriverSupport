@@ -6,6 +6,78 @@
     android:layout_height="match_parent">
 
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent"
+    android:orientation="vertical"
+    android:layout_marginTop="@dimen/drawer_top_margin">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textSize="@dimen/normal_text_size"
+        android:text="@string/available_bluetooth_devices"
+        android:layout_marginBottom="@dimen/normal_margin"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recView_bluetooth_available_devices"/>
+
+</LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+<!--
+
+
+    <TextView
+        android:id="@+id/tv_av_dev"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/available_bluetooth_devices"
+        android:textSize="@dimen/normal_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/header_margin"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recView_bluetooth_available_devices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/tv_av_dev"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/header_margin"/>
+
+
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
@@ -48,5 +120,4 @@
         app:layout_constraintStart_toStartOf="@+id/vertical_guideline"
         app:layout_constraintTop_toBottomOf="@id/horizontal_guideline" />
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+-->
