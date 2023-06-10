@@ -2,7 +2,7 @@ package com.barreloftea.driversupport.domain.processor.common;
 
 public class Constants {
 
-    //public static final String ADDRESS = "address";
+    public static final String TYPE = "type";
 
     public static final String SHARED_PREF_NAME = "driver_support_data";
 

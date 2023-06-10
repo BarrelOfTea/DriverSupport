@@ -6,7 +6,9 @@ import com.barreloftea.driversupport.domain.models.BluetoothDeviceM
 import com.barreloftea.driversupport.domain.models.Device
 import com.barreloftea.driversupport.domain.usecases.GetConnectedBTDevicesUC
 import com.barreloftea.driversupport.domain.usecases.GetSavedDevicesUC
+import com.barreloftea.driversupport.domain.usecases.SaveBluetoothDeviceUC
 import com.barreloftea.driversupport.domain.usecases.SaveWiFiDeviceUC
+import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -14,21 +16,24 @@ import javax.inject.Inject
 class DevicesSharedViewModel @Inject constructor(
     getSavedDevicesUC : GetSavedDevicesUC,
     saveWiFiDeviceUC: SaveWiFiDeviceUC,
-    getConnectedBTDevicesUC: GetConnectedBTDevicesUC
+    getConnectedBTDevicesUC: GetConnectedBTDevicesUC,
+    saveBluetoothDeviceUC : SaveBluetoothDeviceUC
 ) : ViewModel() {
 
     private val getSavedDevices : GetSavedDevicesUC
     private val saveWiFiDevice : SaveWiFiDeviceUC
     private val getConnectedBTDevices : GetConnectedBTDevicesUC
+    private val saveBluetoothDevice : SaveBluetoothDeviceUC
 
 
     var devicesLD : MutableLiveData<Array<Device>> = MutableLiveData()
-    var blueDevicesLD : MutableLiveData<Array<BluetoothDeviceM>> = MutableLiveData()
+    //var blueDevicesLD : MutableLiveData<Array<BluetoothDeviceM>> = MutableLiveData()
 
     init {
         this.getSavedDevices = getSavedDevicesUC
         this.saveWiFiDevice = saveWiFiDeviceUC
         this.getConnectedBTDevices = getConnectedBTDevicesUC
+        this.saveBluetoothDevice = saveBluetoothDeviceUC
     }
 
     fun updateDevices(){
@@ -39,8 +44,16 @@ class DevicesSharedViewModel @Inject constructor(
         saveWiFiDevice.execute(deviceName, link, username, password)
     }
 
-    fun getConnectedBlueDevices(){
-        blueDevicesLD.value = getConnectedBTDevices.execute()
+    fun getConnectedBlueDevices(listener : BlueViewHolderClickListener){
+        getConnectedBTDevices.execute(listener)
+    }
+
+    fun stopScanning(){
+        getConnectedBTDevices.stopScanning()
+    }
+
+    fun saveBluetoothDevice(type: String, name: String, address: String){
+        saveBluetoothDevice.execute(type, name, address)
     }
 
 }

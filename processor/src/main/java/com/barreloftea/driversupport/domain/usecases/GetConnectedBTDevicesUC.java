@@ -1,6 +1,7 @@
 package com.barreloftea.driversupport.domain.usecases;
 
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
+import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener;
 import com.barreloftea.driversupport.domain.usecases.interfaces.BluetoothRepository;
 
 public class GetConnectedBTDevicesUC {
@@ -11,7 +12,11 @@ public class GetConnectedBTDevicesUC {
         this.repository = repository;
     }
 
-    public BluetoothDeviceM[] execute(){
-        return repository.getBluetoothDevices();
+    public void execute(BlueViewHolderClickListener listener){
+        repository.getBluetoothDevices(listener);
+    }
+
+    public void stopScanning(){
+        repository.stopScan();
     }
 }

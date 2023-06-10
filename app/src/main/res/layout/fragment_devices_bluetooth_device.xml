@@ -21,15 +21,27 @@
         android:text="@string/available_bluetooth_devices"
         android:layout_marginBottom="@dimen/normal_margin"/>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/recView_bluetooth_available_devices"/>
+        android:id="@+id/listView_bluetooth_available_devices"/>
 
 </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+<!--
+
+<androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recView_bluetooth_available_devices"/>
+
+-->
+
+
 
 
 <!--

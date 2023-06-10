@@ -1,9 +1,9 @@
-package com.barreloftea.driversupport.presentation.recyclerview;
+package com.barreloftea.driversupport.domain.usecases.interfaces;
 
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
 
 public interface BlueViewHolderClickListener {
 
-    void onViewHolderClick(BluetoothDeviceM device);
+    void onDeviceDiscovered(BluetoothDeviceM device);
 
 }

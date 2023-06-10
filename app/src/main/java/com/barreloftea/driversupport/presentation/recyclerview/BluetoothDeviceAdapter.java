@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.barreloftea.driversupport.R;
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
-import com.barreloftea.driversupport.domain.models.Device;
+import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener;
 
 public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>{
 
@@ -57,7 +57,7 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
             device_name = itemView.findViewById(R.id.tv_device_blue_name);
             device_address = itemView.findViewById(R.id.tv_device_blue_address);
             itemView.setOnClickListener(v -> {
-                parentFragment.onViewHolderClick(devices[position]);
+                //parentFragment.onViewHolderClick(devices[position]);
             });
 
 

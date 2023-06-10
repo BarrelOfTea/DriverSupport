@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -12,26 +14,28 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.barreloftea.driversupport.databinding.FragmentDevicesBluetoothDeviceBinding
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM
-import com.barreloftea.driversupport.presentation.recyclerview.BlueViewHolderClickListener
+import com.barreloftea.driversupport.domain.processor.common.Constants
+import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener
 import com.barreloftea.driversupport.presentation.recyclerview.BluetoothDeviceAdapter
 
 class InstructionBluetoothFragment(): Fragment(),
     BlueViewHolderClickListener {
 
     private val viewModel : DevicesSharedViewModel by viewModels()
-    private lateinit var adapter : BluetoothDeviceAdapter
     private lateinit var navController: NavController
     private lateinit var binding : FragmentDevicesBluetoothDeviceBinding
+    private lateinit var adapter : ArrayAdapter<BluetoothDeviceM>
+    private lateinit var deviceType : String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.blueDevicesLD.observe(this){data ->
+        /*viewModel.blueDevicesLD.observe(this){data ->
             data?.let {
                 adapter.setData(it)
             }
-        }
-        viewModel.getConnectedBlueDevices()
+        }*/
+        viewModel.getConnectedBlueDevices(this)
     }
 
     override fun onCreateView(
@@ -42,14 +46,17 @@ class InstructionBluetoothFragment(): Fragment(),
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentDevicesBluetoothDeviceBinding.inflate(inflater, container, false)
 
-        val levelsRecyclerView: RecyclerView = binding.recViewBluetoothAvailableDevices
-        val layoutManager = LinearLayoutManager(activity)
-        levelsRecyclerView.layoutManager = layoutManager
-        val scrollposition =
-            (levelsRecyclerView.layoutManager as LinearLayoutManager?)!!.findFirstCompletelyVisibleItemPosition()
-        levelsRecyclerView.scrollToPosition(scrollposition)
-        adapter = BluetoothDeviceAdapter(this)
-        levelsRecyclerView.adapter = adapter
+        val bundle = arguments
+        bundle?.let {
+            deviceType = bundle.getString(Constants.TYPE) ?: ""
+        }
+
+        binding.listViewBluetoothAvailableDevices.adapter = adapter
+        binding.listViewBluetoothAvailableDevices.setOnItemClickListener { parent, view, position, id ->
+            viewModel.stopScanning()
+            //NOTICE not a safe call on adapter.getItem()
+            viewModel.saveBluetoothDevice(deviceType, adapter.getItem(position)!!.name, adapter.getItem(position)!!.address)
+        }
 
         return binding.root
     }
@@ -60,8 +67,22 @@ class InstructionBluetoothFragment(): Fragment(),
         navController = findNavController()
     }
 
-    override fun onViewHolderClick(device: BluetoothDeviceM?) {
-        TODO("Not yet implemented")
+    override fun onDeviceDiscovered(device: BluetoothDeviceM?) {
+        adapter.add(device)
     }
 
 }
+
+
+/*
+
+val levelsRecyclerView: RecyclerView = binding.recViewBluetoothAvailableDevices
+        val layoutManager = LinearLayoutManager(activity)
+        levelsRecyclerView.layoutManager = layoutManager
+        val scrollposition =
+            (levelsRecyclerView.layoutManager as LinearLayoutManager?)!!.findFirstCompletelyVisibleItemPosition()
+        levelsRecyclerView.scrollToPosition(scrollposition)
+        adapter = BluetoothDeviceAdapter(this)
+        levelsRecyclerView.adapter = adapter
+
+ */

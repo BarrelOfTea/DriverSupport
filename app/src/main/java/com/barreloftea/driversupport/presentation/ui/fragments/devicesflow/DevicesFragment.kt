@@ -84,8 +84,14 @@ class DevicesFragment(): Fragment(),
                 bundle.putString(Constants.RTSP_LINK, device.password)
             }
             navController.navigateSafely(R.id.action_devices_to_camera, bundle)
-        } else {
-            navController.navigateSafely(R.id.action_devices_to_bluetooth)
+        } else if(device.type.equals(Constants.TYPE_BAND)) {
+            val bundle = Bundle()
+            bundle.putString(Constants.TYPE, Constants.TYPE_BAND)
+            navController.navigateSafely(R.id.action_devices_to_bluetooth, bundle)
+        } else if(device.type.equals(Constants.TYPE_LED)){
+            val bundle = Bundle()
+            bundle.putString(Constants.TYPE, Constants.TYPE_LED)
+            navController.navigateSafely(R.id.action_devices_to_bluetooth, bundle)
         }
     }
 }

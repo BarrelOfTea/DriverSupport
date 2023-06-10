@@ -2,6 +2,7 @@ package com.barreloftea.driversupport.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
 import com.barreloftea.driversupport.domain.models.Device;
@@ -10,6 +11,8 @@ import com.barreloftea.driversupport.domain.processor.common.Constants;
 import com.barreloftea.driversupport.domain.usecases.interfaces.SharedPrefRepository;
 
 public class SharedPrefRepositoryImpl implements SharedPrefRepository {
+
+    private static final String TAG = SharedPrefRepositoryImpl.class.getSimpleName();
 
     Context context;
 
@@ -50,5 +53,18 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
         sharedPreferences.edit().putString(Constants.RTSP_LINK, link).apply();
         sharedPreferences.edit().putString(Constants.RTSP_USERNAME, username).apply();
         sharedPreferences.edit().putString(Constants.RTSP_PASSWORD, password).apply();
+    }
+
+    @Override
+    public void saveBluetoothDevice(String type, String deviceName, String address) {
+        if (type.equals(Constants.TYPE_BAND)) {
+            sharedPreferences.edit().putString(Constants.BAND_NAME, deviceName).apply();
+            sharedPreferences.edit().putString(Constants.BAND_ADDRESS, address).apply();
+        } else if (type.equals(Constants.TYPE_LED)){
+            sharedPreferences.edit().putString(Constants.LED_NAME, deviceName).apply();
+            sharedPreferences.edit().putString(Constants.LED_ADDRESS, address).apply();
+        } else {
+            Log.v(TAG, "there is no such device type");
+        }
     }
 }

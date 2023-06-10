@@ -11,8 +11,9 @@ public class GetBluetoothDevicesUC {
         this.repository = repository;
     }
 
-    public BluetoothDeviceM[] execute(){
-        return repository.getBluetoothDevices();
-    }
+//    public BluetoothDeviceM[] execute(){
+//        return repository.getBluetoothDevices();
+//    }
+//TODO decide why you need this class
 
 }
