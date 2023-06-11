@@ -38,7 +38,6 @@ class InstructionCameraFragment(): Fragment() {
             rtsp_link = bundle.getString(Constants.RTSP_LINK) ?: ""
             rtsp_username = bundle.getString(Constants.RTSP_USERNAME) ?: ""
             rtsp_password = bundle.getString(Constants.RTSP_PASSWORD) ?: ""
-            Log.v(TAG, rtsp_device_name + " " + rtsp_link)
         }
     }
 

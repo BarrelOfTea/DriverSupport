@@ -34,8 +34,11 @@ public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDeviceM> 
         }
 
         // Lookup view for data population
-        TextView textView1 = convertView.findViewById(android.R.id.text1);
-        TextView textView2 = convertView.findViewById(android.R.id.text2);
+        /*TextView textView1 = convertView.findViewById(android.R.id.text1);
+        TextView textView2 = convertView.findViewById(android.R.id.text2);*/
+
+        TextView textView1 = convertView.findViewById(R.id.tv_device_blue_name);
+        TextView textView2 = convertView.findViewById(R.id.tv_device_blue_address);
 
         // Populate the data into the template view using the data object
         textView1.setText(data.getName());

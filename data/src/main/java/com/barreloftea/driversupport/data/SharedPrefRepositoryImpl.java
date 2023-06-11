@@ -36,7 +36,6 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
                 sharedPreferences.getString(Constants.RTSP_PASSWORD, ""),
                 sharedPreferences.contains(Constants.WIFI_NAME),
                 Constants.TYPE_CAMERA);
-        if (devices[0] instanceof WiFiDeviceM) Log.v(TAG, devices[0].getName() + " " + ((WiFiDeviceM) devices[0]).getRtsp_link());
         devices[1] = new BluetoothDeviceM(
                 sharedPreferences.getString(Constants.BAND_NAME, Constants.NO_BAND),
                 sharedPreferences.getString(Constants.BAND_ADDRESS, ""),

@@ -85,8 +85,7 @@ class DevicesFragment(): Fragment(),
                 bundle.putString(Constants.WIFI_NAME, device.name)
                 bundle.putString(Constants.RTSP_LINK, device.rtsp_link)
                 bundle.putString(Constants.RTSP_USERNAME, device.username)
-                bundle.putString(Constants.RTSP_LINK, device.password)
-                Log.v(TAG, device.name + " " + device.rtsp_link)
+                bundle.putString(Constants.RTSP_PASSWORD, device.password)
             }
             navController.navigateSafely(R.id.action_devices_to_camera, bundle)
         } else if(device.type.equals(Constants.TYPE_BAND)) {
