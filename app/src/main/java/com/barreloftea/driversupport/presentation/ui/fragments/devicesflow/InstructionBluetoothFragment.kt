@@ -16,6 +16,7 @@ import com.barreloftea.driversupport.databinding.FragmentDevicesBluetoothDeviceB
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM
 import com.barreloftea.driversupport.domain.processor.common.Constants
 import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener
+import com.barreloftea.driversupport.presentation.navutils.navigateSafely
 import com.barreloftea.driversupport.presentation.recyclerview.BluetoothDeviceArrayAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -69,6 +70,7 @@ class InstructionBluetoothFragment(): Fragment(),
             viewModel.stopScanning()
             //NOTICE not a safe call on adapter.getItem()
             viewModel.saveBluetoothDevice(deviceType, adapter.getItem(position)!!.name, adapter.getItem(position)!!.address)
+            navController.navigateSafely(R.id.action_bluetooth_to_devices)
         }
 
         return binding.root
