@@ -4,27 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.databinding.FragmentDevicesBluetoothDeviceBinding
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM
 import com.barreloftea.driversupport.domain.processor.common.Constants
 import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener
-import com.barreloftea.driversupport.presentation.recyclerview.BluetoothDeviceAdapter
+import com.barreloftea.driversupport.presentation.recyclerview.BluetoothDeviceArrayAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class InstructionBluetoothFragment(): Fragment(),
     BlueViewHolderClickListener {
 
     private val viewModel : DevicesSharedViewModel by viewModels()
     private lateinit var navController: NavController
     private lateinit var binding : FragmentDevicesBluetoothDeviceBinding
-    private lateinit var adapter : ArrayAdapter<BluetoothDeviceM>
+    private lateinit var adapter : BluetoothDeviceArrayAdapter
     private lateinit var deviceType : String
 
 
@@ -50,6 +50,8 @@ class InstructionBluetoothFragment(): Fragment(),
         bundle?.let {
             deviceType = bundle.getString(Constants.TYPE) ?: ""
         }
+
+        adapter = BluetoothDeviceArrayAdapter(requireActivity(), R.layout.item_blue_device, ArrayList<BluetoothDeviceM>())
 
         binding.listViewBluetoothAvailableDevices.adapter = adapter
         binding.listViewBluetoothAvailableDevices.setOnItemClickListener { parent, view, position, id ->
@@ -82,7 +84,7 @@ val levelsRecyclerView: RecyclerView = binding.recViewBluetoothAvailableDevices
         val scrollposition =
             (levelsRecyclerView.layoutManager as LinearLayoutManager?)!!.findFirstCompletelyVisibleItemPosition()
         levelsRecyclerView.scrollToPosition(scrollposition)
-        adapter = BluetoothDeviceAdapter(this)
+        adapter = BluetoothDeviceArrayAdapter(this)
         levelsRecyclerView.adapter = adapter
 
  */

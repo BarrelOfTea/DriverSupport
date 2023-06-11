@@ -1,24 +1,60 @@
 package com.barreloftea.driversupport.presentation.recyclerview;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.barreloftea.driversupport.R;
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
-import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener;
 
-public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDeviceAdapter.ViewHolder>{
+import java.util.List;
 
 
-    private BluetoothDeviceM[] devices;
+public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDeviceM> {
+
+
+    public BluetoothDeviceArrayAdapter(@NonNull Context context, int resource, @NonNull List<BluetoothDeviceM> objects) {
+        super(context, resource, objects);
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        // Get the data item for this position
+        BluetoothDeviceM data = getItem(position);
+
+        // Check if an existing view is being reused, otherwise inflate the view
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_blue_device, parent, false);
+        }
+
+        // Lookup view for data population
+        TextView textView1 = convertView.findViewById(android.R.id.text1);
+        TextView textView2 = convertView.findViewById(android.R.id.text2);
+
+        // Populate the data into the template view using the data object
+        textView1.setText(data.getName());
+        textView2.setText(data.getAddress());
+
+        // Return the completed view to render on screen
+        return convertView;
+    }
+
+}
+
+
+
+/*
+
+private BluetoothDeviceM[] devices;
     private BlueViewHolderClickListener parentFragment;
 
-    public BluetoothDeviceAdapter(BlueViewHolderClickListener listener){
+    public BluetoothDeviceArrayAdapter(BlueViewHolderClickListener listener){
         this.parentFragment = listener;
     }
 
@@ -31,11 +67,11 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_blue_device, parent, false);
-        return new BluetoothDeviceAdapter.ViewHolder(view);
+        return new BluetoothDeviceArrayAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull BluetoothDeviceAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BluetoothDeviceArrayAdapter.ViewHolder holder, int position) {
         holder.getDeviceNameTextView().setText(devices[position].getName());
         holder.getDeviceAddressTextView().setText(devices[position].getAddress());
         holder.setPosition(position);
@@ -76,4 +112,4 @@ public class BluetoothDeviceAdapter extends RecyclerView.Adapter<BluetoothDevice
         }
     }
 
-}
+ */

@@ -1,6 +1,8 @@
 package com.barreloftea.driversupport.presentation.ui.fragments.devicesflow
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +27,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class DevicesFragment(): Fragment(),
     DeviceViewHolderClickListener {
+
+    private val TAG = DevicesFragment::class.java.simpleName
 
     private lateinit var binding : FragmentDevicesBinding
     private lateinit var adapter : DeviceAdapter
@@ -82,6 +86,7 @@ class DevicesFragment(): Fragment(),
                 bundle.putString(Constants.RTSP_LINK, device.rtsp_link)
                 bundle.putString(Constants.RTSP_USERNAME, device.username)
                 bundle.putString(Constants.RTSP_LINK, device.password)
+                Log.v(TAG, device.name + " " + device.rtsp_link)
             }
             navController.navigateSafely(R.id.action_devices_to_camera, bundle)
         } else if(device.type.equals(Constants.TYPE_BAND)) {

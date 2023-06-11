@@ -15,12 +15,15 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
     private static final String TAG = SharedPrefRepositoryImpl.class.getSimpleName();
 
     Context context;
+    private final SharedPreferences sharedPreferences;
 
     public SharedPrefRepositoryImpl(Context context){
-        this.context = context;
+        //this.context = context;
+        this.context = context.getApplicationContext();
+        sharedPreferences = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    private SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+
 
     @Override
     public Device[] getSavedDevices() {
@@ -33,6 +36,7 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
                 sharedPreferences.getString(Constants.RTSP_PASSWORD, ""),
                 sharedPreferences.contains(Constants.WIFI_NAME),
                 Constants.TYPE_CAMERA);
+        if (devices[0] instanceof WiFiDeviceM) Log.v(TAG, devices[0].getName() + " " + ((WiFiDeviceM) devices[0]).getRtsp_link());
         devices[1] = new BluetoothDeviceM(
                 sharedPreferences.getString(Constants.BAND_NAME, Constants.NO_BAND),
                 sharedPreferences.getString(Constants.BAND_ADDRESS, ""),
