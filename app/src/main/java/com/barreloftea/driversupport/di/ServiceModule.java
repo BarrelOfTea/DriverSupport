@@ -17,6 +17,7 @@ import com.barreloftea.driversupport.domain.processor.Processor;
 import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.PulseRepository;
 import com.barreloftea.driversupport.domain.pulseprocessor.service.PulseProcessor;
 import com.barreloftea.driversupport.domain.soundcontroller.SoundController;
+import com.barreloftea.driversupport.domain.usecases.interfaces.SharedPrefRepository;
 
 import javax.inject.Singleton;
 
@@ -91,8 +92,8 @@ public class ServiceModule {
     }
 
     @Provides
-    public static SoundController provideSoundController(){
-        return new SoundController();
+    public static SoundController provideSoundController(SharedPrefRepository repository){
+        return new SoundController(repository);
     }
 
 }

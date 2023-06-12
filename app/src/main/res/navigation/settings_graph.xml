@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/devices_graph"
+    app:startDestination="@id/settingsFragment">
+
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.barreloftea.driversupport.presentation.ui.fragments.settingsflow.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings">
+
+        <action
+            android:id="@+id/action_settings_to_sound"
+            app:destination="@id/settingsSoundFragment" >
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsSoundFragment"
+        android:name="com.barreloftea.driversupport.presentation.ui.fragments.settingsflow.SoundFragment"
+        android:label="fragment_sound"
+        tools:layout="@layout/fragment_settings_choose_sound">
+
+        <action
+            android:id="@+id/action_sound_to_settings"
+            app:destination="@id/settingsFragment" >
+        </action>
+
+    </fragment>
+
+
+</navigation>
+

@@ -1,10 +1,14 @@
 package com.barreloftea.driversupport.di;
 
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
+import com.barreloftea.driversupport.domain.usecases.DeleteDataUC;
 import com.barreloftea.driversupport.domain.usecases.GetBluetoothDevicesUC;
 import com.barreloftea.driversupport.domain.usecases.GetConnectedBTDevicesUC;
 import com.barreloftea.driversupport.domain.usecases.GetSavedDevicesUC;
+import com.barreloftea.driversupport.domain.usecases.GetSoundVolumeUC;
 import com.barreloftea.driversupport.domain.usecases.SaveBluetoothDeviceUC;
+import com.barreloftea.driversupport.domain.usecases.SaveSignalSoundUC;
+import com.barreloftea.driversupport.domain.usecases.SaveSoundVolumeUC;
 import com.barreloftea.driversupport.domain.usecases.SaveWiFiDeviceUC;
 import com.barreloftea.driversupport.domain.usecases.interfaces.BluetoothRepository;
 import com.barreloftea.driversupport.domain.usecases.interfaces.SharedPrefRepository;
@@ -43,5 +47,26 @@ public class ViewModelModule {
     public static SaveBluetoothDeviceUC provideSaveBluetoothDeviceUC(SharedPrefRepository repository){
         return new SaveBluetoothDeviceUC(repository);
     }
+
+    @Provides
+    public static SaveSoundVolumeUC provideSaveSoundVolumeUC(SharedPrefRepository prefRepository){
+        return new SaveSoundVolumeUC(prefRepository);
+    }
+
+    @Provides
+    public static GetSoundVolumeUC provideGetSoundVolumeUC(SharedPrefRepository prefRepository){
+        return new GetSoundVolumeUC(prefRepository);
+    }
+
+    @Provides
+    public static DeleteDataUC provideDeleteDataUC(SharedPrefRepository prefRepository){
+        return new DeleteDataUC(prefRepository);
+    }
+
+    @Provides
+    public static SaveSignalSoundUC provideSaveSignalSoundUC(SharedPrefRepository prefRepository){
+        return new SaveSignalSoundUC(prefRepository);
+    }
+
 
 }

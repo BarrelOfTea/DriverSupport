@@ -31,4 +31,5 @@ public class Constants {
 
     //sound
     public static final String SOUND_RES_INT = "sound_res_int";
+    public static final String SOUND_VOLUME = "sound_volume";
 }

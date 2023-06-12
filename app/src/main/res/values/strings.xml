@@ -32,4 +32,5 @@
     <string name="device_name">Имя устройства</string>
     <string name="available_bluetooth_devices">Доступные Bluetooth устройства</string>
     <string name="light_signal">Световой сигнал</string>
+    <string name="choose_signal_sound">Выберите звук сигнала</string>
 </resources>

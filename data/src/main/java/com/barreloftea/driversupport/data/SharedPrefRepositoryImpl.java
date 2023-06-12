@@ -18,7 +18,6 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
     private final SharedPreferences sharedPreferences;
 
     public SharedPrefRepositoryImpl(Context context){
-        //this.context = context;
         this.context = context.getApplicationContext();
         sharedPreferences = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE);
     }
@@ -69,5 +68,31 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
         } else {
             Log.v(TAG, "there is no such device type");
         }
+    }
+
+    @Override
+    public void saveSoundVolume(float v) {
+        sharedPreferences.edit().putFloat(Constants.SOUND_VOLUME, v).apply();
+    }
+
+    @Override
+    public float getSavedSoundVolume() {
+        return sharedPreferences.getFloat(Constants.SOUND_VOLUME, 0.8f);
+    }
+
+    @Override
+    public void saveSignalSoundResID(int resid) {
+        sharedPreferences.edit().putInt(Constants.SOUND_RES_INT, resid).apply();
+    }
+
+    @Override
+    public int getSignalSoundResId() {
+        //TODO handle if resid is 0
+        return sharedPreferences.getInt(Constants.SOUND_RES_INT, 0);
+    }
+
+    @Override
+    public void deleteAll() {
+        sharedPreferences.edit().clear().apply();
     }
 }
