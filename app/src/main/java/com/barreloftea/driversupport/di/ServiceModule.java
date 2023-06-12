@@ -3,6 +3,8 @@ package com.barreloftea.driversupport.di;
 
 
 
+import android.content.Context;
+
 import com.alexvas.repository.VideoRepositoryImpl;
 import com.alexvas.rtsp.widget.RtspSurfaceView;
 import com.barreloftea.driversupport.bleservice.repositories.LedRepositoryImpl;
@@ -14,12 +16,14 @@ import com.barreloftea.driversupport.domain.ledcontroller.service.LedController;
 import com.barreloftea.driversupport.domain.processor.Processor;
 import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.PulseRepository;
 import com.barreloftea.driversupport.domain.pulseprocessor.service.PulseProcessor;
+import com.barreloftea.driversupport.domain.soundcontroller.SoundController;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 
 @Module
@@ -36,8 +40,8 @@ public class ServiceModule {
 
     @Provides
     @Singleton
-    public static Processor provideProcessor(ImageProcessor cameraService){
-        return new Processor(cameraService);
+    public static Processor provideProcessor(ImageProcessor imageProcessor, SoundController soundController){
+        return new Processor(imageProcessor, soundController);
     }
 
 //    @Provides
@@ -86,5 +90,9 @@ public class ServiceModule {
         return new LedRepositoryImpl();
     }
 
+    @Provides
+    public static SoundController provideSoundController(){
+        return new SoundController();
+    }
 
 }

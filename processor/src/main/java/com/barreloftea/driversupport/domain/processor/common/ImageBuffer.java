@@ -38,4 +38,9 @@ public class ImageBuffer {
         }
     }
 
+    //TODO do we really need synchronized here?
+    public synchronized boolean isListenerSet(){
+        return frameListener!=null;
+    }
+
 }

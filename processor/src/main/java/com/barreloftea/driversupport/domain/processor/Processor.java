@@ -1,9 +1,11 @@
 package com.barreloftea.driversupport.domain.processor;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.barreloftea.driversupport.domain.imageprocessor.service.ImageProcessor;
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer;
+import com.barreloftea.driversupport.domain.soundcontroller.SoundController;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -12,14 +14,35 @@ import javax.inject.Inject;
 
 public class Processor extends Thread {
 
+    public static final int AWAKE = 0;
+    public static final int DROWSY = 1;
+    public static final int SLEEPING = 2;
+
+
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
-    private ImageProcessor imageProcessor;
+    private int stateCam = 0;
+    private int stateBand = 0;
+    private Context context;
+
+    @Inject
+    ImageProcessor imageProcessor;
+    @Inject
+    SoundController soundController;
     //private PulseProcessor pulseProcessor;
     //private LedController ledController;
 
     @Inject
-    public Processor(ImageProcessor c){
-        imageProcessor = c;
+    public Processor(ImageProcessor i, SoundController s){
+        imageProcessor = i;
+        imageProcessor.setProcessor(this);
+
+        soundController = s;
+
+    }
+
+    public void init(Context context){
+        soundController.init(context);
+        this.context = context;
     }
 
 //    @Inject
@@ -46,7 +69,33 @@ public class Processor extends Thread {
 
 
         while(!exitFlag.get()){
-           // Log.v("bbb", "processor thread is running");
+            if (stateCam == AWAKE){
+                soundController.pause();
+            }
+            if (stateCam == SLEEPING) {
+                soundController.play();
+            }
+        }
+
+        ImageBuffer.isProcessorRunning.set(false);
+        if (imageProcessor!=null) imageProcessor.stopAsync();
+        if (soundController!=null) soundController.destroy();
+        //if (pulseProcessor !=null) pulseProcessor.stopAsync();
+    }
+
+    public synchronized void setCamState(int s){
+        this.stateCam = s;
+    }
+
+    public synchronized void setBandState(int s){
+        this.stateBand = s;
+    }
+
+
+}
+
+
+//            Log.v("bbb", "processor thread is running");
 //            ledController.sendOnCmd();
 //            try {
 //                Thread.sleep(1000);
@@ -54,15 +103,8 @@ public class Processor extends Thread {
 //                throw new RuntimeException(e);
 //            }
 //            ledController.sendOffCmd();
-        }
-
-        ImageBuffer.isProcessorRunning.set(false);
-        if (imageProcessor!=null) imageProcessor.stopAsync();
-        //if (pulseProcessor !=null) pulseProcessor.stopAsync();
-    }
 
 
-}
 
 
 

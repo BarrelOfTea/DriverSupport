@@ -3,12 +3,11 @@ package com.barreloftea.driversupport.domain.imageprocessor.service;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import com.barreloftea.driversupport.domain.imageprocessor.interfaces.VideoRepository;
 import com.barreloftea.driversupport.domain.imageprocessor.utils.DrawContours;
+import com.barreloftea.driversupport.domain.processor.Processor;
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer;
 import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.common.InputImage;
@@ -35,6 +34,7 @@ public class ImageProcessor extends Thread {
     VideoRepository videoRepository;
     ArrayBlockingQueue<Bitmap> queue;
     ImageBuffer imageBuffer;
+    Processor processor;
 
     public ImageProcessor(VideoRepository rep){
         videoRepository = rep;
@@ -44,6 +44,9 @@ public class ImageProcessor extends Thread {
         imageBuffer = ImageBuffer.getInstance();
     }
 
+    public void setProcessor(Processor processor) {
+        this.processor = processor;
+    }
 
     int eyeFlag;
     int mouthFlag;
@@ -53,6 +56,8 @@ public class ImageProcessor extends Thread {
     static final int MOUTH_THRESH = 18;
     static final int NO_BLINK_TH = 80;
     static final float ROUND = 0.6f;
+
+    private float EOP = 0.5f;
 
     private DrawContours drawer = new DrawContours();
 
@@ -139,23 +144,23 @@ public class ImageProcessor extends Thread {
 
                                             notBlinkFlag++;
 
-//                                            if ((LEOP+REOP)/2 < activity.params.getEOP()) {
-//                                                eyeFlag++;
-//                                                notBlinkFlag = 0;
-//                                                Log.v(null, "you blinked");
-//                                            }
-//                                            else {
-//                                                eyeFlag = 0;
-//                                            }
-//
-//                                            if (eyeFlag>=EYE_THRESH){
-//                                                activity.enableAlert("WAKE UP! FIND A SPOT TO HAVE REST");
-//                                                Log.v(null, "REASON closed eyes");
-//                                            }
-//                                            if (notBlinkFlag > NO_BLINK_TH){
-//                                                activity.enableAlert("WAKE UP! YOU ARE SLEEPING WITH OPEN EYES");
-//                                                Log.v(null, "REASON always open eyes");
-//                                            }
+                                            if ((LEOP+REOP)/2 < EOP) {
+                                                eyeFlag++;
+                                                notBlinkFlag = 0;
+                                                Log.v(null, "you blinked");
+                                            }
+                                            else {
+                                                eyeFlag = 0;
+                                            }
+
+                                            if (eyeFlag>=EYE_THRESH){
+                                                processor.setCamState(Processor.SLEEPING);
+                                                Log.v(null, "REASON closed eyes");
+                                            }
+                                            if (notBlinkFlag > NO_BLINK_TH){
+                                                processor.setCamState(Processor.DROWSY);
+                                                Log.v(null, "REASON always open eyes");
+                                            }
 
                                         /*long endTime2 = System.nanoTime();
                                         long timePassed2 = endTime2 - startTime;
@@ -202,8 +207,9 @@ public class ImageProcessor extends Thread {
                                         //activity.preview.setRotation(image.getImageInfo().getRotationDegrees());
                                         //activity.setPreview(bitmap);
 
-                                        imageBuffer.imageQueue.offer(bitmap);
-                                        //imageBuffer.setFrame(bitmap);
+                                        //imageBuffer.imageQueue.offer(bitmap);
+                                        if (imageBuffer.isListenerSet())
+                                            imageBuffer.setFrame(bitmap);
 
                                         Log.v("aaa", "IMGAE IS PROCESSED SUCCESSFULLY");
                                         //image.close();
