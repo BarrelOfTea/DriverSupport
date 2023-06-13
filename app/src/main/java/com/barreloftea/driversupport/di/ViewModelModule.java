@@ -1,8 +1,6 @@
 package com.barreloftea.driversupport.di;
 
-import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
 import com.barreloftea.driversupport.domain.usecases.DeleteDataUC;
-import com.barreloftea.driversupport.domain.usecases.GetBluetoothDevicesUC;
 import com.barreloftea.driversupport.domain.usecases.GetConnectedBTDevicesUC;
 import com.barreloftea.driversupport.domain.usecases.GetSavedDevicesUC;
 import com.barreloftea.driversupport.domain.usecases.GetSoundVolumeUC;
@@ -10,7 +8,7 @@ import com.barreloftea.driversupport.domain.usecases.SaveBluetoothDeviceUC;
 import com.barreloftea.driversupport.domain.usecases.SaveSignalSoundUC;
 import com.barreloftea.driversupport.domain.usecases.SaveSoundVolumeUC;
 import com.barreloftea.driversupport.domain.usecases.SaveWiFiDeviceUC;
-import com.barreloftea.driversupport.domain.usecases.interfaces.BluetoothRepository;
+import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.BluetoothRepository;
 import com.barreloftea.driversupport.domain.usecases.interfaces.SharedPrefRepository;
 
 import dagger.Module;

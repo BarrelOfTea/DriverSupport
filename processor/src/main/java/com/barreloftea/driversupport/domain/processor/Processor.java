@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.barreloftea.driversupport.domain.imageprocessor.service.ImageProcessor;
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer;
+import com.barreloftea.driversupport.domain.pulseprocessor.service.PulseProcessor;
 import com.barreloftea.driversupport.domain.soundcontroller.SoundController;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,22 +23,27 @@ public class Processor extends Thread {
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
     private int stateCam = 0;
     private int stateBand = 0;
-    private Context context;
+    public Context context;
 
     @Inject
     ImageProcessor imageProcessor;
+
+    @Inject
+    PulseProcessor pulseProcessor;
     @Inject
     SoundController soundController;
     //private PulseProcessor pulseProcessor;
     //private LedController ledController;
 
     @Inject
-    public Processor(ImageProcessor i, SoundController s){
+    public Processor(ImageProcessor i, PulseProcessor p, SoundController s){
         imageProcessor = i;
         imageProcessor.setProcessor(this);
 
-        soundController = s;
+        pulseProcessor = p;
+        pulseProcessor.setProcessor(this);
 
+        soundController = s;
     }
 
     public void init(Context context){
@@ -45,10 +51,7 @@ public class Processor extends Thread {
         this.context = context;
     }
 
-//    @Inject
-//    public Processor(LedController s){
-//        ledController = s;
-//    }
+
 
 
     public void stopAsync(){
@@ -63,7 +66,9 @@ public class Processor extends Thread {
     public void run() {
 
         imageProcessor.start();
-        //pulseProcessor.start();
+
+        pulseProcessor.prepare("D7:71:B3:98:F8:57");
+        pulseProcessor.start();
         ImageBuffer.isProcessorRunning.set(true);
         Log.v("aaa", "camera service started");
 
@@ -80,7 +85,7 @@ public class Processor extends Thread {
         ImageBuffer.isProcessorRunning.set(false);
         if (imageProcessor!=null) imageProcessor.stopAsync();
         if (soundController!=null) soundController.destroy();
-        //if (pulseProcessor !=null) pulseProcessor.stopAsync();
+        if (pulseProcessor !=null) pulseProcessor.stopAsync();
     }
 
     public synchronized void setCamState(int s){
@@ -93,6 +98,12 @@ public class Processor extends Thread {
 
 
 }
+
+
+//    @Inject
+//    public Processor(LedController s){
+//        ledController = s;
+//    }
 
 
 //            Log.v("bbb", "processor thread is running");

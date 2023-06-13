@@ -23,7 +23,8 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/listView_signal_sound"/>
+            android:id="@+id/listView_signal_sound"
+            android:divider="@color/white"/>
 
     </LinearLayout>
 

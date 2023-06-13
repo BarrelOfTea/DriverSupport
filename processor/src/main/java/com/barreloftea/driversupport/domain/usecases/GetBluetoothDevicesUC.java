@@ -1,8 +1,7 @@
 package com.barreloftea.driversupport.domain.usecases;
 
 
-import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
-import com.barreloftea.driversupport.domain.usecases.interfaces.BluetoothRepository;
+import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.BluetoothRepository;
 
 public class GetBluetoothDevicesUC {
     BluetoothRepository repository;

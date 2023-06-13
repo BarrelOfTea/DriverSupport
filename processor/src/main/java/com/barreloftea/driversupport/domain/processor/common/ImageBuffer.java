@@ -38,6 +38,12 @@ public class ImageBuffer {
         }
     }
 
+    public synchronized void updatePulse(int pulse){
+        if (frameListener!=null) {
+            frameListener.onPulse(pulse);
+        }
+    }
+
     //TODO do we really need synchronized here?
     public synchronized boolean isListenerSet(){
         return frameListener!=null;

@@ -176,6 +176,10 @@ class MainFlowFragment: Fragment(),
             }
         //}
     }
+
+    override fun onPulse(pulse: Int) {
+        binding.tvMainPulse.setText(pulse)
+    }
 }
 
 

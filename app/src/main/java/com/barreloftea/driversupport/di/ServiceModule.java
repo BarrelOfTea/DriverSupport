@@ -14,6 +14,7 @@ import com.barreloftea.driversupport.domain.imageprocessor.service.ImageProcesso
 import com.barreloftea.driversupport.domain.ledcontroller.interfaces.LedRepository;
 import com.barreloftea.driversupport.domain.ledcontroller.service.LedController;
 import com.barreloftea.driversupport.domain.processor.Processor;
+import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.BluetoothRepository;
 import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.PulseRepository;
 import com.barreloftea.driversupport.domain.pulseprocessor.service.PulseProcessor;
 import com.barreloftea.driversupport.domain.soundcontroller.SoundController;
@@ -41,24 +42,15 @@ public class ServiceModule {
 
     @Provides
     @Singleton
-    public static Processor provideProcessor(ImageProcessor imageProcessor, SoundController soundController){
-        return new Processor(imageProcessor, soundController);
+    public static Processor provideProcessor(ImageProcessor imageProcessor, PulseProcessor pulseProcessor, SoundController soundController){
+        return new Processor(imageProcessor, pulseProcessor, soundController);
     }
 
-//    @Provides
-//    public static Processor provideProcessor(PulseProcessor pulseProcessor){
-//        return new Processor(pulseProcessor);
-//    }
-
-//    @Provides
-//    public static Processor provideProcessor(LedController c){
-//        return new Processor(c);
-//    }
 
     @Provides
     @Singleton
-    public static PulseProcessor providePulseProcessor(){
-        return new PulseProcessor();
+    public static PulseProcessor providePulseProcessor(BluetoothRepository blueRep, PulseRepository pulseRep){
+        return new PulseProcessor(blueRep, pulseRep);
     }
 
     @Provides
@@ -79,21 +71,12 @@ public class ServiceModule {
         return new RtspSurfaceView();
     }
 
-    @Provides
-    @Singleton
-    public static PulseRepository providePulseRepository(){
-        return new PulseRepositoryImpl();
-    }
 
-    @Provides
-    @Singleton
-    public static LedRepository provideLedRepository(){
-        return new LedRepositoryImpl();
-    }
 
     @Provides
     public static SoundController provideSoundController(SharedPrefRepository repository){
         return new SoundController(repository);
     }
 
+    //TODO MANAGE DIFFERENT MODULES TO INITIALIZE CLASSES
 }

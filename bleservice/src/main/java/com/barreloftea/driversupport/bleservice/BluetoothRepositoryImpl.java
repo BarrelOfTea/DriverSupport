@@ -7,11 +7,15 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.content.Context;
 import android.util.Log;
 
+import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.ActionCallback;
+import com.barreloftea.driversupport.bleservice.miband.MiBand;
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
+import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.HeartRateNotifyListener;
 import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener;
-import com.barreloftea.driversupport.domain.usecases.interfaces.BluetoothRepository;
+import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.BluetoothRepository;
 
 import java.util.HashMap;
 
@@ -22,6 +26,7 @@ public class BluetoothRepositoryImpl implements BluetoothRepository {
     private BlueViewHolderClickListener listener;
 
     ScanCallback scanCallback;
+
 
     @Override
     public void getBluetoothDevices(BlueViewHolderClickListener listener) {
@@ -66,6 +71,12 @@ public class BluetoothRepositoryImpl implements BluetoothRepository {
         stopScan(scanCallback);
     }
 
+    @Override
+    public BluetoothDevice getDevice(String address) {
+        //"D7:71:B3:98:F8:57"
+        return BluetoothAdapter.getDefaultAdapter().getRemoteDevice(address);
+    }
+
 
     public void startScan(ScanCallback callback) {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
@@ -97,4 +108,6 @@ public class BluetoothRepositoryImpl implements BluetoothRepository {
         scanner.stopScan(callback);
         Log.v(TAG, "Stopped scanning");
     }
+
+
 }
