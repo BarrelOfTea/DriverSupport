@@ -33,13 +33,11 @@ class SoundFragment: Fragment() {
 
         adapter = ArrayAdapter(requireActivity(), R.layout.item_sound, ArrayList<String>())
         val fields = com.barreloftea.driversupport.domain.R.raw::class.java.fields
-        for(i in 0..fields.size-1){
-            adapter.add(fields[i].name)
+        for(element in fields){
+            adapter.add(element.name)
         }
         binding.listViewSignalSound.adapter = adapter
         binding.listViewSignalSound.setOnItemClickListener { parent, view, position, id ->
-            //TODO getIdentifier is resource-consuming
-            //viewModel.saveSignalSoundResId(requireActivity().resources.getIdentifier(adapter.getItem(position)!!, "raw", "com.barreloftea.driversupport.domain"))
             viewModel.saveSignalSoundResId(fields[position].getInt(fields[position]))
             navController.navigateSafely(R.id.action_sound_to_settings)
         }
@@ -55,3 +53,8 @@ class SoundFragment: Fragment() {
     }
 
 }
+
+
+
+//getIdentifier is resource-consuming
+//viewModel.saveSignalSoundResId(requireActivity().resources.getIdentifier(adapter.getItem(position)!!, "raw", "com.barreloftea.driversupport.domain"))

@@ -31,17 +31,18 @@ public class Processor extends Thread {
     @Inject
     PulseProcessor pulseProcessor;
     @Inject
-    SoundController soundController;
-    //private PulseProcessor pulseProcessor;
+    volatile SoundController soundController;
     //private LedController ledController;
 
     @Inject
     public Processor(ImageProcessor i, PulseProcessor p, SoundController s){
         imageProcessor = i;
         imageProcessor.setProcessor(this);
+        imageProcessor.setName("image processor");
 
         pulseProcessor = p;
         pulseProcessor.setProcessor(this);
+        pulseProcessor.setName("pulse processor");
 
         soundController = s;
     }
@@ -76,6 +77,7 @@ public class Processor extends Thread {
         while(!exitFlag.get()){
             if (stateCam == AWAKE){
                 soundController.pause();
+                Log.v("aaa", "sound controller paused");
             }
             if (stateCam == SLEEPING) {
                 soundController.play();

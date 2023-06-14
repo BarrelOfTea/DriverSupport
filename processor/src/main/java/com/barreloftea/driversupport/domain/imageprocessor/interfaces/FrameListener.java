@@ -4,5 +4,5 @@ import android.graphics.Bitmap;
 
 public interface FrameListener {
     void onFrame(Bitmap bitmap);
-    void onPulse(int pulse);
+    //void onPulse(int pulse);
 }

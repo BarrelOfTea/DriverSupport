@@ -10,6 +10,10 @@ import com.barreloftea.driversupport.domain.models.WiFiDeviceM;
 import com.barreloftea.driversupport.domain.processor.common.Constants;
 import com.barreloftea.driversupport.domain.usecases.interfaces.SharedPrefRepository;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 public class SharedPrefRepositoryImpl implements SharedPrefRepository {
 
     private static final String TAG = SharedPrefRepositoryImpl.class.getSimpleName();
@@ -72,27 +76,45 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
 
     @Override
     public void saveSoundVolume(float v) {
+        Log.v("vol", "set shared vol "+v);
         sharedPreferences.edit().putFloat(Constants.SOUND_VOLUME, v).apply();
     }
 
     @Override
     public float getSavedSoundVolume() {
+        Log.v("vol", "get shared vol "+sharedPreferences.getFloat(Constants.SOUND_VOLUME, 0.8f));
         return sharedPreferences.getFloat(Constants.SOUND_VOLUME, 0.8f);
     }
 
     @Override
     public void saveSignalSoundResID(int resid) {
+        Log.v("sound", "set sound shared id is " + resid);
         sharedPreferences.edit().putInt(Constants.SOUND_RES_INT, resid).apply();
     }
 
     @Override
     public int getSignalSoundResId() {
-        //TODO handle if resid is 0
-        return sharedPreferences.getInt(Constants.SOUND_RES_INT, 0);
+        Log.v("sound", "get sound id is " + sharedPreferences.getInt(Constants.SOUND_RES_INT, com.barreloftea.driversupport.domain.R.raw.sirena));
+        return sharedPreferences.getInt(Constants.SOUND_RES_INT, com.barreloftea.driversupport.domain.R.raw.sirena);
     }
 
     @Override
     public void deleteAll() {
         sharedPreferences.edit().clear().apply();
     }
+
+    @Override
+    public Map<String, Boolean> getAreSignalsOn() {
+        Map<String, Boolean> map = new HashMap<>();
+        map.put(Constants.IS_SOUND_SIGNAL_ON, sharedPreferences.getBoolean(Constants.IS_SOUND_SIGNAL_ON, true));
+        map.put(Constants.IS_LED_SIGNAL_ON, sharedPreferences.getBoolean(Constants.IS_LED_SIGNAL_ON, false));
+        return map;
+    }
+
+    @Override
+    public void setSignalOn(String signal, boolean isSignalOn) {
+        sharedPreferences.edit().putBoolean(signal, isSignalOn).apply();
+    }
+
+
 }

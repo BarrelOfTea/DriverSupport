@@ -33,4 +33,7 @@
     <string name="available_bluetooth_devices">Доступные Bluetooth устройства</string>
     <string name="light_signal">Световой сигнал</string>
     <string name="choose_signal_sound">Выберите звук сигнала</string>
+
+    <string name="sleeping">СПИТ</string>
+    <string name="awake">НЕ СПИТ</string>
 </resources>

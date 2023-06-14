@@ -7,7 +7,9 @@ public interface PulseRepository {
 
 
 
-    void connect(BluetoothDevice device, Context context, ActionCallback actionCallback, HeartRateNotifyListener listener);
+    void connect(BluetoothDevice device, Context context, ActionCallback actionCallback);
+
+    void setHeartListener(HeartRateNotifyListener listener);
 
     void startHeartRateScanner();
 

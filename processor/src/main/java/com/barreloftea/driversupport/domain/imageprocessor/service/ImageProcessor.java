@@ -42,6 +42,7 @@ public class ImageProcessor extends Thread {
         videoRepository.prepare();
         queue = rep.getVideoQueue();
         imageBuffer = ImageBuffer.getInstance();
+        //imageBuffer.setEOPlistener(this);
     }
 
     public void setProcessor(Processor processor) {
@@ -57,7 +58,12 @@ public class ImageProcessor extends Thread {
     static final int NO_BLINK_TH = 80;
     static final float ROUND = 0.6f;
 
-    private float EOP = 0.5f;
+    public float EOP_ = 0.5f;
+    public float MOR_ = 0.5f;
+    public float NL_ = 0.5f;
+    private float lastEOP;
+    private float lastMOR;
+    private float lastNL;
 
     private DrawContours drawer = new DrawContours();
 
@@ -144,7 +150,11 @@ public class ImageProcessor extends Thread {
 
                                             notBlinkFlag++;
 
-                                            if ((LEOP+REOP)/2 < EOP) {
+                                            lastEOP = (LEOP+REOP)/2;
+
+                                            Log.v("aaa", "last eop is" + lastEOP);
+
+                                            if ((LEOP+REOP)/2 < EOP_) {
                                                 eyeFlag++;
                                                 notBlinkFlag = 0;
                                                 Log.v(null, "you blinked");
@@ -158,7 +168,7 @@ public class ImageProcessor extends Thread {
                                                 Log.v(null, "REASON closed eyes");
                                             }
                                             if (notBlinkFlag > NO_BLINK_TH){
-                                                processor.setCamState(Processor.DROWSY);
+                                                //processor.setCamState(Processor.DROWSY);
                                                 Log.v(null, "REASON always open eyes");
                                             }
 
@@ -166,31 +176,42 @@ public class ImageProcessor extends Thread {
                                         long timePassed2 = endTime2 - startTime;
                                         Log.v(null, "Execution time before mor: " + timePassed2 / 1000000);*/
                                             float MOR = getMOR(upperLipCon, lowerLipCon);
+                                            lastMOR = MOR;
                                         /*long endTime3 = System.nanoTime();
                                         long timePassed3 = endTime3 - startTime;
                                         Log.v(null, "Execution time after mor: " + timePassed3 / 1000000);*/
-//                                            if (MOR > activity.params.getMOR()) mouthFlag++;
-//                                            else {
-//                                                mouthFlag = 0;
-//                                            }
-//                                            Log.v(null, "mouthflag is "+mouthFlag+" with mor "+MOR);
-//                                            if (mouthFlag>=MOUTH_THRESH){
-//                                                activity.enableWarning("YOU ARE SLEEPY! DRIVE TO THE CLOSEST PARKING TO HAVE SOME REST");
-//                                                Log.v(null, "REASON yawn");
-//                                            }
-//
-//                                            if(eyeFlag<EYE_THRESH && mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH) activity.resetText();
-//
-//                                            float nl = getNL(noseCon);
-//                                            if (nl < activity.params.getNL()) noseFlag++;
-//                                            else {
-//                                                noseFlag = 0;
-//                                            }
-//                                            Log.v(null, "nose flag is "+noseFlag+" with nose length "+nl);
-//                                            if (noseFlag >= EYE_THRESH){
-//                                                activity.enableAlert("YOU ARE DOZING OFF! DRIVE TO THE CLOSEST PARKING LOT");
-//                                                Log.v(null, "REASON dosed off");
-//                                            }
+                                            if (MOR > MOR_) mouthFlag++;
+                                            else {
+                                                mouthFlag = 0;
+                                            }
+                                            Log.v(null, "mouthflag is "+mouthFlag+" with mor "+MOR);
+                                            if (mouthFlag>=MOUTH_THRESH){
+                                                processor.setCamState(Processor.DROWSY);
+                                                Log.v(null, "REASON yawn");
+                                            }
+
+                                            if(eyeFlag<EYE_THRESH && mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH) {
+
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        processor.setBandState(Processor.AWAKE);
+                                                    }
+                                                }).start();
+                                            }
+
+                                            float nl = getNL(noseCon);
+                                            lastNL = nl;
+
+                                            if (nl < NL_) noseFlag++;
+                                            else {
+                                                noseFlag = 0;
+                                            }
+                                            Log.v(null, "nose flag is "+noseFlag+" with nose length "+nl);
+                                            if (noseFlag >= EYE_THRESH){
+                                                processor.setCamState(Processor.SLEEPING);
+                                                Log.v(null, "REASON dosed off");
+                                            }
 
                                             //log(LEOP, REOP, MOR, rotY, rotZ, nl);
 
@@ -292,6 +313,15 @@ public class ImageProcessor extends Thread {
         float nl = (float) Math.sqrt(Math.pow(points[0].x - points[1].x, 2) + Math.pow(points[0].y - points[1].y, 2));
 
         return nl;
+    }
+
+    public void onEOPupdate(){
+        EOP_ = lastEOP;
+        Log.v("aaa", "new eop is set to" + EOP_);
+        MOR_ = lastMOR;
+        Log.v("aaa", "new eop is set to" + MOR_);
+        NL_ = lastNL;
+        Log.v("aaa", "new eop is set to" + NL_);
     }
 
 }

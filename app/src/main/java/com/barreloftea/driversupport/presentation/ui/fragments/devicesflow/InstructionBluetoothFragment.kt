@@ -1,17 +1,23 @@
 package com.barreloftea.driversupport.presentation.ui.fragments.devicesflow
 
+import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import android.Manifest;import com.barreloftea.driversupport.R
+import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.databinding.FragmentDevicesBluetoothDeviceBinding
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM
 import com.barreloftea.driversupport.domain.processor.common.Constants
@@ -31,7 +37,21 @@ class InstructionBluetoothFragment(): Fragment(),
     private lateinit var adapter : BluetoothDeviceArrayAdapter
     private lateinit var deviceType : String
     private val reqCodePerm = 1
-    private var permissons = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_CONNECT)
+
+    private var permissons = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_CONNECT) else arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions: Map<String, Boolean> ->
+        if (permissions[Manifest.permission.BLUETOOTH_CONNECT]==true && permissions[Manifest.permission.ACCESS_FINE_LOCATION]==true) {
+            viewModel.getConnectedBlueDevices(this)
+        } else {
+            // Explain to the user that the feature is unavailable because the
+            // feature requires a permission that the user has denied. At the
+            // same time, respect the user's decision. Don't link to system
+            // settings in an effort to convince the user to change their
+            // decision.
+            Toast.makeText(requireActivity(), "we need it to connect to your band", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,11 +62,34 @@ class InstructionBluetoothFragment(): Fragment(),
             }
         }*/
 
-        if(!hasPermisions(requireActivity(), permissons)){
+        when {
+            ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.BLUETOOTH_CONNECT
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // You can use the API that requires the permission.
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.BLUETOOTH_CONNECT) -> {
+            // In an educational UI, explain to the user why your app requires this
+            // permission for a specific feature to behave as expected, and what
+            // features are disabled if it's declined. In this UI, include a
+            // "cancel" or "no thanks" button that lets the user continue
+            // using your app without granting the permission.
+            //showInContextUI(...)
+                Toast.makeText(requireActivity(), "we need it to connect to your band", Toast.LENGTH_SHORT).show()
+        }
+            else -> {
+                // You can directly ask for the permission.
+                // The registered ActivityResultCallback gets the result of this request.
+                requestPermissionLauncher.launch(permissons)
+            }
+        }
+
+        /*if(!hasPermisions(requireActivity(), permissons)){
             requestPermissions(permissons, reqCodePerm);
         } else {
             viewModel.getConnectedBlueDevices(this)
-        }
+        }*/
 
     }
 

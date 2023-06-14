@@ -2,6 +2,8 @@ package com.barreloftea.driversupport.domain.usecases.interfaces;
 
 import com.barreloftea.driversupport.domain.models.Device;
 
+import java.util.Map;
+
 public interface SharedPrefRepository {
 
     Device[] getSavedDevices();
@@ -14,5 +16,8 @@ public interface SharedPrefRepository {
     int getSignalSoundResId();
 
     void deleteAll();
+
+    Map<String, Boolean> getAreSignalsOn();
+    void setSignalOn(String signal, boolean isSignalOn);
 
 }

@@ -12,11 +12,16 @@ public class PulseRepositoryImpl implements PulseRepository {
 
     private MiBand miBand;
     @Override
-    public void connect(BluetoothDevice device, Context context, ActionCallback actionCallback, HeartRateNotifyListener listener) {
+    public void connect(BluetoothDevice device, Context context, ActionCallback actionCallback) {
         miBand = new MiBand(context);
         miBand.connect(device, actionCallback);
+    }
+
+    @Override
+    public void setHeartListener(HeartRateNotifyListener listener) {
         miBand.setHeartRateScanListener(listener);
     }
+
 
     @Override
     public void startHeartRateScanner() {

@@ -78,6 +78,7 @@ import androidx.fragment.app.Fragment
 
 import android.util.Log
 import androidx.fragment.app.viewModels
+import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.domain.imageprocessor.interfaces.FrameListener
 import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer
@@ -88,6 +89,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainFlowFragment: Fragment(),
     FrameListener {
 
+    private val TAG = MainFlowFragment::class.java.simpleName
+
     private var startNewService = false
     private lateinit var binding : FlowFragmentMainBinding
     private val viewModel : MainViewModel by viewModels()
@@ -97,10 +100,23 @@ class MainFlowFragment: Fragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let{
             if (requireArguments().getBoolean("startnew")) startNewService = true
         }
 
+        viewModel.soundSignalOnLD.observe(this){isOn ->
+            isOn?.let {
+                binding.switchSoundSignal.isChecked = it
+            }
+        }
+        viewModel.ledSignalOnLD.observe(this){isOn ->
+            isOn?.let {
+                binding.switchLightSignal.isChecked = it
+            }
+        }
+
+        viewModel.getSignalsOn()
     }
 
     override fun onCreateView(
@@ -110,13 +126,28 @@ class MainFlowFragment: Fragment(),
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         binding = FlowFragmentMainBinding.inflate(inflater, container, false)
-        /*viewModel.imageLD.observe(viewLifecycleOwner){bitmap ->
-            bitmap?.let {
-                binding.videoView.setImageBitmap(bitmap);
-            }
-        }*/
+
+        binding.switchSoundSignal.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewModel.saveSoundSignalSate(isChecked)
+        }
+
+        binding.switchLightSignal.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewModel.saveLedSignalSate(isChecked)
+        }
+//        viewModel.imageLD.observe(viewLifecycleOwner){bitmap ->
+//            bitmap?.let {
+//                binding.videoView.setImageBitmap(bitmap);
+//            }
+//        }
         imageBuffer = ImageBuffer.getInstance()
         imageBuffer.setFrameListener(this)
+        binding.tvMainState.setOnClickListener {
+//            Log.v("aaa", "button is clicked")
+//            Thread{
+//                imageBuffer.updateEOP()
+//            }.start()
+
+        }
         return binding.root
     }
 
@@ -128,7 +159,7 @@ class MainFlowFragment: Fragment(),
             startNewService=false
         }
 
-        Thread{
+        /*Thread{
             val holder = binding.videoView.holder
             val canvas = holder.lockCanvas()
             while(true) {
@@ -140,6 +171,14 @@ class MainFlowFragment: Fragment(),
                     }
                 }
             }
+        }.start()*/
+
+        Thread{
+            Thread.sleep(3000)
+                requireActivity().runOnUiThread {
+                    binding.tvMainPulse.setText(200.toString())
+                }
+
         }.start()
 
         /*requireActivity().runOnUiThread {
@@ -168,6 +207,7 @@ class MainFlowFragment: Fragment(),
     override fun onFrame(bitmap: Bitmap?) {
         //requireActivity().runOnUiThread{
             //binding.videoView.setImageBitmap(bitmap)
+        Log.v(TAG, "onFrame is run on thread " + Thread.currentThread().name)
             var holder = binding.videoView.holder
             var canvas = holder.lockCanvas()
             if (canvas != null && bitmap != null) {
@@ -177,12 +217,46 @@ class MainFlowFragment: Fragment(),
         //}
     }
 
+
+    //TODO change to a single function with view, and state as params
+    fun setCameraPredictionSleeping(){
+        binding.tvMainCameraPrediction.text = R.string.sleeping.toString()
+        binding.tvMainCameraPrediction.setBackgroundResource(R.color.red)
+    }
+
+    fun setBandPredictionSleeping(){
+        binding.tvMainBandPrediction.text = R.string.sleeping.toString()
+        binding.tvMainBandPrediction.setBackgroundResource(R.color.red)
+    }
+
+    fun setCameraPredictionAwake(){
+        binding.tvMainCameraPrediction.text = R.string.awake.toString()
+        binding.tvMainCameraPrediction.setBackgroundResource(R.color.grass_green)
+    }
+
+    fun setBandPredictionAwake(){
+        binding.tvMainBandPrediction.text = R.string.awake.toString()
+        binding.tvMainBandPrediction.setBackgroundResource(R.color.grass_green)
+    }
+
+    fun setPredictionSleeping(){
+        binding.tvMainState.text = R.string.sleeping.toString()
+        binding.tvMainState.setBackgroundResource(R.color.red)
+    }
+
+    fun setPredictionAwake(){
+        binding.tvMainState.text = R.string.awake.toString()
+        binding.tvMainState.setBackgroundResource(R.color.grass_green)
+    }
+
+}
+
+/*
+
     override fun onPulse(pulse: Int) {
         binding.tvMainPulse.setText(pulse)
     }
-}
-
-
+ */
 
 /*private fun startService(){
     var serviceIntent = Intent(activity, DriverSupportService::class.java)

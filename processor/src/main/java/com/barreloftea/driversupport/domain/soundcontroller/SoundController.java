@@ -19,8 +19,7 @@ public class SoundController {
     boolean isActivated;
 
     public void init(Context context){
-        //this.player = MediaPlayer.create(context, repository.getSignalSoundResId());
-        this.player = MediaPlayer.create(context, R.raw.sirena);
+        this.player = MediaPlayer.create(context, repository.getSignalSoundResId());
         isActivated = true;
         player.setVolume(1f, 1f);
     }
