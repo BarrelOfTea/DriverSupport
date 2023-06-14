@@ -39,7 +39,8 @@ class SoundFragment: Fragment() {
         binding.listViewSignalSound.adapter = adapter
         binding.listViewSignalSound.setOnItemClickListener { parent, view, position, id ->
             //TODO getIdentifier is resource-consuming
-            viewModel.saveSignalSoundResId(requireActivity().resources.getIdentifier(adapter.getItem(position)!!, "raw", "com.barreloftea.driversupport.domain"))
+            //viewModel.saveSignalSoundResId(requireActivity().resources.getIdentifier(adapter.getItem(position)!!, "raw", "com.barreloftea.driversupport.domain"))
+            viewModel.saveSignalSoundResId(fields[position].getInt(fields[position]))
             navController.navigateSafely(R.id.action_sound_to_settings)
         }
 

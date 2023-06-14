@@ -14,9 +14,8 @@ public class GetSoundVolumeUC {
 
 
     public int execute(){
-        //int vol = (int) (repository.getSavedSoundVolume()*100);
-        int vol = (int) repository.getSavedSoundVolume();
-        Log.v("aaa", "get vol "+vol);
+        int vol = (int) (repository.getSavedSoundVolume()*100f);
+        Log.v("vol", "get vol "+vol);
         return vol;
     }
 

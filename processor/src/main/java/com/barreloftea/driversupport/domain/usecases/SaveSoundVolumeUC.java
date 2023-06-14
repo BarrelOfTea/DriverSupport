@@ -17,8 +17,8 @@ public class SaveSoundVolumeUC {
     public void execute(int v){
 
         float vol = ((float) v ) / 100;
-        Log.v("aaa", "set vol "+vol);
-        repository.saveSoundVolume(v);
+        Log.v("vol", "set vol "+vol);
+        repository.saveSoundVolume(vol);
     }
 
 }
