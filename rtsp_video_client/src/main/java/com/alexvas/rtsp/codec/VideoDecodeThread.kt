@@ -31,6 +31,11 @@ class VideoDecodeThread (
 
     private var exitFlag: AtomicBoolean = AtomicBoolean(false)
     var videoQueue : ArrayBlockingQueue<Bitmap> = ArrayBlockingQueue(60)
+    lateinit var bitmap : Bitmap
+    val options = BitmapFactory.Options().apply {
+        // Set your desired options here
+        inJustDecodeBounds = true
+    }
 
     fun stopAsync() {
         if (DEBUG) Log.v(TAG, "stopAsync()")
@@ -68,9 +73,6 @@ class VideoDecodeThread (
 
             if (DEBUG) Log.d(TAG, "Configuring surface ${widthHeight.first}x${widthHeight.second} w/ '$mimeType', max instances: ${decoder.codecInfo.getCapabilitiesForType(mimeType).maxSupportedInstances}")
             decoder.configure(format, null, null, 0)
-
-            // TODO: add scale option (ie: FIT, SCALE_CROP, SCALE_NO_CROP)
-            //decoder.setVideoScalingMode(MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING)
 
             decoder.start()
             if (DEBUG) Log.d(TAG, "Started surface decoder")
@@ -120,10 +122,10 @@ class VideoDecodeThread (
 
                                 val stream = ByteArrayOutputStream()
                                 yuvImage.compressToJpeg(Rect(0, 0, 480, 360), 80, stream)
-                                var bitmap = BitmapFactory.decodeByteArray(
+                                bitmap = BitmapFactory.decodeByteArray(
                                     stream.toByteArray(),
                                     0,
-                                    stream.size()
+                                    stream.size(),
                                 )
                                 try {
                                     stream.close()
@@ -131,10 +133,13 @@ class VideoDecodeThread (
                                     e.printStackTrace()
                                 }
 
-                                bitmap?.let {
-                                    videoQueue.offer(bitmap, 10, TimeUnit.MILLISECONDS)
-                                }?: run {
-                                    Log.v("aaa", "bitmap is null")
+                                bitmap.let {
+                                    if (!videoQueue.offer(bitmap)){
+                                        videoQueue.poll()
+                                        //videoQueue.offer(bitmap, 10, TimeUnit.MILLISECONDS)
+                                        videoQueue.add(bitmap)
+                                    }
+
                                 }
                                 image.close();
                             } ?: run {
@@ -213,15 +218,6 @@ class VideoDecodeThread (
         val ySize = yBuffer.remaining()
         val uSize = uBuffer.remaining()
         val vSize = vBuffer.remaining()
-        /*nv21 = ByteArray(ySize + uSize + vSize)
-        //U and V are swapped
-        yBuffer[nv21, 0, ySize]
-        vBuffer[nv21, ySize, vSize]
-        uBuffer[nv21, ySize + vSize, uSize]
-        yBuffer.clear()
-        uBuffer.clear()
-        vBuffer.clear()*/
-
 
         val yBytes = ByteArray(ySize)
         yBuffer.get(yBytes)

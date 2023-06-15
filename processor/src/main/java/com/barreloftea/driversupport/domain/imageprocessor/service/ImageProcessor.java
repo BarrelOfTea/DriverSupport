@@ -30,6 +30,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ImageProcessor extends Thread {
 
+    public static final String TAG = ImageProcessor.class.getSimpleName();
+
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
     VideoRepository videoRepository;
     ArrayBlockingQueue<Bitmap> queue;
@@ -40,9 +42,7 @@ public class ImageProcessor extends Thread {
         videoRepository = rep;
         videoRepository.setParams("rtsp://192.168.0.1:554/livestream/12", "", "");
         videoRepository.prepare();
-        queue = rep.getVideoQueue();
         imageBuffer = ImageBuffer.getInstance();
-        //imageBuffer.setEOPlistener(this);
     }
 
     public void setProcessor(Processor processor) {
@@ -58,7 +58,7 @@ public class ImageProcessor extends Thread {
     static final int NO_BLINK_TH = 80;
     static final float ROUND = 0.6f;
 
-    public float EOP_ = 0.5f;
+    public float EOP_ = 0.3f;
     public float MOR_ = 0.5f;
     public float NL_ = 0.5f;
     private float lastEOP;
@@ -78,12 +78,14 @@ public class ImageProcessor extends Thread {
     public void stopAsync(){
         exitFlag.set(true);
         interrupt();
-        Log.v("aaa", "camara thread is stopped");
+        Log.v(TAG, "camara thread is stopped");
     }
 
 
     @Override
     public void run() {
+        queue = videoRepository.getVideoQueue();
+        Log.v(TAG, "camera thread started");
         while(!exitFlag.get()){
             //ByteBuffer byteBuffer; //NOTICE you can change overload of method here too
             //Image image;
@@ -92,12 +94,11 @@ public class ImageProcessor extends Thread {
             try {
                 //byteBuffer = queue.take();
                 bitmap = queue.take();
-                Log.v("aaa", "image is taken from queue");
+                Log.v(TAG, "image is taken from queue");
             } catch (InterruptedException e) {
                 //throw new RuntimeException(e);
-                Log.v("aaa", "no bitmap available in queue");
+                Log.v(TAG, "no bitmap available in queue");
             }
-            long startTime = System.nanoTime();
             /*InputImage inputImage = InputImage.fromByteBuffer(
                     byteBuffer,1280, 720, 0,
                     InputImage.IMAGE_FORMAT_NV21 // or IMAGE_FORMAT_YV12
@@ -109,12 +110,14 @@ public class ImageProcessor extends Thread {
             //InputImage inputImage = InputImage.fromByteArray(ibd.getBytes(), ibd.getWidth(), ibd.getHeight(), ibd.getRotationDegrees(), ibd.getFormat());
 
             //bitmap = inputImage.getBitmapInternal();
+            long startTime = System.nanoTime();
 
             Task<List<Face>> result =
                     detector.process(inputImage)
                             .addOnSuccessListener(
                                     faces -> {
-                                        Log.v("aaa", faces.size() + " FACES WERE DETECTED");
+
+                                        Log.v(TAG, faces.size() + " FACES WERE DETECTED");
 
                                         for (Face face : faces){
                                             Rect bounds = face.getBoundingBox();
@@ -137,22 +140,15 @@ public class ImageProcessor extends Thread {
                                             bitmap = drawer.drawContours(bitmap, noseCon);
 
 
-                                        /*long endTime = System.nanoTime();
-                                        long timePassed = endTime - startTime;
-                                        Log.v(null, "Execution time before eop " + timePassed / 1000000);*/
-
                                             float REOP = getOneEOP(rightEyeContour);
                                             float LEOP = getOneEOP(leftEyeContour);
 
-                                        /*long endTime1 = System.nanoTime();
-                                        long timePassed1 = endTime1 - startTime;
-                                        Log.v(null, "Execution time after eop: " + timePassed1 / 1000000);*/
 
                                             notBlinkFlag++;
 
                                             lastEOP = (LEOP+REOP)/2;
 
-                                            Log.v("aaa", "last eop is" + lastEOP);
+                                            Log.v(TAG, "last eop is" + lastEOP);
 
                                             if ((LEOP+REOP)/2 < EOP_) {
                                                 eyeFlag++;
@@ -164,7 +160,7 @@ public class ImageProcessor extends Thread {
                                             }
 
                                             if (eyeFlag>=EYE_THRESH){
-                                                processor.setCamState(Processor.SLEEPING);
+                                                //processor.setCamState(Processor.SLEEPING);
                                                 Log.v(null, "REASON closed eyes");
                                             }
                                             if (notBlinkFlag > NO_BLINK_TH){
@@ -172,14 +168,10 @@ public class ImageProcessor extends Thread {
                                                 Log.v(null, "REASON always open eyes");
                                             }
 
-                                        /*long endTime2 = System.nanoTime();
-                                        long timePassed2 = endTime2 - startTime;
-                                        Log.v(null, "Execution time before mor: " + timePassed2 / 1000000);*/
-                                            float MOR = getMOR(upperLipCon, lowerLipCon);
+
+                                            /*float MOR = getMOR(upperLipCon, lowerLipCon);
                                             lastMOR = MOR;
-                                        /*long endTime3 = System.nanoTime();
-                                        long timePassed3 = endTime3 - startTime;
-                                        Log.v(null, "Execution time after mor: " + timePassed3 / 1000000);*/
+
                                             if (MOR > MOR_) mouthFlag++;
                                             else {
                                                 mouthFlag = 0;
@@ -188,19 +180,20 @@ public class ImageProcessor extends Thread {
                                             if (mouthFlag>=MOUTH_THRESH){
                                                 processor.setCamState(Processor.DROWSY);
                                                 Log.v(null, "REASON yawn");
-                                            }
+                                            }*/
 
                                             if(eyeFlag<EYE_THRESH && mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH) {
 
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        processor.setBandState(Processor.AWAKE);
-                                                    }
-                                                }).start();
+//                                                new Thread(new Runnable() {
+//                                                    @Override
+//                                                    public void run() {
+                                                Log.v(null, "awake again");
+                                                        //processor.setBandState(Processor.AWAKE);
+//                                                    }
+//                                                }).start();
                                             }
 
-                                            float nl = getNL(noseCon);
+                                            /*float nl = getNL(noseCon);
                                             lastNL = nl;
 
                                             if (nl < NL_) noseFlag++;
@@ -211,34 +204,38 @@ public class ImageProcessor extends Thread {
                                             if (noseFlag >= EYE_THRESH){
                                                 processor.setCamState(Processor.SLEEPING);
                                                 Log.v(null, "REASON dosed off");
-                                            }
+                                            }*/
 
                                             //log(LEOP, REOP, MOR, rotY, rotZ, nl);
 
                                             Log.v(null, rotY + " roty");
                                             Log.v(null, rotZ + " rotz");
                                             Log.v(null, rotX + " rotx");
+
+                                            long endTime = System.nanoTime();
+                                            long timePassed = endTime - startTime;
+                                            Log.v(null, "Execution time in milliseconds: " + timePassed / 1000000);
                                         }
 
                                     })
                             .addOnFailureListener(
-                                    e -> Log.v("aaa", "IMAGE PROCESSING FAILED"+ Arrays.toString(e.getStackTrace())+ e.getMessage()))
+                                    e -> Log.v(TAG, "IMAGE PROCESSING FAILED"+ Arrays.toString(e.getStackTrace())+ e.getMessage()))
                             .addOnCompleteListener(
                                     task -> {
                                         //activity.preview.setRotation(image.getImageInfo().getRotationDegrees());
                                         //activity.setPreview(bitmap);
 
                                         //imageBuffer.imageQueue.offer(bitmap);
-                                        if (imageBuffer.isListenerSet())
-                                            imageBuffer.setFrame(bitmap);
 
-                                        Log.v("aaa", "IMGAE IS PROCESSED SUCCESSFULLY");
+
+                                        Log.v(TAG, "IMGAE IS PROCESSED SUCCESSFULLY");
                                         //image.close();
 
-                                        long endTime = System.nanoTime();
-                                        long timePassed = endTime - startTime;
-                                        Log.v(null, "Execution time in milliseconds: " + timePassed / 1000000);
 
+
+
+                                        //if (imageBuffer.isListenerSet())
+                                        imageBuffer.setFrame(bitmap);
                                     }
                             );
                     inputImage = null;
@@ -317,11 +314,11 @@ public class ImageProcessor extends Thread {
 
     public void onEOPupdate(){
         EOP_ = lastEOP;
-        Log.v("aaa", "new eop is set to" + EOP_);
+        Log.v(TAG, "new eop is set to" + EOP_);
         MOR_ = lastMOR;
-        Log.v("aaa", "new eop is set to" + MOR_);
+        Log.v(TAG, "new eop is set to" + MOR_);
         NL_ = lastNL;
-        Log.v("aaa", "new eop is set to" + NL_);
+        Log.v(TAG, "new eop is set to" + NL_);
     }
 
 }
