@@ -42,9 +42,9 @@ public class ImageBuffer {
 
 
     //NOTICE do we really need synchronized here?
-    public synchronized boolean isListenerSet(){
-        return frameListener!=null;
-    }
+//    public synchronized boolean isListenerSet(){
+//        return frameListener!=null;
+//    }
 
 }
 

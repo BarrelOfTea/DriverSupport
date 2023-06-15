@@ -66,6 +66,7 @@
         android:paddingStart="@dimen/normal_margin"
         android:paddingEnd="@dimen/normal_margin"
         android:text="@string/get_started"
+        android:enabled="false"
         android:textColor="@color/black"
         android:textSize="@dimen/normal_text_size"
         app:cornerRadius="@dimen/card_rounding"

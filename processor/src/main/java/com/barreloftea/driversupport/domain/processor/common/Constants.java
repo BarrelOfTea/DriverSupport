@@ -33,7 +33,12 @@ public class Constants {
     public static final String SOUND_RES_INT = "sound_res_int";
     public static final String SOUND_VOLUME = "sound_volume";
 
+
     //managing
     public static final String IS_SOUND_SIGNAL_ON = "is_sound_signal_on";
     public static final String IS_LED_SIGNAL_ON = "is_led_signal_on";
+
+
+    //broadcasting
+    public static final String UPDATE_EOP_ACTION = "com.barreloftea.driversupport.UPDATE_EOP_ACTION";
 }

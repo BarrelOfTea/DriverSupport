@@ -3,8 +3,10 @@ package com.barreloftea.driversupport.di;
 import com.barreloftea.driversupport.domain.usecases.DeleteDataUC;
 import com.barreloftea.driversupport.domain.usecases.GetConnectedBTDevicesUC;
 import com.barreloftea.driversupport.domain.usecases.GetSavedDevicesUC;
+import com.barreloftea.driversupport.domain.usecases.GetSignalsActivationStateUC;
 import com.barreloftea.driversupport.domain.usecases.GetSoundVolumeUC;
 import com.barreloftea.driversupport.domain.usecases.SaveBluetoothDeviceUC;
+import com.barreloftea.driversupport.domain.usecases.SaveSignalActivationStateUC;
 import com.barreloftea.driversupport.domain.usecases.SaveSignalSoundUC;
 import com.barreloftea.driversupport.domain.usecases.SaveSoundVolumeUC;
 import com.barreloftea.driversupport.domain.usecases.SaveWiFiDeviceUC;
@@ -66,5 +68,14 @@ public class ViewModelModule {
         return new SaveSignalSoundUC(prefRepository);
     }
 
+    @Provides
+    public static GetSignalsActivationStateUC provideGetSignalsActivationStateUC(SharedPrefRepository repository){
+        return new GetSignalsActivationStateUC(repository);
+    }
+
+    @Provides
+    public static SaveSignalActivationStateUC provideSaveSignalActivationStateUC(SharedPrefRepository repository){
+        return new SaveSignalActivationStateUC(repository);
+    }
 
 }

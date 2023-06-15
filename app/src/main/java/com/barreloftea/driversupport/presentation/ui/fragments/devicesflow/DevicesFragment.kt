@@ -40,6 +40,9 @@ class DevicesFragment(): Fragment(),
                 adapter.setData(it)
             }
         }
+        viewModel.buttonEnableLD.observe(this){enable ->
+            if (enable) binding.buttonGetStarted.isEnabled = true
+        }
         viewModel.updateDevices()
     }
 

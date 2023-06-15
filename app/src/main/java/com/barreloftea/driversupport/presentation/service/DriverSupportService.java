@@ -30,11 +30,12 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class DriverSupportService extends Service {
 
-    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 2039;
+    public static final String TAG = DriverSupportService.class.getSimpleName();
+
+//    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 2039;
 
     @Inject
     Processor processor;
-    //MainViewModel viewModel = new ViewModelProvider(new ViewModelStore(), new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(MainViewModel.class);
 
 
     @Override
@@ -52,26 +53,11 @@ public class DriverSupportService extends Service {
                 .build();
 
         startForeground(1, notification);
-        Log.v("aaa", "service is created");
-        //processor = new Processor(new ImageProcessor(new VideoRepositoryImpl(new RtspSurfaceView())));
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            Log.e("aaa", "you have got not permission on bluetooth connect!!! you peasant");
-            return;
-        }
-
-
+        Log.v(TAG, "service is created");
 
         processor.setName("processor thread");
         processor.init(this);
         processor.start();
-        //new ImageProcessor(new VideoRepositoryImpl(new RtspSurfaceView())).start();
 
         //TODO consider how to reset params if changed on every Get Started click
 
@@ -79,13 +65,13 @@ public class DriverSupportService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v("aaa", "service is started");
+        Log.v(TAG, "service is started");
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        Log.v("aaa", "service is destroyed");
+        Log.v(TAG, "service is destroyed");
         super.onDestroy();
         if (processor!=null) processor.stopAsync();
     }

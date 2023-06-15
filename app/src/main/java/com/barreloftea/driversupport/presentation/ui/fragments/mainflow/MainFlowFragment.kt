@@ -77,6 +77,7 @@ import androidx.fragment.app.Fragment
 
 
 import android.util.Log
+import android.view.SurfaceHolder
 import androidx.fragment.app.viewModels
 import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.domain.imageprocessor.interfaces.FrameListener
@@ -95,6 +96,7 @@ class MainFlowFragment: Fragment(),
     private lateinit var binding : FlowFragmentMainBinding
     private val viewModel : MainViewModel by viewModels()
     private lateinit var imageBuffer: ImageBuffer
+    private lateinit var holder : SurfaceHolder
 
 
 
@@ -148,6 +150,7 @@ class MainFlowFragment: Fragment(),
 //            }.start()
 
         }
+        holder = binding.videoView.holder
         return binding.root
     }
 
@@ -205,16 +208,13 @@ class MainFlowFragment: Fragment(),
     }
 
     override fun onFrame(bitmap: Bitmap?) {
-        //requireActivity().runOnUiThread{
             //binding.videoView.setImageBitmap(bitmap)
         Log.v(TAG, "onFrame is run on thread " + Thread.currentThread().name)
-            var holder = binding.videoView.holder
-            var canvas = holder.lockCanvas()
-            if (canvas != null && bitmap != null) {
-                canvas.drawBitmap(bitmap, 0f, 0f, null);
-                holder.unlockCanvasAndPost(canvas);
-            }
-        //}
+        val canvas = holder.lockCanvas()
+        if (canvas != null && bitmap != null) {
+            canvas.drawBitmap(bitmap, 0f, 0f, null);
+            holder.unlockCanvasAndPost(canvas);
+        }
     }
 
 

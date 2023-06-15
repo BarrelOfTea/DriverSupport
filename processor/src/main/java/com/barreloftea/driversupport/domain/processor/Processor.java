@@ -15,13 +15,15 @@ import javax.inject.Inject;
 
 public class Processor extends Thread {
 
+    public static final String TAG = Processor.class.getSimpleName();
+
     public static final int AWAKE = 0;
     public static final int DROWSY = 1;
     public static final int SLEEPING = 2;
 
 
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
-    private int stateCam = 0;
+    private volatile int stateCam = 0;
     private int stateBand = 0;
     public Context context;
 
@@ -40,9 +42,9 @@ public class Processor extends Thread {
         imageProcessor.setProcessor(this);
         imageProcessor.setName("image processor");
 
-        pulseProcessor = p;
-        pulseProcessor.setProcessor(this);
-        pulseProcessor.setName("pulse processor");
+        //pulseProcessor = p;
+        //pulseProcessor.setProcessor(this);
+        //pulseProcessor.setName("pulse processor");
 
         soundController = s;
     }
@@ -65,19 +67,20 @@ public class Processor extends Thread {
 
     @Override
     public void run() {
+        Log.v(TAG, "processor thread started");
 
         imageProcessor.start();
 
-        pulseProcessor.prepare("D7:71:B3:98:F8:57");
-        pulseProcessor.start();
+        //pulseProcessor.prepare("D7:71:B3:98:F8:57");
+        //pulseProcessor.start();
         ImageBuffer.isProcessorRunning.set(true);
-        Log.v("aaa", "camera service started");
+
 
 
         while(!exitFlag.get()){
             if (stateCam == AWAKE){
                 soundController.pause();
-                Log.v("aaa", "sound controller paused");
+                //Log.v("aaa", "sound controller paused");
             }
             if (stateCam == SLEEPING) {
                 soundController.play();

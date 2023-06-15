@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM
 import com.barreloftea.driversupport.domain.models.Device
+import com.barreloftea.driversupport.domain.models.WiFiDeviceM
 import com.barreloftea.driversupport.domain.usecases.GetConnectedBTDevicesUC
 import com.barreloftea.driversupport.domain.usecases.GetSavedDevicesUC
 import com.barreloftea.driversupport.domain.usecases.SaveBluetoothDeviceUC
@@ -27,6 +28,7 @@ class DevicesSharedViewModel @Inject constructor(
 
 
     var devicesLD : MutableLiveData<Array<Device>> = MutableLiveData()
+    var buttonEnableLD : MutableLiveData<Boolean> = MutableLiveData()
     //var blueDevicesLD : MutableLiveData<Array<BluetoothDeviceM>> = MutableLiveData()
 
     init {
@@ -38,6 +40,12 @@ class DevicesSharedViewModel @Inject constructor(
 
     fun updateDevices(){
         devicesLD.value = getSavedDevices.execute()
+        var devices = devicesLD.value
+        var cameraDevice = devices?.get(0)
+        if (cameraDevice is WiFiDeviceM){
+            if (!cameraDevice.rtsp_link.equals(""))
+                buttonEnableLD.value = true
+        }
     }
 
     fun saveWiFiParams(deviceName : String, link : String, username : String, password : String){

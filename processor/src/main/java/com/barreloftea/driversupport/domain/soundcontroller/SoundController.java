@@ -21,7 +21,8 @@ public class SoundController {
     public void init(Context context){
         this.player = MediaPlayer.create(context, repository.getSignalSoundResId());
         isActivated = true;
-        player.setVolume(1f, 1f);
+        float vol = repository.getSavedSoundVolume();
+        player.setVolume(vol, vol);
     }
 
 
