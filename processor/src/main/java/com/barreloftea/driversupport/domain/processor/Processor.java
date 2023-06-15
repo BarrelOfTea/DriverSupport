@@ -80,7 +80,6 @@ public class Processor extends Thread {
         while(!exitFlag.get()){
             if (stateCam == AWAKE){
                 soundController.pause();
-                //Log.v("aaa", "sound controller paused");
             }
             if (stateCam == SLEEPING) {
                 soundController.play();

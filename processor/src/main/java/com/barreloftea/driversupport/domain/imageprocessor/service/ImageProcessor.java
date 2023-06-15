@@ -53,7 +53,7 @@ public class ImageProcessor extends Thread {
     int mouthFlag;
     int noseFlag;
     int notBlinkFlag;
-    static final int EYE_THRESH = 16;
+    static final int EYE_THRESH = 4;
     static final int MOUTH_THRESH = 18;
     static final int NO_BLINK_TH = 80;
     static final float ROUND = 0.6f;
@@ -86,6 +86,7 @@ public class ImageProcessor extends Thread {
     public void run() {
         queue = videoRepository.getVideoQueue();
         Log.v(TAG, "camera thread started");
+
         while(!exitFlag.get()){
             //ByteBuffer byteBuffer; //NOTICE you can change overload of method here too
             //Image image;
@@ -95,6 +96,7 @@ public class ImageProcessor extends Thread {
                 //byteBuffer = queue.take();
                 bitmap = queue.take();
                 Log.v(TAG, "image is taken from queue");
+                //Log.v(TAG, String.valueOf(bitmap.getByteCount()));
             } catch (InterruptedException e) {
                 //throw new RuntimeException(e);
                 Log.v(TAG, "no bitmap available in queue");
@@ -105,6 +107,7 @@ public class ImageProcessor extends Thread {
             );
             bitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
             bitmap.copyPixelsFromBuffer(byteBuffer);*/
+
 
             inputImage = InputImage.fromBitmap(bitmap, 0);
             //InputImage inputImage = InputImage.fromByteArray(ibd.getBytes(), ibd.getWidth(), ibd.getHeight(), ibd.getRotationDegrees(), ibd.getFormat());
@@ -129,7 +132,7 @@ public class ImageProcessor extends Thread {
                                             float rotX = face.getHeadEulerAngleX();
 
                                             List<PointF> leftEyeContour = face.getContour(FaceContour.LEFT_EYE).getPoints();
-                                            bitmap = drawer.drawContours(bitmap, leftEyeContour);
+                                            //bitmap = drawer.drawContours(bitmap, leftEyeContour);
                                             List<PointF> rightEyeContour = face.getContour(FaceContour.RIGHT_EYE).getPoints();
                                             bitmap = drawer.drawContours(bitmap, rightEyeContour);
                                             List<PointF> upperLipCon = face.getContour(FaceContour.UPPER_LIP_TOP).getPoints();
@@ -160,7 +163,7 @@ public class ImageProcessor extends Thread {
                                             }
 
                                             if (eyeFlag>=EYE_THRESH){
-                                                //processor.setCamState(Processor.SLEEPING);
+                                                processor.setCamState(Processor.SLEEPING);
                                                 Log.v(null, "REASON closed eyes");
                                             }
                                             if (notBlinkFlag > NO_BLINK_TH){
@@ -182,13 +185,13 @@ public class ImageProcessor extends Thread {
                                                 Log.v(null, "REASON yawn");
                                             }*/
 
-                                            if(eyeFlag<EYE_THRESH && mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH) {
+                                            if(eyeFlag<EYE_THRESH /*&& mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH*/) {
 
 //                                                new Thread(new Runnable() {
 //                                                    @Override
 //                                                    public void run() {
                                                 Log.v(null, "awake again");
-                                                        //processor.setBandState(Processor.AWAKE);
+                                                processor.setCamState(Processor.AWAKE);
 //                                                    }
 //                                                }).start();
                                             }
@@ -212,9 +215,8 @@ public class ImageProcessor extends Thread {
                                             Log.v(null, rotZ + " rotz");
                                             Log.v(null, rotX + " rotx");
 
-                                            long endTime = System.nanoTime();
-                                            long timePassed = endTime - startTime;
-                                            Log.v(null, "Execution time in milliseconds: " + timePassed / 1000000);
+                                            imageBuffer.setFrame(bitmap);
+
                                         }
 
                                     })
@@ -222,20 +224,15 @@ public class ImageProcessor extends Thread {
                                     e -> Log.v(TAG, "IMAGE PROCESSING FAILED"+ Arrays.toString(e.getStackTrace())+ e.getMessage()))
                             .addOnCompleteListener(
                                     task -> {
-                                        //activity.preview.setRotation(image.getImageInfo().getRotationDegrees());
-                                        //activity.setPreview(bitmap);
-
                                         //imageBuffer.imageQueue.offer(bitmap);
-
-
                                         Log.v(TAG, "IMGAE IS PROCESSED SUCCESSFULLY");
                                         //image.close();
+                                        long endTime = System.nanoTime();
+                                        long timePassed = endTime - startTime;
+                                        Log.v(null, "Execution time in milliseconds: " + timePassed / 1000000);
 
+                                        //imageBuffer.setFrame(bitmap);
 
-
-
-                                        //if (imageBuffer.isListenerSet())
-                                        imageBuffer.setFrame(bitmap);
                                     }
                             );
                     inputImage = null;

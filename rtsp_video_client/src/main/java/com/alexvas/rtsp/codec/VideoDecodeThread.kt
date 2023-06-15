@@ -30,7 +30,7 @@ class VideoDecodeThread (
         private val onFrameRenderedListener: OnFrameRenderedListener) : Thread() {
 
     private var exitFlag: AtomicBoolean = AtomicBoolean(false)
-    var videoQueue : ArrayBlockingQueue<Bitmap> = ArrayBlockingQueue(60)
+    var videoQueue : ArrayBlockingQueue<Bitmap> = ArrayBlockingQueue(10)
     lateinit var bitmap : Bitmap
     val options = BitmapFactory.Options().apply {
         // Set your desired options here
@@ -138,6 +138,7 @@ class VideoDecodeThread (
                                         videoQueue.poll()
                                         //videoQueue.offer(bitmap, 10, TimeUnit.MILLISECONDS)
                                         videoQueue.add(bitmap)
+                                        Log.v("aaa", "image sent for processing")
                                     }
 
                                 }
@@ -152,7 +153,7 @@ class VideoDecodeThread (
                                 //bufferInfo.size != 0 && !exitFlag.get()
                                 false
                             )
-                            Log.v("aaa", "image sent for processing")
+
                         }
                     }
                 }
@@ -186,28 +187,6 @@ class VideoDecodeThread (
         if (DEBUG) Log.d(TAG, "$name stopped")
     }
 
-    /*private fun getImageFormatFromCodecType(mimeType: String): Int {
-        // TODO: Need pick a codec first, then get the codec info, will revisit for future.
-        val codecInfo: MediaCodecInfo = getCodecInfoByType(mimeType)
-        //if (VERBOSE) Log.v(TAG, "found decoder: " + codecInfo.getName())
-        val colorFormat: Int = selectDecoderOutputColorFormat(codecInfo, mimeType)
-        /*if (VERBOSE) Log.v(
-            TAG,
-            "found decoder output color format: $colorFormat"
-        )*/
-        return when (colorFormat) {
-            MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar ->                 // TODO: This is fishy, OMX YUV420P is not identical as YV12, U and V planes are
-                // swapped actually. It should give YV12 if producer is setup first, that is, after
-                // Configuring the Surface (provided by ImageReader object) into codec, but this
-                // is Chicken-egg issue, do the translation on behalf of driver here:)
-                ImageFormat.YV12
-
-            MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar ->                 // same as above.
-                ImageFormat.NV21
-
-            else -> colorFormat
-        }
-    }*/
 
 
     private fun YUV_420_888toNV21(image: Image): ByteArray? {
@@ -286,4 +265,31 @@ class VideoDecodeThread (
     }
 
 }
+
+
+
+
+/*private fun getImageFormatFromCodecType(mimeType: String): Int {
+    // TODO: Need pick a codec first, then get the codec info, will revisit for future.
+    val codecInfo: MediaCodecInfo = getCodecInfoByType(mimeType)
+    //if (VERBOSE) Log.v(TAG, "found decoder: " + codecInfo.getName())
+    val colorFormat: Int = selectDecoderOutputColorFormat(codecInfo, mimeType)
+    /*if (VERBOSE) Log.v(
+        TAG,
+        "found decoder output color format: $colorFormat"
+    )*/
+    return when (colorFormat) {
+        MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar ->                 // TODO: This is fishy, OMX YUV420P is not identical as YV12, U and V planes are
+            // swapped actually. It should give YV12 if producer is setup first, that is, after
+            // Configuring the Surface (provided by ImageReader object) into codec, but this
+            // is Chicken-egg issue, do the translation on behalf of driver here:)
+            ImageFormat.YV12
+
+        MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar ->                 // same as above.
+            ImageFormat.NV21
+
+        else -> colorFormat
+    }
+}*/
+
 

@@ -2,12 +2,16 @@ package com.barreloftea.driversupport.domain.soundcontroller;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.util.Log;
 
 import com.barreloftea.driversupport.domain.R;
 import com.barreloftea.driversupport.domain.processor.common.Constants;
 import com.barreloftea.driversupport.domain.usecases.interfaces.SharedPrefRepository;
 
 public class SoundController {
+
+
+    public static final String TAG = SoundController.class.getSimpleName();
 
     SharedPrefRepository repository;
 
@@ -27,7 +31,10 @@ public class SoundController {
 
 
     public void play(){
-        if(!player.isPlaying()) player.start();
+        if(!player.isPlaying()){
+            player.start();
+            Log.v(TAG, "sound controller started");
+        }
     }
 
     public void setVolume(float volume){
@@ -38,6 +45,7 @@ public class SoundController {
         if (player.isPlaying()) {
             player.pause();
             player.seekTo(0);
+            Log.v(TAG, "sound controller paused");
         }
     }
 

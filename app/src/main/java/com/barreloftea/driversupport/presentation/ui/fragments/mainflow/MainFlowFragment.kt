@@ -176,13 +176,6 @@ class MainFlowFragment: Fragment(),
             }
         }.start()*/
 
-        Thread{
-            Thread.sleep(3000)
-                requireActivity().runOnUiThread {
-                    binding.tvMainPulse.setText(200.toString())
-                }
-
-        }.start()
 
         /*requireActivity().runOnUiThread {
             Log.v("aaa", "inside runonuithread block")

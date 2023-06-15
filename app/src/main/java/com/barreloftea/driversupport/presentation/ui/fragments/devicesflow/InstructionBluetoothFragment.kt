@@ -62,7 +62,7 @@ class InstructionBluetoothFragment(): Fragment(),
             }
         }*/
 
-        when {
+        /*when {
             ContextCompat.checkSelfPermission(
                 requireActivity(),
                 Manifest.permission.BLUETOOTH_CONNECT
@@ -70,12 +70,6 @@ class InstructionBluetoothFragment(): Fragment(),
                 // You can use the API that requires the permission.
             }
             shouldShowRequestPermissionRationale(Manifest.permission.BLUETOOTH_CONNECT) -> {
-            // In an educational UI, explain to the user why your app requires this
-            // permission for a specific feature to behave as expected, and what
-            // features are disabled if it's declined. In this UI, include a
-            // "cancel" or "no thanks" button that lets the user continue
-            // using your app without granting the permission.
-            //showInContextUI(...)
                 Toast.makeText(requireActivity(), "we need it to connect to your band", Toast.LENGTH_SHORT).show()
         }
             else -> {
@@ -83,13 +77,13 @@ class InstructionBluetoothFragment(): Fragment(),
                 // The registered ActivityResultCallback gets the result of this request.
                 requestPermissionLauncher.launch(permissons)
             }
-        }
+        }*/
 
-        /*if(!hasPermisions(requireActivity(), permissons)){
+        if(!hasPermisions(requireActivity(), permissons)){
             requestPermissions(permissons, reqCodePerm);
         } else {
             viewModel.getConnectedBlueDevices(this)
-        }*/
+        }
 
     }
 

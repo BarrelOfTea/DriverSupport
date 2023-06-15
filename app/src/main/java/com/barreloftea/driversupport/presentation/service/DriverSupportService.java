@@ -42,6 +42,15 @@ public class DriverSupportService extends Service {
     public void onCreate() {
 
         super.onCreate();
+
+
+        //TODO consider how to reset params if changed on every Get Started click
+
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.v(TAG, "service is started");
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
@@ -58,14 +67,6 @@ public class DriverSupportService extends Service {
         processor.setName("processor thread");
         processor.init(this);
         processor.start();
-
-        //TODO consider how to reset params if changed on every Get Started click
-
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v(TAG, "service is started");
         return START_STICKY;
     }
 
