@@ -2,6 +2,7 @@ package com.barreloftea.driversupport.bleservice.repositories;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.util.Log;
 
 import com.barreloftea.driversupport.bleservice.miband.MiBand;
 import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.ActionCallback;
@@ -9,6 +10,8 @@ import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.HeartRateN
 import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.PulseRepository;
 
 public class PulseRepositoryImpl implements PulseRepository {
+
+    public static final String TAG = PulseRepositoryImpl.class.getSimpleName();
 
     private MiBand miBand;
     @Override
@@ -20,12 +23,14 @@ public class PulseRepositoryImpl implements PulseRepository {
     @Override
     public void setHeartListener(HeartRateNotifyListener listener) {
         miBand.setHeartRateScanListener(listener);
+        Log.v(TAG, "heart listener is set");
     }
 
 
     @Override
     public void startHeartRateScanner() {
         miBand.startHeartRateScan();
+        Log.v(TAG, "heart scanner is started");
     }
 }
 

@@ -2,6 +2,7 @@ package com.barreloftea.driversupport.domain.pulseprocessor.service;
 
 import android.Manifest;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -30,11 +31,16 @@ public class PulseProcessor extends Thread {
     BluetoothRepository bluetoothRepository;
     PulseRepository pulseRepository;
     BluetoothDevice band;
+    Context context;
 
     public PulseProcessor(BluetoothRepository bluetoothRepository, PulseRepository pulseRepository) {
         this.bluetoothRepository = bluetoothRepository;
         this.pulseRepository = pulseRepository;
         imageBuffer = ImageBuffer.getInstance();
+    }
+
+    public void init(Context context){
+        this.context = context;
     }
 
     public void stopAsync() {
@@ -49,8 +55,9 @@ public class PulseProcessor extends Thread {
         Log.d(TAG, "band's data is" + band.getName());
     }
 
-    /*private void connect(){
-        pulseRepository.connect(band, processor.context, new ActionCallback() {
+    public void connect(){
+        Log.d(TAG,"attempting to connect..");
+        pulseRepository.connect(band, context, new ActionCallback() {
             @Override
             public void onSuccess(Object data) {
                 Log.d(TAG,"connect success");
@@ -69,21 +76,21 @@ public class PulseProcessor extends Thread {
         pulseRepository.setHeartListener(new HeartRateNotifyListener() {
             @Override
             public void onNotify(int heartRate) {
-                if (heartRate < NORMAL_PULSE){
-                    processor.setBandState(Processor.SLEEPING);
-                }
+                //if (heartRate < NORMAL_PULSE){
+                    //processor.setBandState(Processor.SLEEPING);
+                //}
                 Log.v(TAG, "pulse is " + heartRate);
                 //imageBuffer.updatePulse(heartRate);
             }
         });
-    }*/
+    }
 
     private void startListening(){
         pulseRepository.startHeartRateScanner();
     }
 
 
-    //public void setProcessor(Processor processor) {
+//    public void setProcessor(Processor processor) {
 //        this.processor = processor;
 //    }
 
