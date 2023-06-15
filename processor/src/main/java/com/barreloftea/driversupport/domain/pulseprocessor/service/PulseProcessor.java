@@ -22,7 +22,7 @@ public class PulseProcessor extends Thread {
     private static final String TAG = PulseProcessor.class.getSimpleName();
 
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
-    private Processor processor;
+   // private Processor processor;
     ImageBuffer imageBuffer;
 
     private int NORMAL_PULSE = 90;
@@ -49,7 +49,7 @@ public class PulseProcessor extends Thread {
         Log.d(TAG, "band's data is" + band.getName());
     }
 
-    private void connect(){
+    /*private void connect(){
         pulseRepository.connect(band, processor.context, new ActionCallback() {
             @Override
             public void onSuccess(Object data) {
@@ -73,23 +73,23 @@ public class PulseProcessor extends Thread {
                     processor.setBandState(Processor.SLEEPING);
                 }
                 Log.v(TAG, "pulse is " + heartRate);
-                imageBuffer.updatePulse(heartRate);
+                //imageBuffer.updatePulse(heartRate);
             }
         });
-    }
+    }*/
 
     private void startListening(){
         pulseRepository.startHeartRateScanner();
     }
 
 
-    public void setProcessor(Processor processor) {
-        this.processor = processor;
-    }
+    //public void setProcessor(Processor processor) {
+//        this.processor = processor;
+//    }
 
     @Override
     public void run(){
-        connect();
+        //connect();
         while(!exitFlag.get()){
 
         }
