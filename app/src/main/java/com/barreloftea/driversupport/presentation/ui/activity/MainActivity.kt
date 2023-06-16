@@ -1,8 +1,13 @@
 package com.barreloftea.driversupport.presentation.ui.activity
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.SharedPreferences
+import android.os.Binder
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -21,8 +26,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-
     private lateinit var appBarConfiguration: AppBarConfiguration
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,18 +72,23 @@ class MainActivity : AppCompatActivity() {
         navController.graph = navGraph
     }
 
+
     override fun onPause() {
         super.onPause()
         Log.v("aaa", "activity is PAUSED")
     }
+
+    //NOTICE delete that if you want to keep service running even if activity is destroyed
     fun stopService(){
-        //NOTICE delete that if you want to keep service running even if activity is destroyed
-        var serviceIntent = Intent(this, DriverSupportService::class.java)
+        val serviceIntent = Intent(this, DriverSupportService::class.java)
         stopService(serviceIntent)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         stopService()
         Log.v("aaa", "activity is DESTROYED")
     }
+
+
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.barreloftea.driversupport.domain.imageprocessor.service.ImageProcessor;
+import com.barreloftea.driversupport.domain.processor.common.Constants;
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer;
 import com.barreloftea.driversupport.domain.pulseprocessor.service.PulseProcessor;
 import com.barreloftea.driversupport.domain.soundcontroller.SoundController;
@@ -17,18 +18,13 @@ public class Processor extends Thread {
 
     public static final String TAG = Processor.class.getSimpleName();
 
-    public static final int AWAKE = 0;
-    public static final int DROWSY = 1;
-    public static final int SLEEPING = 2;
-
-
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
     private volatile int stateCam = 0;
     private int stateBand = 0;
     public Context context;
 
     @Inject
-    ImageProcessor imageProcessor;
+    public ImageProcessor imageProcessor;
 
     @Inject
     PulseProcessor pulseProcessor;
@@ -78,10 +74,10 @@ public class Processor extends Thread {
 
 
         while(!exitFlag.get()){
-            if (stateCam == AWAKE){
+            if (stateCam == Constants.AWAKE){
                 soundController.pause();
             }
-            if (stateCam == SLEEPING) {
+            if (stateCam == Constants.SLEEPING) {
                 soundController.play();
             }
         }

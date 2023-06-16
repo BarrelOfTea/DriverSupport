@@ -1,7 +1,12 @@
 package com.barreloftea.driversupport.presentation.ui.fragments.mainflow
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -78,11 +83,15 @@ import androidx.fragment.app.Fragment
 
 import android.util.Log
 import android.view.SurfaceHolder
+import androidx.compose.ui.unit.Constraints
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.domain.imageprocessor.interfaces.FrameListener
 import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
+import com.barreloftea.driversupport.domain.processor.common.Constants
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer
+import com.barreloftea.driversupport.presentation.service.DriverSupportService
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -93,10 +102,27 @@ class MainFlowFragment: Fragment(),
     private val TAG = MainFlowFragment::class.java.simpleName
 
     private var startNewService = false
+    private var enablePulseProcessor = false
+    private var enableLed = false
     private lateinit var binding : FlowFragmentMainBinding
     private val viewModel : MainViewModel by viewModels()
     private lateinit var imageBuffer: ImageBuffer
     private lateinit var holder : SurfaceHolder
+
+    private lateinit var driverSupportService: DriverSupportService
+    private var isBound = false
+    private val dsConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, b: IBinder?) {
+            val binder = b as DriverSupportService.DriverSupportBinder
+            driverSupportService = binder.service
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+        }
+
+    }
 
 
 
@@ -105,6 +131,8 @@ class MainFlowFragment: Fragment(),
 
         arguments?.let{
             if (requireArguments().getBoolean("startnew")) startNewService = true
+//            enablePulseProcessor = (requireArguments().getBoolean(Constants.BAND))
+//            enableLed = (requireArguments().getBoolean(Constants.LED))
         }
 
         viewModel.soundSignalOnLD.observe(this){isOn ->
@@ -136,19 +164,11 @@ class MainFlowFragment: Fragment(),
         binding.switchLightSignal.setOnCheckedChangeListener { buttonView, isChecked ->
             viewModel.saveLedSignalSate(isChecked)
         }
-//        viewModel.imageLD.observe(viewLifecycleOwner){bitmap ->
-//            bitmap?.let {
-//                binding.videoView.setImageBitmap(bitmap);
-//            }
-//        }
+
         imageBuffer = ImageBuffer.getInstance()
         imageBuffer.setFrameListener(this)
         binding.tvMainState.setOnClickListener {
-//            Log.v("aaa", "button is clicked")
-//            Thread{
-//                imageBuffer.updateEOP()
-//            }.start()
-
+            driverSupportService.setEOP()
         }
         holder = binding.videoView.holder
         return binding.root
@@ -158,32 +178,17 @@ class MainFlowFragment: Fragment(),
         super.onViewCreated(view, savedInstanceState)
 
         if (startNewService) {
-            viewModel.startService(requireActivity())
+            val serviceIntent = Intent(requireActivity(), DriverSupportService::class.java)
+
+            ContextCompat.startForegroundService(requireActivity(), serviceIntent)
+
             startNewService=false
         }
 
-        /*Thread{
-            val holder = binding.videoView.holder
-            val canvas = holder.lockCanvas()
-            while(true) {
-                val bitmap = imageBuffer.imageQueue.take()
-                requireActivity().runOnUiThread {
-                    if (canvas != null && bitmap != null) {
-                        canvas.drawBitmap(bitmap, 0f, 0f, null);
-                        holder.unlockCanvasAndPost(canvas);
-                    }
-                }
-            }
-        }.start()*/
 
-
-        /*requireActivity().runOnUiThread {
-            Log.v("aaa", "inside runonuithread block")
-            while (ImageBuffer.isProcessorRunning.get()) {
-                Log.v("aaa", "image is about to set to an imageview")
-                binding.videoView.setImageBitmap(ImageBuffer.imageQueue.poll())
-            }
-        }*/
+        Intent(requireActivity(), DriverSupportService::class.java).also {intent->
+            requireActivity().bindService(intent, dsConnection, Context.BIND_AUTO_CREATE)
+        }
     }
 
 
@@ -193,6 +198,12 @@ class MainFlowFragment: Fragment(),
         Log.v("aaa", "mainfragment is paused");
     }
 
+    override fun onStop() {
+        super.onStop()
+        Intent(requireActivity(), DriverSupportService::class.java).also { intent ->
+            requireActivity().unbindService(dsConnection)
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -243,6 +254,31 @@ class MainFlowFragment: Fragment(),
     }
 
 }
+
+
+
+/*Thread{
+    val holder = binding.videoView.holder
+    val canvas = holder.lockCanvas()
+    while(true) {
+        val bitmap = imageBuffer.imageQueue.take()
+        requireActivity().runOnUiThread {
+            if (canvas != null && bitmap != null) {
+                canvas.drawBitmap(bitmap, 0f, 0f, null);
+                holder.unlockCanvasAndPost(canvas);
+            }
+        }
+    }
+}.start()*/
+
+
+/*requireActivity().runOnUiThread {
+    Log.v("aaa", "inside runonuithread block")
+    while (ImageBuffer.isProcessorRunning.get()) {
+        Log.v("aaa", "image is about to set to an imageview")
+        binding.videoView.setImageBitmap(ImageBuffer.imageQueue.poll())
+    }
+}*/
 
 /*
 

@@ -38,7 +38,8 @@ class DevicesFragment(): Fragment(),
         viewModel.devicesLD.observe(this){data ->
             data?.let {
                 adapter.setData(it)
-                binding.recyclerViewDevices.adapter = adapter
+                //
+                adapter.notifyDataSetChanged()
             }
         }
         viewModel.buttonEnableLD.observe(this){enable ->
@@ -62,6 +63,7 @@ class DevicesFragment(): Fragment(),
             (levelsRecyclerView.layoutManager as LinearLayoutManager?)!!.findFirstCompletelyVisibleItemPosition()
         levelsRecyclerView.scrollToPosition(scrollposition)
         adapter = DeviceAdapter(this)
+        binding.recyclerViewDevices.adapter = adapter
 
         return binding.root
     }
@@ -69,10 +71,13 @@ class DevicesFragment(): Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonGetStarted.setOnClickListener {
-            //startService()
-            //TODO write logic from viewmodel, then navigate
             var bundle = Bundle()
             bundle.putBoolean("startnew", true)
+
+//            var devices = adapter.data
+//            bundle.putBoolean(Constants.BAND, (devices[1].isSaved))
+//            bundle.putBoolean(Constants.LED, (devices[2].isSaved))
+
             activityNavController().navigateSafely(R.id.action_global_mainFlowFragment, bundle)
         }
         navController = findNavController()

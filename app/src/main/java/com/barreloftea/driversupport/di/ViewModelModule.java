@@ -80,7 +80,7 @@ public class ViewModelModule {
     }
 
     @Provides
-    public static DeleteSavedDeviceUC porvideDeleteSavedDeviceUC(SharedPrefRepository repository){
+    public static DeleteSavedDeviceUC provideDeleteSavedDeviceUC(SharedPrefRepository repository){
         return new DeleteSavedDeviceUC(repository);
     }
 

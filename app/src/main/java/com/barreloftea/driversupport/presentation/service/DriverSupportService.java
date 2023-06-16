@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -17,8 +18,10 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.MutableLiveData;
 
 import com.barreloftea.driversupport.R;
+import com.barreloftea.driversupport.domain.processor.common.Constants;
 import com.barreloftea.driversupport.presentation.ui.activity.MainActivity;
 import com.barreloftea.driversupport.domain.processor.Processor;
 
@@ -30,9 +33,13 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class DriverSupportService extends Service {
 
+    private final DriverSupportBinder binder = new DriverSupportBinder();
+
     public static final String TAG = DriverSupportService.class.getSimpleName();
 
-//    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 2039;
+    public MutableLiveData<Integer> cameraStateSleepingLD = new MutableLiveData<>(Constants.AWAKE);
+    public MutableLiveData<Integer> bandStateSleepingLD = new MutableLiveData<>(Constants.AWAKE);
+
 
     @Inject
     Processor processor;
@@ -40,12 +47,8 @@ public class DriverSupportService extends Service {
 
     @Override
     public void onCreate() {
-
         super.onCreate();
-
-
         //TODO consider how to reset params if changed on every Get Started click
-
     }
 
     @Override
@@ -60,13 +63,10 @@ public class DriverSupportService extends Service {
                 .setSmallIcon(R.drawable.ds)
                 .setContentIntent(pendingIntent)
                 .build();
-
+        startService();
         startForeground(1, notification);
         Log.v(TAG, "service is created");
 
-        processor.setName("processor thread");
-        processor.init(this);
-        processor.start();
         return START_STICKY;
     }
 
@@ -80,6 +80,25 @@ public class DriverSupportService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return binder;
     }
+
+
+    public class DriverSupportBinder extends Binder {
+        public DriverSupportService getService(){
+            return DriverSupportService.this;
+        }
+    }
+
+    public void startService(){
+        processor.setName("processor thread");
+        processor.init(this);
+        processor.start();
+    }
+
+    public void setEOP(){
+        processor.imageProcessor.onEOPupdate();
+    }
+
 }
+

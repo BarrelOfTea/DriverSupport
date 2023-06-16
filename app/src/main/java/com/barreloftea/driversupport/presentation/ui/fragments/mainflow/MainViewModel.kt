@@ -31,13 +31,6 @@ class MainViewModel @Inject constructor(
     }
 
 
-    fun startService(activity : FragmentActivity){
-        var serviceIntent = Intent(activity, DriverSupportService::class.java)
-        //TODO consider startForegroundService
-        //activity?.startService(serviceIntent)
-        ContextCompat.startForegroundService(activity, serviceIntent)
-    }
-
     fun getSignalsOn(){
         val hashMap = getSignalsOn.execute()
         soundSignalOnLD.value = hashMap[Constants.IS_SOUND_SIGNAL_ON]

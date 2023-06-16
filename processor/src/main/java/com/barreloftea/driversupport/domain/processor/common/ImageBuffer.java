@@ -1,6 +1,7 @@
 package com.barreloftea.driversupport.domain.processor.common;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.barreloftea.driversupport.domain.imageprocessor.interfaces.FrameListener;
 
@@ -8,6 +9,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ImageBuffer {
+
+    public static final String TAG = ImageBuffer.class.getSimpleName();
 
     private static ImageBuffer imageBuffer;
     public ImageBuffer(){}
@@ -38,6 +41,7 @@ public class ImageBuffer {
         if (frameListener!=null) {
             frameListener.onFrame(b);
         }
+        Log.v(TAG, "image onFrame");
     }
 
 

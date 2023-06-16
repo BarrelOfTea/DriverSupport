@@ -25,6 +25,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
     public void setData(Device[] data) {
         devices = data;
     }
+    public Device[] getData(){return devices;}
 
 
     @NonNull
@@ -40,6 +41,8 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
         holder.setPosition(position);
         if (devices[position].isSaved())
             holder.getDevicePlusIcon().setImageResource(R.drawable.baseline_remove_24);
+        else
+            holder.getDevicePlusIcon().setImageResource(R.drawable.baseline_add_24);
     }
 
     @Override

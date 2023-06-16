@@ -14,12 +14,14 @@ public class Constants {
     public static final String NO_CAMERA = "No camera";
     public static final String TYPE_CAMERA = "type_camera";
 
+    public static final String CAMERA = "camera";
 
     //band
     public static final String BAND_NAME = "band_name";
     public static final String BAND_ADDRESS = "band_address";
     public static final String NO_BAND = "No band";
     public static final String TYPE_BAND = "type_band";
+    public static final String BAND = "band";
 
 
     //led
@@ -27,11 +29,13 @@ public class Constants {
     public static final String LED_ADDRESS = "led_address";
     public static final String NO_LED = "No LED";
     public static final String TYPE_LED = "type_led";
+    public static final String LED = "led";
 
 
     //sound
     public static final String SOUND_RES_INT = "sound_res_int";
     public static final String SOUND_VOLUME = "sound_volume";
+    public static final String SOUND = "sound";
 
 
     //managing
@@ -41,4 +45,11 @@ public class Constants {
 
     //broadcasting
     public static final String UPDATE_EOP_ACTION = "com.barreloftea.driversupport.UPDATE_EOP_ACTION";
+
+
+    //processor
+
+    public static final int AWAKE = 0;
+    public static final int DROWSY = 1;
+    public static final int SLEEPING = 2;
 }

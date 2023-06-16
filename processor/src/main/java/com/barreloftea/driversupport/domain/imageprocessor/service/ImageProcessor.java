@@ -8,6 +8,7 @@ import android.util.Log;
 import com.barreloftea.driversupport.domain.imageprocessor.interfaces.VideoRepository;
 import com.barreloftea.driversupport.domain.imageprocessor.utils.DrawContours;
 import com.barreloftea.driversupport.domain.processor.Processor;
+import com.barreloftea.driversupport.domain.processor.common.Constants;
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer;
 import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.common.InputImage;
@@ -53,12 +54,15 @@ public class ImageProcessor extends Thread {
     int mouthFlag;
     int noseFlag;
     int notBlinkFlag;
+
+    volatile int imagesRunning = 0;
+    static final int imagesAtaTime = 5;
     static final int EYE_THRESH = 4;
     static final int MOUTH_THRESH = 18;
     static final int NO_BLINK_TH = 80;
     static final float ROUND = 0.6f;
 
-    public float EOP_ = 0.3f;
+    public float EOP_ = 0.5f;
     public float MOR_ = 0.5f;
     public float NL_ = 0.5f;
     private float lastEOP;
@@ -72,6 +76,8 @@ public class ImageProcessor extends Thread {
     private FaceDetectorOptions realTimeOpts = new FaceDetectorOptions.Builder()
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
             .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+            //.setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+            //.setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
             .build();
     private FaceDetector detector = FaceDetection.getClient(realTimeOpts);
 
@@ -115,61 +121,61 @@ public class ImageProcessor extends Thread {
             //bitmap = inputImage.getBitmapInternal();
             long startTime = System.nanoTime();
 
-            Task<List<Face>> result =
-                    detector.process(inputImage)
-                            .addOnSuccessListener(
-                                    faces -> {
+            if (imagesRunning <= imagesAtaTime) {
+                //TODO DECLARATION NOT ALLOWED HERE
+                //Task<List<Face>> result =
+                detector.process(inputImage)
+                        .addOnSuccessListener(
+                                faces -> {
+                                    imagesRunning++;
+                                    Log.v(TAG, faces.size() + " FACES WERE DETECTED");
 
-                                        Log.v(TAG, faces.size() + " FACES WERE DETECTED");
+                                    for (Face face : faces) {
+                                        Rect bounds = face.getBoundingBox();
+                                        bitmap = drawer.drawRect(bitmap, bounds);
 
-                                        for (Face face : faces){
-                                            Rect bounds = face.getBoundingBox();
-                                            bitmap = drawer.drawRect(bitmap, bounds);
+                                        float rotY = face.getHeadEulerAngleY();  // To the right of the camera
+                                        float rotZ = face.getHeadEulerAngleZ();  // Counter-clockwise to the camera
+                                        float rotX = face.getHeadEulerAngleX();  // Upward
 
-
-                                            float rotY = face.getHeadEulerAngleY();  // Head is rotated to the right rotY degrees
-                                            float rotZ = face.getHeadEulerAngleZ(); //TODO rotY and rotZ are somehow always 0.0 and -0.0
-                                            float rotX = face.getHeadEulerAngleX();
-
-                                            List<PointF> leftEyeContour = face.getContour(FaceContour.LEFT_EYE).getPoints();
-                                            //bitmap = drawer.drawContours(bitmap, leftEyeContour);
-                                            List<PointF> rightEyeContour = face.getContour(FaceContour.RIGHT_EYE).getPoints();
-                                            bitmap = drawer.drawContours(bitmap, rightEyeContour);
-                                            List<PointF> upperLipCon = face.getContour(FaceContour.UPPER_LIP_TOP).getPoints();
-                                            bitmap = drawer.drawContours(bitmap, upperLipCon);
-                                            List<PointF> lowerLipCon = face.getContour(FaceContour.LOWER_LIP_BOTTOM).getPoints();
-                                            bitmap = drawer.drawContours(bitmap, lowerLipCon);
-                                            List<PointF> noseCon = face.getContour(FaceContour.NOSE_BRIDGE).getPoints();
-                                            bitmap = drawer.drawContours(bitmap, noseCon);
-
-
-                                            float REOP = getOneEOP(rightEyeContour);
-                                            float LEOP = getOneEOP(leftEyeContour);
+                                        List<PointF> leftEyeContour = face.getContour(FaceContour.LEFT_EYE).getPoints();
+                                        //bitmap = drawer.drawContours(bitmap, leftEyeContour);
+                                        List<PointF> rightEyeContour = face.getContour(FaceContour.RIGHT_EYE).getPoints();
+                                        bitmap = drawer.drawContours(bitmap, rightEyeContour);
+                                        List<PointF> upperLipCon = face.getContour(FaceContour.UPPER_LIP_TOP).getPoints();
+                                        bitmap = drawer.drawContours(bitmap, upperLipCon);
+                                        List<PointF> lowerLipCon = face.getContour(FaceContour.LOWER_LIP_BOTTOM).getPoints();
+                                        bitmap = drawer.drawContours(bitmap, lowerLipCon);
+                                        List<PointF> noseCon = face.getContour(FaceContour.NOSE_BRIDGE).getPoints();
+                                        bitmap = drawer.drawContours(bitmap, noseCon);
 
 
-                                            notBlinkFlag++;
+                                        float REOP = getOneEOP(rightEyeContour);
+                                        float LEOP = getOneEOP(leftEyeContour);
 
-                                            lastEOP = (LEOP+REOP)/2;
 
-                                            Log.v(TAG, "last eop is" + lastEOP);
+                                        notBlinkFlag++;
 
-                                            if ((LEOP+REOP)/2 < EOP_) {
-                                                eyeFlag++;
-                                                notBlinkFlag = 0;
-                                                Log.v(null, "you blinked");
-                                            }
-                                            else {
-                                                eyeFlag = 0;
-                                            }
+                                        lastEOP = (LEOP + REOP) / 2;
 
-                                            if (eyeFlag>=EYE_THRESH){
-                                                processor.setCamState(Processor.SLEEPING);
-                                                Log.v(null, "REASON closed eyes");
-                                            }
-                                            if (notBlinkFlag > NO_BLINK_TH){
-                                                //processor.setCamState(Processor.DROWSY);
-                                                Log.v(null, "REASON always open eyes");
-                                            }
+                                        Log.v(TAG, "last eop is" + lastEOP);
+
+                                        if ((LEOP + REOP) / 2 < EOP_) {
+                                            eyeFlag++;
+                                            notBlinkFlag = 0;
+                                            Log.v(null, "you blinked");
+                                        } else {
+                                            eyeFlag = 0;
+                                        }
+
+                                        if (eyeFlag >= EYE_THRESH) {
+                                            processor.setCamState(Constants.SLEEPING);
+                                            Log.v(null, "REASON closed eyes");
+                                        }
+                                        if (notBlinkFlag > NO_BLINK_TH) {
+                                            //processor.setCamState(Processor.DROWSY);
+                                            Log.v(null, "REASON always open eyes");
+                                        }
 
 
                                             /*float MOR = getMOR(upperLipCon, lowerLipCon);
@@ -185,16 +191,16 @@ public class ImageProcessor extends Thread {
                                                 Log.v(null, "REASON yawn");
                                             }*/
 
-                                            if(eyeFlag<EYE_THRESH /*&& mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH*/) {
+                                        if (eyeFlag < EYE_THRESH /*&& mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH*/) {
 
 //                                                new Thread(new Runnable() {
 //                                                    @Override
 //                                                    public void run() {
-                                                Log.v(null, "awake again");
-                                                processor.setCamState(Processor.AWAKE);
+                                            Log.v(null, "awake again");
+                                            processor.setCamState(Constants.AWAKE);
 //                                                    }
 //                                                }).start();
-                                            }
+                                        }
 
                                             /*float nl = getNL(noseCon);
                                             lastNL = nl;
@@ -209,33 +215,31 @@ public class ImageProcessor extends Thread {
                                                 Log.v(null, "REASON dosed off");
                                             }*/
 
-                                            //log(LEOP, REOP, MOR, rotY, rotZ, nl);
+                                        //log(LEOP, REOP, MOR, rotY, rotZ, nl);
 
-                                            Log.v(null, rotY + " roty");
-                                            Log.v(null, rotZ + " rotz");
-                                            Log.v(null, rotX + " rotx");
-
-                                            imageBuffer.setFrame(bitmap);
-
-                                        }
-
-                                    })
-                            .addOnFailureListener(
-                                    e -> Log.v(TAG, "IMAGE PROCESSING FAILED"+ Arrays.toString(e.getStackTrace())+ e.getMessage()))
-                            .addOnCompleteListener(
-                                    task -> {
-                                        //imageBuffer.imageQueue.offer(bitmap);
-                                        Log.v(TAG, "IMGAE IS PROCESSED SUCCESSFULLY");
-                                        //image.close();
-                                        long endTime = System.nanoTime();
-                                        long timePassed = endTime - startTime;
-                                        Log.v(null, "Execution time in milliseconds: " + timePassed / 1000000);
-
-                                        //imageBuffer.setFrame(bitmap);
-
+                                        Log.v(null, rotY + " roty");
+                                        Log.v(null, rotZ + " rotz");
+                                        Log.v(null, rotX + " rotx");
                                     }
-                            );
-                    inputImage = null;
+                                })
+                        .addOnFailureListener(
+                                e -> Log.v(TAG, "IMAGE PROCESSING FAILED" + Arrays.toString(e.getStackTrace()) + e.getMessage()))
+                        .addOnCompleteListener(
+                                task -> {
+                                    //imageBuffer.imageQueue.offer(bitmap);
+                                    Log.v(TAG, "IMGAE IS PROCESSED SUCCESSFULLY");
+                                    //image.close();
+                                    long endTime = System.nanoTime();
+                                    long timePassed = endTime - startTime;
+                                    Log.v(null, "Execution time in milliseconds: " + timePassed / 1000000);
+                                    imagesRunning--;
+
+                                    imageBuffer.setFrame(bitmap);
+                                    Log.v(TAG, "image onFrame called");
+                                }
+                        );
+                inputImage = null;
+            }
         }
     }
 
