@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM
 import com.barreloftea.driversupport.domain.models.Device
 import com.barreloftea.driversupport.domain.models.WiFiDeviceM
+import com.barreloftea.driversupport.domain.usecases.DeleteSavedDeviceUC
 import com.barreloftea.driversupport.domain.usecases.GetConnectedBTDevicesUC
 import com.barreloftea.driversupport.domain.usecases.GetSavedDevicesUC
 import com.barreloftea.driversupport.domain.usecases.SaveBluetoothDeviceUC
@@ -18,13 +19,15 @@ class DevicesSharedViewModel @Inject constructor(
     getSavedDevicesUC : GetSavedDevicesUC,
     saveWiFiDeviceUC: SaveWiFiDeviceUC,
     getConnectedBTDevicesUC: GetConnectedBTDevicesUC,
-    saveBluetoothDeviceUC : SaveBluetoothDeviceUC
+    saveBluetoothDeviceUC : SaveBluetoothDeviceUC,
+    deleteSavedDeviceUC: DeleteSavedDeviceUC
 ) : ViewModel() {
 
     private val getSavedDevices : GetSavedDevicesUC
     private val saveWiFiDevice : SaveWiFiDeviceUC
     private val getConnectedBTDevices : GetConnectedBTDevicesUC
     private val saveBluetoothDevice : SaveBluetoothDeviceUC
+    private val deleteSavedDevice : DeleteSavedDeviceUC
 
 
     var devicesLD : MutableLiveData<Array<Device>> = MutableLiveData()
@@ -36,6 +39,7 @@ class DevicesSharedViewModel @Inject constructor(
         this.saveWiFiDevice = saveWiFiDeviceUC
         this.getConnectedBTDevices = getConnectedBTDevicesUC
         this.saveBluetoothDevice = saveBluetoothDeviceUC
+        this.deleteSavedDevice = deleteSavedDeviceUC
     }
 
     fun updateDevices(){
@@ -64,4 +68,8 @@ class DevicesSharedViewModel @Inject constructor(
         saveBluetoothDevice.execute(type, name, address)
     }
 
+    fun deleteDevice(type: String){
+        deleteSavedDevice.execute(type)
+        updateDevices()
+    }
 }

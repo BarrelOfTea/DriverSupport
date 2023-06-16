@@ -38,6 +38,7 @@ class DevicesFragment(): Fragment(),
         viewModel.devicesLD.observe(this){data ->
             data?.let {
                 adapter.setData(it)
+                binding.recyclerViewDevices.adapter = adapter
             }
         }
         viewModel.buttonEnableLD.observe(this){enable ->
@@ -61,7 +62,6 @@ class DevicesFragment(): Fragment(),
             (levelsRecyclerView.layoutManager as LinearLayoutManager?)!!.findFirstCompletelyVisibleItemPosition()
         levelsRecyclerView.scrollToPosition(scrollposition)
         adapter = DeviceAdapter(this)
-        levelsRecyclerView.adapter = adapter
 
         return binding.root
     }
@@ -79,24 +79,28 @@ class DevicesFragment(): Fragment(),
     }
 
     override fun onViewHolderClick(device : Device) {
-        if (device.type.equals(Constants.TYPE_CAMERA)){
-            var bundle = Bundle()
-            if (device is WiFiDeviceM) {
-                //TODO try passing Parcelable
-                bundle.putString(Constants.WIFI_NAME, device.name)
-                bundle.putString(Constants.RTSP_LINK, device.rtsp_link)
-                bundle.putString(Constants.RTSP_USERNAME, device.username)
-                bundle.putString(Constants.RTSP_PASSWORD, device.password)
+        if (device.isSaved){
+            viewModel.deleteDevice(device.type)
+        } else {
+            if (device.type.equals(Constants.TYPE_CAMERA)){
+                var bundle = Bundle()
+                if (device is WiFiDeviceM) {
+                    //TODO try passing Parcelable
+                    bundle.putString(Constants.WIFI_NAME, device.name)
+                    bundle.putString(Constants.RTSP_LINK, device.rtsp_link)
+                    bundle.putString(Constants.RTSP_USERNAME, device.username)
+                    bundle.putString(Constants.RTSP_PASSWORD, device.password)
+                }
+                navController.navigateSafely(R.id.action_devices_to_camera, bundle)
+            } else if(device.type.equals(Constants.TYPE_BAND)) {
+                val bundle = Bundle()
+                bundle.putString(Constants.TYPE, Constants.TYPE_BAND)
+                navController.navigateSafely(R.id.action_devices_to_bluetooth, bundle)
+            } else if(device.type.equals(Constants.TYPE_LED)){
+                val bundle = Bundle()
+                bundle.putString(Constants.TYPE, Constants.TYPE_LED)
+                navController.navigateSafely(R.id.action_devices_to_bluetooth, bundle)
             }
-            navController.navigateSafely(R.id.action_devices_to_camera, bundle)
-        } else if(device.type.equals(Constants.TYPE_BAND)) {
-            val bundle = Bundle()
-            bundle.putString(Constants.TYPE, Constants.TYPE_BAND)
-            navController.navigateSafely(R.id.action_devices_to_bluetooth, bundle)
-        } else if(device.type.equals(Constants.TYPE_LED)){
-            val bundle = Bundle()
-            bundle.putString(Constants.TYPE, Constants.TYPE_LED)
-            navController.navigateSafely(R.id.action_devices_to_bluetooth, bundle)
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.barreloftea.driversupport.di;
 
 import com.barreloftea.driversupport.domain.usecases.DeleteDataUC;
+import com.barreloftea.driversupport.domain.usecases.DeleteSavedDeviceUC;
 import com.barreloftea.driversupport.domain.usecases.GetConnectedBTDevicesUC;
 import com.barreloftea.driversupport.domain.usecases.GetSavedDevicesUC;
 import com.barreloftea.driversupport.domain.usecases.GetSignalsActivationStateUC;
@@ -76,6 +77,11 @@ public class ViewModelModule {
     @Provides
     public static SaveSignalActivationStateUC provideSaveSignalActivationStateUC(SharedPrefRepository repository){
         return new SaveSignalActivationStateUC(repository);
+    }
+
+    @Provides
+    public static DeleteSavedDeviceUC porvideDeleteSavedDeviceUC(SharedPrefRepository repository){
+        return new DeleteSavedDeviceUC(repository);
     }
 
 }

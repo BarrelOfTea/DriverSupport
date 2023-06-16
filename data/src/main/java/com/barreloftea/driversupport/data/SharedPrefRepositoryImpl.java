@@ -82,8 +82,8 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
 
     @Override
     public float getSavedSoundVolume() {
-        Log.v("vol", "get shared vol "+sharedPreferences.getFloat(Constants.SOUND_VOLUME, 0.8f));
-        return sharedPreferences.getFloat(Constants.SOUND_VOLUME, 0.8f);
+        Log.v("vol", "get shared vol "+sharedPreferences.getFloat(Constants.SOUND_VOLUME, 0.5f));
+        return sharedPreferences.getFloat(Constants.SOUND_VOLUME, 0.5f);
     }
 
     @Override
@@ -114,6 +114,23 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
     @Override
     public void setSignalOn(String signal, boolean isSignalOn) {
         sharedPreferences.edit().putBoolean(signal, isSignalOn).apply();
+    }
+
+    @Override
+    public void deleteDevice(String type) {
+        switch (type){
+            case Constants.TYPE_CAMERA:
+                sharedPreferences.edit().remove(Constants.WIFI_NAME).apply();
+                sharedPreferences.edit().remove(Constants.RTSP_LINK).apply();
+                sharedPreferences.edit().remove(Constants.RTSP_USERNAME).apply();
+                sharedPreferences.edit().remove(Constants.RTSP_PASSWORD).apply();
+            case Constants.TYPE_BAND:
+                sharedPreferences.edit().remove(Constants.BAND_NAME).apply();
+                sharedPreferences.edit().remove(Constants.BAND_ADDRESS).apply();
+            case Constants.TYPE_LED:
+                sharedPreferences.edit().remove(Constants.LED_NAME).apply();
+                sharedPreferences.edit().remove(Constants.LED_ADDRESS).apply();
+        }
     }
 
 

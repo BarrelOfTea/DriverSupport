@@ -20,4 +20,6 @@ public interface SharedPrefRepository {
     Map<String, Boolean> getAreSignalsOn();
     void setSignalOn(String signal, boolean isSignalOn);
 
+    void deleteDevice(String type);
+
 }
