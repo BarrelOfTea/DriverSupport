@@ -44,9 +44,6 @@ class VideoDecodeThread (
         interrupt()
     }
 
-
-
-
     private fun getDecoderSafeWidthHeight(decoder: MediaCodec): Pair<Int, Int> {
         val capabilities = decoder.codecInfo.getCapabilitiesForType(mimeType).videoCapabilities
         return if (capabilities.isSizeSupported(width, height)) {

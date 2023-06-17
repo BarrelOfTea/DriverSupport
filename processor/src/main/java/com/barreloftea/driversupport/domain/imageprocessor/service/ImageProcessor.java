@@ -54,9 +54,7 @@ public class ImageProcessor extends Thread {
     int mouthFlag;
     int noseFlag;
     int notBlinkFlag;
-
-    volatile int imagesRunning = 0;
-    static final int imagesAtaTime = 5;
+    volatile boolean isBusy = false;
     static final int EYE_THRESH = 4;
     static final int MOUTH_THRESH = 18;
     static final int NO_BLINK_TH = 80;
@@ -76,13 +74,14 @@ public class ImageProcessor extends Thread {
     private FaceDetectorOptions realTimeOpts = new FaceDetectorOptions.Builder()
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
             .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
-            //.setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+             .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
             //.setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
             .build();
     private FaceDetector detector = FaceDetection.getClient(realTimeOpts);
 
     public void stopAsync(){
         exitFlag.set(true);
+        videoRepository.stopAsync();
         interrupt();
         Log.v(TAG, "camara thread is stopped");
     }
@@ -121,13 +120,13 @@ public class ImageProcessor extends Thread {
             //bitmap = inputImage.getBitmapInternal();
             long startTime = System.nanoTime();
 
-            if (imagesRunning <= imagesAtaTime) {
-                //TODO DECLARATION NOT ALLOWED HERE
+            if (!isBusy) {
+                isBusy = true;
                 //Task<List<Face>> result =
                 detector.process(inputImage)
                         .addOnSuccessListener(
                                 faces -> {
-                                    imagesRunning++;
+
                                     Log.v(TAG, faces.size() + " FACES WERE DETECTED");
 
                                     for (Face face : faces) {
@@ -232,7 +231,7 @@ public class ImageProcessor extends Thread {
                                     long endTime = System.nanoTime();
                                     long timePassed = endTime - startTime;
                                     Log.v(null, "Execution time in milliseconds: " + timePassed / 1000000);
-                                    imagesRunning--;
+                                    isBusy=false;
 
                                     imageBuffer.setFrame(bitmap);
                                     Log.v(TAG, "image onFrame called");
@@ -241,6 +240,7 @@ public class ImageProcessor extends Thread {
                 inputImage = null;
             }
         }
+        detector.close();
     }
 
 

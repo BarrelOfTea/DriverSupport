@@ -23,7 +23,7 @@ public class PulseProcessor extends Thread {
     private static final String TAG = PulseProcessor.class.getSimpleName();
 
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
-   // private Processor processor;
+    private Processor processor;
     ImageBuffer imageBuffer;
 
     private int NORMAL_PULSE = 90;
@@ -90,9 +90,9 @@ public class PulseProcessor extends Thread {
     }
 
 
-//    public void setProcessor(Processor processor) {
-//        this.processor = processor;
-//    }
+    public void setProcessor(Processor processor) {
+        this.processor = processor;
+    }
 
     @Override
     public void run(){

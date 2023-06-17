@@ -12,5 +12,6 @@ public interface VideoRepository {
     void setParams(String l, String pass, String uname);
 
     ArrayBlockingQueue<Bitmap> getVideoQueue();
+    void stopAsync();
 
 }

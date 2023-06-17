@@ -77,4 +77,11 @@ public class VideoRepositoryImpl implements VideoRepository {
         }
         return videoQueue;
     }
+
+    @Override
+    public void stopAsync() {
+        rtspSurfaceView.stop();
+    }
+
+
 }

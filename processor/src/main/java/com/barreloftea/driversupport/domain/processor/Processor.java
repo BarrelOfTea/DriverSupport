@@ -38,9 +38,9 @@ public class Processor extends Thread {
         imageProcessor.setProcessor(this);
         imageProcessor.setName("image processor");
 
-        //pulseProcessor = p;
-        //pulseProcessor.setProcessor(this);
-        //pulseProcessor.setName("pulse processor");
+        pulseProcessor = p;
+        pulseProcessor.setProcessor(this);
+        pulseProcessor.setName("pulse processor");
 
         soundController = s;
     }
@@ -67,8 +67,9 @@ public class Processor extends Thread {
 
         imageProcessor.start();
 
-        //pulseProcessor.prepare("D7:71:B3:98:F8:57");
-        //pulseProcessor.start();
+        pulseProcessor.prepare("D7:71:B3:98:F8:57");
+        pulseProcessor.connect();
+        pulseProcessor.start();
         ImageBuffer.isProcessorRunning.set(true);
 
 
