@@ -133,5 +133,32 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
         }
     }
 
+    @Override
+    public BluetoothDeviceM getSavedBlueDevice(String type) {
+        if (type.equals(Constants.TYPE_BAND)){
+           return new BluetoothDeviceM(
+                    sharedPreferences.getString(Constants.BAND_NAME, Constants.NO_BAND),
+                    sharedPreferences.getString(Constants.BAND_ADDRESS, ""),
+                    sharedPreferences.contains(Constants.BAND_NAME),
+                    Constants.TYPE_BAND);
+        }
+        return new BluetoothDeviceM(
+                    sharedPreferences.getString(Constants.LED_NAME, Constants.NO_LED),
+                    sharedPreferences.getString(Constants.LED_ADDRESS, ""),
+                    sharedPreferences.contains(Constants.LED_NAME),
+                    Constants.TYPE_LED);
+    }
+
+    @Override
+    public WiFiDeviceM getSavedWifiDevice() {
+        return new WiFiDeviceM(
+                sharedPreferences.getString(Constants.WIFI_NAME, Constants.NO_CAMERA),
+                sharedPreferences.getString(Constants.RTSP_LINK, ""),
+                sharedPreferences.getString(Constants.RTSP_USERNAME, ""),
+                sharedPreferences.getString(Constants.RTSP_PASSWORD, ""),
+                sharedPreferences.contains(Constants.WIFI_NAME),
+                Constants.TYPE_CAMERA);
+    }
+
 
 }

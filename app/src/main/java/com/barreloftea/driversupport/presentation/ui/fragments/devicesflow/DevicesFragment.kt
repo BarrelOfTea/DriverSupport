@@ -90,7 +90,6 @@ class DevicesFragment(): Fragment(),
             if (device.type.equals(Constants.TYPE_CAMERA)){
                 var bundle = Bundle()
                 if (device is WiFiDeviceM) {
-                    //TODO try passing Parcelable
                     bundle.putString(Constants.WIFI_NAME, device.name)
                     bundle.putString(Constants.RTSP_LINK, device.rtsp_link)
                     bundle.putString(Constants.RTSP_USERNAME, device.username)

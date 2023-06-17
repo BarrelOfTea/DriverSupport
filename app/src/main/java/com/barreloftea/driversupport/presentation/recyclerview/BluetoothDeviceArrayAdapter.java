@@ -1,5 +1,6 @@
 package com.barreloftea.driversupport.presentation.recyclerview;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,26 +17,22 @@ import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
 import java.util.List;
 
 
-public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDeviceM> {
+public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDevice> {
 
 
-    public BluetoothDeviceArrayAdapter(@NonNull Context context, int resource, @NonNull List<BluetoothDeviceM> objects) {
+    public BluetoothDeviceArrayAdapter(@NonNull Context context, int resource, @NonNull List<BluetoothDevice> objects) {
         super(context, resource, objects);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        BluetoothDeviceM data = getItem(position);
+        BluetoothDevice data = getItem(position);
 
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_blue_device, parent, false);
         }
-
-        // Lookup view for data population
-        /*TextView textView1 = convertView.findViewById(android.R.id.text1);
-        TextView textView2 = convertView.findViewById(android.R.id.text2);*/
 
         TextView textView1 = convertView.findViewById(R.id.tv_device_blue_name);
         TextView textView2 = convertView.findViewById(R.id.tv_device_blue_address);

@@ -24,7 +24,6 @@ public class PulseProcessor extends Thread {
 
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
     private Processor processor;
-    ImageBuffer imageBuffer;
 
     private int NORMAL_PULSE = 90;
 
@@ -36,11 +35,12 @@ public class PulseProcessor extends Thread {
     public PulseProcessor(BluetoothRepository bluetoothRepository, PulseRepository pulseRepository) {
         this.bluetoothRepository = bluetoothRepository;
         this.pulseRepository = pulseRepository;
-        imageBuffer = ImageBuffer.getInstance();
     }
 
-    public void init(Context context){
-        this.context = context;
+    public void init(String address, Processor p){
+        prepare(address);
+        processor = p;
+        context = processor.context;
     }
 
     public void stopAsync() {
@@ -90,13 +90,9 @@ public class PulseProcessor extends Thread {
     }
 
 
-    public void setProcessor(Processor processor) {
-        this.processor = processor;
-    }
-
     @Override
     public void run(){
-        //connect();
+        connect();
         while(!exitFlag.get()){
 
         }

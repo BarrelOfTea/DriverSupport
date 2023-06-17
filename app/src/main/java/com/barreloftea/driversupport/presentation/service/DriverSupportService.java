@@ -93,7 +93,8 @@ public class DriverSupportService extends Service {
     public void startService(){
         processor.setName("processor thread");
         processor.init(this);
-        processor.start();
+        if (!processor.isAlive())
+            processor.start();
     }
 
     public void setEOP(){

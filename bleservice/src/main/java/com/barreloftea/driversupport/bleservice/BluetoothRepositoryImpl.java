@@ -33,7 +33,7 @@ public class BluetoothRepositoryImpl implements BluetoothRepository {
         this.listener = listener;
         Log.v(TAG, "Set listener for scan callback");
 
-        HashMap<String, BluetoothDeviceM> devices = new HashMap<>();
+        HashMap<String, BluetoothDevice> devices = new HashMap<>();
 
         //TODO make scancallback and devices global final and clear hashmap in stopscan()
 
@@ -48,10 +48,9 @@ public class BluetoothRepositoryImpl implements BluetoothRepository {
                                 + device.getType() + ",bondState:"
                                 + device.getBondState() + ",rssi:" + result.getRssi());
 
-                BluetoothDeviceM item = new BluetoothDeviceM(device.getName(), device.getAddress(), false, null);
                 if (!devices.containsKey(device.getAddress())) {
-                    devices.put(device.getAddress(), item);
-                    listener.onDeviceDiscovered(item);
+                    devices.put(device.getAddress(), device);
+                    listener.onDeviceDiscovered(device);
                 }
             }
 

@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package com.barreloftea.driversupport.bleservice.miband.model;
 
 public enum VibrationMode {

@@ -7,92 +7,21 @@ import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-//import org.opencv.android.Utils
-//import org.opencv.core.Core
-//import org.opencv.core.Mat
-//import org.opencv.videoio.VideoCapture
-//import org.opencv.videoio.Videoio
-
-
-/*class MainFlowFragment: Fragment() {
-
-    val rtspLink = "rtsp://192.168.0.1:554/livestream/12"
-    lateinit var capture : VideoCapture
-    private var binding: FlowFragmentMainBinding? = null
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        System.loadLibrary("opencv_java4")
-        System.setProperty("OPENCV_ANDROID_CAPTURE_OPTIONS", "rtsp_transport;udp");
-//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-//        System.loadLibrary("opencv_java470");
-    }
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-
-        capture = VideoCapture()
-        capture.open(rtspLink, Videoio.CAP_ANDROID)
-        capture.set(Videoio.CAP_PROP_FRAME_WIDTH, 640.0)
-        capture.set(Videoio.CAP_PROP_FRAME_HEIGHT, 480.0)
-        return inflater.inflate(R.layout.flow_fragment_main, container, false)
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val binding = FlowFragmentMainBinding.bind(view)
-
-        Thread {
-            val frame = Mat()
-            while (capture.read(frame)) {
-                val bitmap = Bitmap.createBitmap(frame.cols(), frame.rows(), Bitmap.Config.ARGB_8888)
-                Utils.matToBitmap(frame, bitmap)
-                binding.videoView.setImageBitmap(bitmap)
-            }
-        }.start()
-
-    }
-
-
-    override fun onDestroyView() {
-        binding = null
-        super.onDestroyView()
-    }
-
-     override fun onDestroy() {
-        super.onDestroy()
-         if (capture != null) {
-            capture.release()
-        }
-    }
-
-
-
-}*/
-
-
-import android.util.Log
-import android.view.SurfaceHolder
-import androidx.compose.ui.unit.Constraints
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.barreloftea.driversupport.R
-import com.barreloftea.driversupport.domain.imageprocessor.interfaces.FrameListener
 import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
-import com.barreloftea.driversupport.domain.processor.common.Constants
+import com.barreloftea.driversupport.domain.imageprocessor.interfaces.FrameListener
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
 import dagger.hilt.android.AndroidEntryPoint
+
 
 
 @AndroidEntryPoint
@@ -102,8 +31,6 @@ class MainFlowFragment: Fragment(),
     private val TAG = MainFlowFragment::class.java.simpleName
 
     private var startNewService = false
-    private var enablePulseProcessor = false
-    private var enableLed = false
     private lateinit var binding : FlowFragmentMainBinding
     private val viewModel : MainViewModel by viewModels()
     private lateinit var imageBuffer: ImageBuffer
@@ -131,8 +58,6 @@ class MainFlowFragment: Fragment(),
 
         arguments?.let{
             if (requireArguments().getBoolean("startnew")) startNewService = true
-//            enablePulseProcessor = (requireArguments().getBoolean(Constants.BAND))
-//            enableLed = (requireArguments().getBoolean(Constants.LED))
         }
 
         viewModel.soundSignalOnLD.observe(this){isOn ->
@@ -184,7 +109,6 @@ class MainFlowFragment: Fragment(),
 
             startNewService=false
         }
-
 
         Intent(requireActivity(), DriverSupportService::class.java).also {intent->
             requireActivity().bindService(intent, dsConnection, Context.BIND_AUTO_CREATE)
@@ -305,3 +229,72 @@ class MainFlowFragment: Fragment(),
 //            binding.videoView.debug = false
 //            binding.videoView.start(true, false)
 //        }
+
+//import org.opencv.android.Utils
+//import org.opencv.core.Core
+//import org.opencv.core.Mat
+//import org.opencv.videoio.VideoCapture
+//import org.opencv.videoio.Videoio
+
+
+/*class MainFlowFragment: Fragment() {
+
+    val rtspLink = "rtsp://192.168.0.1:554/livestream/12"
+    lateinit var capture : VideoCapture
+    private var binding: FlowFragmentMainBinding? = null
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        System.loadLibrary("opencv_java4")
+        System.setProperty("OPENCV_ANDROID_CAPTURE_OPTIONS", "rtsp_transport;udp");
+//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//        System.loadLibrary("opencv_java470");
+    }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+
+        capture = VideoCapture()
+        capture.open(rtspLink, Videoio.CAP_ANDROID)
+        capture.set(Videoio.CAP_PROP_FRAME_WIDTH, 640.0)
+        capture.set(Videoio.CAP_PROP_FRAME_HEIGHT, 480.0)
+        return inflater.inflate(R.layout.flow_fragment_main, container, false)
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val binding = FlowFragmentMainBinding.bind(view)
+
+        Thread {
+            val frame = Mat()
+            while (capture.read(frame)) {
+                val bitmap = Bitmap.createBitmap(frame.cols(), frame.rows(), Bitmap.Config.ARGB_8888)
+                Utils.matToBitmap(frame, bitmap)
+                binding.videoView.setImageBitmap(bitmap)
+            }
+        }.start()
+
+    }
+
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
+    }
+
+     override fun onDestroy() {
+        super.onDestroy()
+         if (capture != null) {
+            capture.release()
+        }
+    }
+
+
+
+}*/

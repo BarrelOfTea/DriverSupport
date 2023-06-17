@@ -42,8 +42,8 @@ public class ServiceModule {
 
     @Provides
     @Singleton
-    public static Processor provideProcessor(ImageProcessor imageProcessor, PulseProcessor pulseProcessor, SoundController soundController){
-        return new Processor(imageProcessor, pulseProcessor, soundController);
+    public static Processor provideProcessor(ImageProcessor imageProcessor, PulseProcessor pulseProcessor, SoundController soundController, SharedPrefRepository sharedPrefRepository){
+        return new Processor(imageProcessor, pulseProcessor, soundController, sharedPrefRepository);
     }
 
 

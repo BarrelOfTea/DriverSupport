@@ -8,6 +8,7 @@ import com.barreloftea.driversupport.domain.processor.common.Constants;
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer;
 import com.barreloftea.driversupport.domain.pulseprocessor.service.PulseProcessor;
 import com.barreloftea.driversupport.domain.soundcontroller.SoundController;
+import com.barreloftea.driversupport.domain.usecases.interfaces.SharedPrefRepository;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -30,32 +31,34 @@ public class Processor extends Thread {
     PulseProcessor pulseProcessor;
     @Inject
     volatile SoundController soundController;
+
+    @Inject
+    SharedPrefRepository sharedPrefRepository;
     //private LedController ledController;
 
     @Inject
-    public Processor(ImageProcessor i, PulseProcessor p, SoundController s){
+    public Processor(ImageProcessor i, PulseProcessor p, SoundController s, SharedPrefRepository rep){
         imageProcessor = i;
-        imageProcessor.setProcessor(this);
         imageProcessor.setName("image processor");
 
         pulseProcessor = p;
-        pulseProcessor.setProcessor(this);
         pulseProcessor.setName("pulse processor");
 
         soundController = s;
+
+        sharedPrefRepository = rep;
     }
 
     public void init(Context context){
         soundController.init(context);
         this.context = context;
+
+        //if ()
     }
-
-
-
 
     public void stopAsync(){
         exitFlag.set(true);
-        ImageBuffer.isProcessorRunning.set(false);
+        //ImageBuffer.isProcessorRunning.set(false);
         Log.v("aaa", "processor thread is stopped");
         interrupt();
     }
@@ -65,14 +68,12 @@ public class Processor extends Thread {
     public void run() {
         Log.v(TAG, "processor thread started");
 
-        imageProcessor.start();
+        //imageProcessor.init(this);
+        //imageProcessor.start();
 
-        pulseProcessor.prepare("D7:71:B3:98:F8:57");
-        pulseProcessor.connect();
+        pulseProcessor.init("D7:71:B3:98:F8:57", this);
         pulseProcessor.start();
-        ImageBuffer.isProcessorRunning.set(true);
-
-
+        //ImageBuffer.isProcessorRunning.set(true);
 
         while(!exitFlag.get()){
             if (stateCam == Constants.AWAKE){
@@ -83,7 +84,7 @@ public class Processor extends Thread {
             }
         }
 
-        ImageBuffer.isProcessorRunning.set(false);
+        //ImageBuffer.isProcessorRunning.set(false);
         if (imageProcessor!=null) imageProcessor.stopAsync();
         if (soundController!=null) soundController.destroy();
         if (pulseProcessor !=null) pulseProcessor.stopAsync();
@@ -97,6 +98,20 @@ public class Processor extends Thread {
         this.stateBand = s;
     }
 
+    boolean checkBandRequired(){
+        return sharedPrefRepository.getSavedBlueDevice(Constants.TYPE_BAND).isSaved();
+    }
+
+    boolean checkLedRequired(){
+        boolean connected = sharedPrefRepository.getSavedBlueDevice(Constants.TYPE_LED).isSaved();
+        boolean required = sharedPrefRepository.getAreSignalsOn().get(Constants.IS_LED_SIGNAL_ON);
+
+        return (connected && required);
+    }
+
+    boolean checkSoundRequired(){
+        return sharedPrefRepository.getAreSignalsOn().get(Constants.IS_SOUND_SIGNAL_ON);
+    }
 
 }
 

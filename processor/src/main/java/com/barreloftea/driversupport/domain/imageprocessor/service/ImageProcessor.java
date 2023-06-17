@@ -46,7 +46,7 @@ public class ImageProcessor extends Thread {
         imageBuffer = ImageBuffer.getInstance();
     }
 
-    public void setProcessor(Processor processor) {
+    public void init(Processor processor) {
         this.processor = processor;
     }
 
