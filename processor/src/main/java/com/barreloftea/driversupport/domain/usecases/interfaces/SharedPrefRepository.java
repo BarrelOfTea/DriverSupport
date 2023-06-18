@@ -22,6 +22,6 @@ public interface SharedPrefRepository {
 
     void deleteAll();
 
-    Map<String, Boolean> getAreSignalsOn();
+    boolean getIsSignalOn(String signalName);
     void setSignalOn(String signal, boolean isSignalOn);
 }

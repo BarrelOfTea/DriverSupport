@@ -41,6 +41,7 @@ public class ImageProcessor extends Thread {
 
     public ImageProcessor(VideoRepository rep){
         videoRepository = rep;
+        //TODO
         videoRepository.setParams("rtsp://192.168.0.1:554/livestream/12", "", "");
         videoRepository.prepare();
         imageBuffer = ImageBuffer.getInstance();

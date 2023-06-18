@@ -2,13 +2,12 @@ package com.barreloftea.driversupport.domain.pulseprocessor.interfaces;
 
 
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 
-import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener;
+import com.barreloftea.driversupport.domain.usecases.interfaces.BlueDeviceDiscoveredListener;
 
 public interface BluetoothRepository {
 
-    void getBluetoothDevices(BlueViewHolderClickListener listener);
+    void getBluetoothDevices(BlueDeviceDiscoveredListener listener);
 
     void stopScan();
     BluetoothDevice getDevice(String address);

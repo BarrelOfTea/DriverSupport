@@ -2,7 +2,6 @@ package com.barreloftea.driversupport.presentation.ui.fragments.devicesflow
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.barreloftea.driversupport.domain.models.BluetoothDeviceM
 import com.barreloftea.driversupport.domain.models.Device
 import com.barreloftea.driversupport.domain.models.WiFiDeviceM
 import com.barreloftea.driversupport.domain.usecases.DeleteSavedDeviceUC
@@ -10,7 +9,7 @@ import com.barreloftea.driversupport.domain.usecases.GetConnectedBTDevicesUC
 import com.barreloftea.driversupport.domain.usecases.GetSavedDevicesUC
 import com.barreloftea.driversupport.domain.usecases.SaveBluetoothDeviceUC
 import com.barreloftea.driversupport.domain.usecases.SaveWiFiDeviceUC
-import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener
+import com.barreloftea.driversupport.domain.usecases.interfaces.BlueDeviceDiscoveredListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -56,7 +55,7 @@ class DevicesSharedViewModel @Inject constructor(
         saveWiFiDevice.execute(deviceName, link, username, password)
     }
 
-    fun getConnectedBlueDevices(listener : BlueViewHolderClickListener){
+    fun getConnectedBlueDevices(listener : BlueDeviceDiscoveredListener){
         getConnectedBTDevices.execute(listener)
     }
 

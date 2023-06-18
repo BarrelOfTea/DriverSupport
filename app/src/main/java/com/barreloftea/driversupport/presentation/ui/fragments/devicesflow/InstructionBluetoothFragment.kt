@@ -9,20 +9,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.databinding.FragmentDevicesBluetoothDeviceBinding
-import com.barreloftea.driversupport.domain.models.BluetoothDeviceM
 import com.barreloftea.driversupport.domain.processor.common.Constants
-import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener
+import com.barreloftea.driversupport.domain.usecases.interfaces.BlueDeviceDiscoveredListener
 import com.barreloftea.driversupport.presentation.navutils.navigateSafely
 import com.barreloftea.driversupport.presentation.recyclerview.BluetoothDeviceArrayAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class InstructionBluetoothFragment(): Fragment(),
-    BlueViewHolderClickListener {
+    BlueDeviceDiscoveredListener {
 
     private val viewModel : DevicesSharedViewModel by viewModels()
     private lateinit var navController: NavController

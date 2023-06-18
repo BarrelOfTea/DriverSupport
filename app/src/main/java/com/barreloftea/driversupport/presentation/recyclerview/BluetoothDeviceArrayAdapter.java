@@ -52,9 +52,9 @@ public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDevice> {
 /*
 
 private BluetoothDeviceM[] devices;
-    private BlueViewHolderClickListener parentFragment;
+    private BlueDeviceDiscoveredListener parentFragment;
 
-    public BluetoothDeviceArrayAdapter(BlueViewHolderClickListener listener){
+    public BluetoothDeviceArrayAdapter(BlueDeviceDiscoveredListener listener){
         this.parentFragment = listener;
     }
 

@@ -1,6 +1,6 @@
 package com.barreloftea.driversupport.domain.usecases;
 
-import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener;
+import com.barreloftea.driversupport.domain.usecases.interfaces.BlueDeviceDiscoveredListener;
 import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.BluetoothRepository;
 
 public class GetConnectedBTDevicesUC {
@@ -11,7 +11,7 @@ public class GetConnectedBTDevicesUC {
         this.repository = repository;
     }
 
-    public void execute(BlueViewHolderClickListener listener){
+    public void execute(BlueDeviceDiscoveredListener listener){
         repository.getBluetoothDevices(listener);
     }
 

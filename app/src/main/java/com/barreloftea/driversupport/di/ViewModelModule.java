@@ -3,6 +3,7 @@ package com.barreloftea.driversupport.di;
 import com.barreloftea.driversupport.domain.usecases.DeleteDataUC;
 import com.barreloftea.driversupport.domain.usecases.DeleteSavedDeviceUC;
 import com.barreloftea.driversupport.domain.usecases.GetConnectedBTDevicesUC;
+import com.barreloftea.driversupport.domain.usecases.GetSavedBlueDeviceUC;
 import com.barreloftea.driversupport.domain.usecases.GetSavedDevicesUC;
 import com.barreloftea.driversupport.domain.usecases.GetSignalsActivationStateUC;
 import com.barreloftea.driversupport.domain.usecases.GetSoundVolumeUC;
@@ -29,10 +30,10 @@ public class ViewModelModule {
         return new GetSavedDevicesUC(repository);
     }
 
-//    @Provides
-//    public static GetBluetoothDevicesUC provideGetBluetoothDevicesUC(BluetoothRepository repository){
-//        return new GetBluetoothDevicesUC(repository);
-//    }
+    @Provides
+    public static GetSavedBlueDeviceUC provideGetBluetoothDevicesUC(SharedPrefRepository repository){
+        return new GetSavedBlueDeviceUC(repository);
+    }
 
     @Provides
     public static SaveWiFiDeviceUC provideSaveWiFiDeviceUC(SharedPrefRepository repository){

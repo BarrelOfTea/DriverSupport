@@ -20,7 +20,6 @@ public class WiFiDeviceM implements Device{
 
     String name;
 
-    //TODO for now wifi address is gonna be rtsp link that will be saved
     String rtsp_link;
 
     String username;

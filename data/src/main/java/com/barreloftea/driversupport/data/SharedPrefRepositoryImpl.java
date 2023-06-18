@@ -104,11 +104,9 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
     }
 
     @Override
-    public Map<String, Boolean> getAreSignalsOn() {
-        Map<String, Boolean> map = new HashMap<>();
-        map.put(Constants.IS_SOUND_SIGNAL_ON, sharedPreferences.getBoolean(Constants.IS_SOUND_SIGNAL_ON, true));
-        map.put(Constants.IS_LED_SIGNAL_ON, sharedPreferences.getBoolean(Constants.IS_LED_SIGNAL_ON, false));
-        return map;
+    public boolean getIsSignalOn(String signal) {
+        if (signal.equals(Constants.IS_SOUND_SIGNAL_ON)) return sharedPreferences.getBoolean(Constants.IS_SOUND_SIGNAL_ON, true);
+        else return sharedPreferences.getBoolean(Constants.IS_LED_SIGNAL_ON, false);
     }
 
     @Override
@@ -141,12 +139,13 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
                     sharedPreferences.getString(Constants.BAND_ADDRESS, ""),
                     sharedPreferences.contains(Constants.BAND_NAME),
                     Constants.TYPE_BAND);
-        }
-        return new BluetoothDeviceM(
+        } else {
+            return new BluetoothDeviceM(
                     sharedPreferences.getString(Constants.LED_NAME, Constants.NO_LED),
                     sharedPreferences.getString(Constants.LED_ADDRESS, ""),
                     sharedPreferences.contains(Constants.LED_NAME),
                     Constants.TYPE_LED);
+        }
     }
 
     @Override

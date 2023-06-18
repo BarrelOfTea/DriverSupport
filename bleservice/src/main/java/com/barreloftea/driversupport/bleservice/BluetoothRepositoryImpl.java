@@ -7,29 +7,24 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
-import android.content.Context;
 import android.util.Log;
 
-import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.ActionCallback;
-import com.barreloftea.driversupport.bleservice.miband.MiBand;
-import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
-import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.HeartRateNotifyListener;
-import com.barreloftea.driversupport.domain.usecases.interfaces.BlueViewHolderClickListener;
+import com.barreloftea.driversupport.domain.usecases.interfaces.BlueDeviceDiscoveredListener;
 import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.BluetoothRepository;
 
 import java.util.HashMap;
 
-//TODO add permission check for all permissions in the beginning
+
 public class BluetoothRepositoryImpl implements BluetoothRepository {
 
     private static final String TAG = BluetoothRepositoryImpl.class.getSimpleName();
-    private BlueViewHolderClickListener listener;
+    private BlueDeviceDiscoveredListener listener;
 
     ScanCallback scanCallback;
 
 
     @Override
-    public void getBluetoothDevices(BlueViewHolderClickListener listener) {
+    public void getBluetoothDevices(BlueDeviceDiscoveredListener listener) {
         this.listener = listener;
         Log.v(TAG, "Set listener for scan callback");
 
