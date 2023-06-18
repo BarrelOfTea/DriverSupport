@@ -38,19 +38,6 @@ public class ImageProcessor extends Thread {
     ArrayBlockingQueue<Bitmap> queue;
     ImageBuffer imageBuffer;
     Processor processor;
-
-    public ImageProcessor(VideoRepository rep){
-        videoRepository = rep;
-        //TODO
-        videoRepository.setParams("rtsp://192.168.0.1:554/livestream/12", "", "");
-        videoRepository.prepare();
-        imageBuffer = ImageBuffer.getInstance();
-    }
-
-    public void init(Processor processor) {
-        this.processor = processor;
-    }
-
     int eyeFlag;
     int mouthFlag;
     int noseFlag;
@@ -72,6 +59,18 @@ public class ImageProcessor extends Thread {
 
     private Bitmap bitmap;
     InputImage inputImage;
+
+    public ImageProcessor(VideoRepository rep){
+        videoRepository = rep;
+    }
+
+    public void init(String rtsp, String username, String password, Processor processor) {
+        this.processor = processor;
+        videoRepository.setParams(rtsp, username, password);
+        videoRepository.prepare();
+        imageBuffer = ImageBuffer.getInstance();
+    }
+
     private FaceDetectorOptions realTimeOpts = new FaceDetectorOptions.Builder()
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
             .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
@@ -241,7 +240,12 @@ public class ImageProcessor extends Thread {
                 inputImage = null;
             }
         }
+
         detector.close();
+        drawer = null;
+        bitmap.recycle();
+        inputImage = null;
+        videoRepository = null;
     }
 
 

@@ -1,11 +1,13 @@
 package com.barreloftea.driversupport.domain.processor;
 
+
 import android.content.Context;
 import android.util.Log;
 
+import com.barreloftea.driversupport.domain.R;
 import com.barreloftea.driversupport.domain.imageprocessor.service.ImageProcessor;
+import com.barreloftea.driversupport.domain.ledcontroller.service.LedController;
 import com.barreloftea.driversupport.domain.processor.common.Constants;
-import com.barreloftea.driversupport.domain.processor.common.ImageBuffer;
 import com.barreloftea.driversupport.domain.pulseprocessor.service.PulseProcessor;
 import com.barreloftea.driversupport.domain.soundcontroller.SoundController;
 import com.barreloftea.driversupport.domain.usecases.interfaces.SharedPrefRepository;
@@ -24,41 +26,56 @@ public class Processor extends Thread {
     private int stateBand = 0;
     public Context context;
 
+    private boolean isBandRequired;
+    private boolean isLedRequired;
+    private boolean isSoundRequired;
+
     @Inject
     public ImageProcessor imageProcessor;
 
     @Inject
     PulseProcessor pulseProcessor;
     @Inject
-    volatile SoundController soundController;
+    volatile SoundController alertSoundController;
+
+    @Inject
+    volatile SoundController warningSoundController;
 
     @Inject
     SharedPrefRepository sharedPrefRepository;
-    //private LedController ledController;
 
     @Inject
-    public Processor(ImageProcessor i, PulseProcessor p, SoundController s, SharedPrefRepository rep){
+    LedController ledController;
+
+    @Inject
+    public Processor(ImageProcessor i, PulseProcessor p, SoundController sa, SoundController sw, LedController controller, SharedPrefRepository rep){
         imageProcessor = i;
         imageProcessor.setName("image processor");
 
         pulseProcessor = p;
         pulseProcessor.setName("pulse processor");
 
-        soundController = s;
+        alertSoundController = sa;
+        warningSoundController = sw;
+
+        ledController = controller;
 
         sharedPrefRepository = rep;
     }
 
     public void init(Context context){
-        soundController.init(context);
         this.context = context;
 
-        //if ()
+        imageProcessor.init("rtsp://192.168.0.1:554/livestream/12", "", "", this);
+        warningSoundController.init(context, R.raw.notification);
+
+        isBandRequired = checkBandRequired();
+        isLedRequired = checkLedRequired();
+        isSoundRequired = checkSoundRequired();
     }
 
     public void stopAsync(){
         exitFlag.set(true);
-        //ImageBuffer.isProcessorRunning.set(false);
         Log.v("aaa", "processor thread is stopped");
         interrupt();
     }
@@ -68,26 +85,27 @@ public class Processor extends Thread {
     public void run() {
         Log.v(TAG, "processor thread started");
 
-        //imageProcessor.init(this);
-        //imageProcessor.start();
+        imageProcessor.start();
 
-        pulseProcessor.init("D7:71:B3:98:F8:57", this);
-        pulseProcessor.start();
-        //ImageBuffer.isProcessorRunning.set(true);
+        startPulseProcessor();
 
         while(!exitFlag.get()){
-            if (stateCam == Constants.AWAKE){
-                soundController.pause();
-            }
-            if (stateCam == Constants.SLEEPING) {
-                soundController.play();
+            if (stateCam == Constants.AWAKE && stateBand == Constants.AWAKE){
+                disableSignals();
+            } else if (stateCam == Constants.SLEEPING) {
+                enableAlertSignals();
+            } else {
+                enableWarningSignal();
             }
         }
 
-        //ImageBuffer.isProcessorRunning.set(false);
         if (imageProcessor!=null) imageProcessor.stopAsync();
-        if (soundController!=null) soundController.destroy();
+        if (alertSoundController !=null) alertSoundController.destroy();
+        if (warningSoundController !=null) warningSoundController.destroy();
         if (pulseProcessor !=null) pulseProcessor.stopAsync();
+
+        alertSoundController = null;
+        warningSoundController = null;
     }
 
     public synchronized void setCamState(int s){
@@ -99,21 +117,60 @@ public class Processor extends Thread {
     }
 
     boolean checkBandRequired(){
-        return sharedPrefRepository.getSavedBlueDevice(Constants.TYPE_BAND).isSaved();
+        boolean available = sharedPrefRepository.getSavedBlueDevice(Constants.TYPE_BAND).isSaved();
+        if (available) pulseProcessor.init("D7:71:B3:98:F8:57", this);
+        return available;
     }
 
     boolean checkLedRequired(){
         boolean connected = sharedPrefRepository.getSavedBlueDevice(Constants.TYPE_LED).isSaved();
-        boolean required = sharedPrefRepository.getAreSignalsOn().get(Constants.IS_LED_SIGNAL_ON);
-
-        return (connected && required);
+        boolean required = sharedPrefRepository.getIsSignalOn(Constants.IS_LED_SIGNAL_ON);
+        boolean available = (connected && required);
+        if (available) ledController.init();
+        return available;
     }
 
     boolean checkSoundRequired(){
-        return sharedPrefRepository.getAreSignalsOn().get(Constants.IS_SOUND_SIGNAL_ON);
+        boolean available = sharedPrefRepository.getIsSignalOn(Constants.IS_SOUND_SIGNAL_ON);
+        if (available) alertSoundController.init(context);
+        return available;
+    }
+
+    private void startPulseProcessor(){
+        if (isBandRequired) pulseProcessor.start();
+    }
+
+    private void enableAlertSignals(){
+        if (isSoundRequired) alertSoundController.play();
+        if (isLedRequired) ledController.sendOnCmd();
+    }
+
+    private void disableSignals(){
+        if (isSoundRequired) alertSoundController.pause();
+        if (isLedRequired) ledController.sendOffCmd();
+        warningSoundController.pause();
+    }
+
+    private void enableWarningSignal(){
+        warningSoundController.play();
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //    @Inject

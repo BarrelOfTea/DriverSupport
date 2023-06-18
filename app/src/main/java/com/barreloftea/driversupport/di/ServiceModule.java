@@ -32,41 +32,46 @@ import dagger.hilt.components.SingletonComponent;
 @InstallIn(SingletonComponent.class)
 public class ServiceModule {
 
+    //TODO i am not sure yet whether to make it singleton or not
+
     @Provides
-    @Singleton
-    //TODO i am not sure yet whether to make it a singleton or not
+    //@Singleton
     public static ImageProcessor provideImageProcessor(VideoRepository rep){
         return new ImageProcessor(rep);
     }
 
 
     @Provides
-    @Singleton
-    public static Processor provideProcessor(ImageProcessor imageProcessor, PulseProcessor pulseProcessor, SoundController soundController, SharedPrefRepository sharedPrefRepository){
-        return new Processor(imageProcessor, pulseProcessor, soundController, sharedPrefRepository);
+    //@Singleton
+    public static Processor provideProcessor(ImageProcessor imageProcessor,
+                                             PulseProcessor pulseProcessor,
+                                             SoundController soundAlertController,
+                                             SoundController soundWarningController,
+                                             LedController controller,
+                                             SharedPrefRepository sharedPrefRepository){
+        return new Processor(imageProcessor, pulseProcessor, soundAlertController, soundWarningController, controller, sharedPrefRepository);
     }
 
 
     @Provides
-    @Singleton
+    //@Singleton
     public static PulseProcessor providePulseProcessor(BluetoothRepository blueRep, PulseRepository pulseRep){
         return new PulseProcessor(blueRep, pulseRep);
     }
 
     @Provides
-    @Singleton
+    //@Singleton
     public static LedController provideLedController(LedRepository ledRepository){
         return new LedController(ledRepository);
     }
     @Provides
-    @Singleton
-    //TODO i am not sure yet whether to make it a singleton or not
+    //@Singleton
     public static VideoRepository provideVideoRepository(RtspSurfaceView view){
         return new VideoRepositoryImpl(view);
     }
 
     @Provides
-    @Singleton
+    //@Singleton
     public static RtspSurfaceView provideRtspSurfaceView(){
         return new RtspSurfaceView();
     }
@@ -78,5 +83,4 @@ public class ServiceModule {
         return new SoundController(repository);
     }
 
-    //TODO MANAGE DIFFERENT MODULES TO INITIALIZE CLASSES
 }

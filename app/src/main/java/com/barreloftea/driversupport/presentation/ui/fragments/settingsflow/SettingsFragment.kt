@@ -1,11 +1,14 @@
 package com.barreloftea.driversupport.presentation.ui.fragments.settingsflow
 
+import android.app.ActivityManager
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -13,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.databinding.FragmentSettingsBinding
 import com.barreloftea.driversupport.presentation.navutils.navigateSafely
+import com.barreloftea.driversupport.presentation.service.DriverSupportService
 import dagger.hilt.android.AndroidEntryPoint
 
 

@@ -92,9 +92,14 @@ public class PulseProcessor extends Thread {
 
     @Override
     public void run(){
+        Log.v(TAG, "pulse thread started");
         connect();
         while(!exitFlag.get()){
 
         }
+        band = null;
+        pulseRepository = null;
+        bluetoothRepository = null;
+        exitFlag = null;
     }
 }

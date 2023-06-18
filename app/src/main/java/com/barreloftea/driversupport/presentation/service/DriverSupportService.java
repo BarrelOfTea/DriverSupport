@@ -73,8 +73,10 @@ public class DriverSupportService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "service is destroyed");
-        super.onDestroy();
         if (processor!=null) processor.stopAsync();
+        Intent intent = new Intent(Constants.SERVICE_DESTROYED_ACTION);
+        sendBroadcast(intent);
+        super.onDestroy();
     }
 
     @Nullable

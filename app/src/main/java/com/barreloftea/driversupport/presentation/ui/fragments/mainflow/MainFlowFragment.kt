@@ -1,8 +1,10 @@
 package com.barreloftea.driversupport.presentation.ui.fragments.mainflow
 
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -12,12 +14,14 @@ import android.view.LayoutInflater
 import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
 import com.barreloftea.driversupport.domain.imageprocessor.interfaces.FrameListener
+import com.barreloftea.driversupport.domain.processor.common.Constants
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +34,9 @@ class MainFlowFragment: Fragment(),
 
     private val TAG = MainFlowFragment::class.java.simpleName
 
-    private var startNewService = false
+    //when newServiceState is 0-no need to start 1-need to start 2 - already started
+    private var newServiceRequired = false
+    private var isReceiverRegistered = false
     private lateinit var binding : FlowFragmentMainBinding
     private val viewModel : MainViewModel by viewModels()
     private lateinit var imageBuffer: ImageBuffer
@@ -44,20 +50,27 @@ class MainFlowFragment: Fragment(),
             driverSupportService = binder.service
             isBound = true
         }
-
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
         }
-
     }
 
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (newServiceRequired){
+                val newServiceIntent = Intent(requireActivity(), DriverSupportService::class.java)
+                ContextCompat.startForegroundService(requireActivity(), newServiceIntent)
+                newServiceRequired=false
+            }
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let{
-            if (requireArguments().getBoolean("startnew")) startNewService = true
+            if (requireArguments().getBoolean("startnew")) newServiceRequired = true
         }
 
         viewModel.soundSignalOnLD.observe(this){isOn ->
@@ -102,12 +115,18 @@ class MainFlowFragment: Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (startNewService) {
+        if (newServiceRequired && !isBound) {
             val serviceIntent = Intent(requireActivity(), DriverSupportService::class.java)
-
             ContextCompat.startForegroundService(requireActivity(), serviceIntent)
+            requireActivity().bindService(serviceIntent, dsConnection, Context.BIND_AUTO_CREATE)
 
-            startNewService=false
+            newServiceRequired=false
+        } else if (newServiceRequired && isBound){
+            val filter = IntentFilter(Constants.SERVICE_DESTROYED_ACTION)
+            requireActivity().registerReceiver(receiver, filter)
+            isReceiverRegistered = true
+            val serviceIntent = Intent(requireActivity(), DriverSupportService::class.java)
+            requireActivity().stopService(serviceIntent)
         }
 
         Intent(requireActivity(), DriverSupportService::class.java).also {intent->
@@ -130,9 +149,13 @@ class MainFlowFragment: Fragment(),
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         imageBuffer.unsetFrameListener()
+        if (isReceiverRegistered) {
+            requireActivity().unregisterReceiver(receiver)
+            isReceiverRegistered = false
+        }
         Log.v("aaa", "mainfragment is destroyed");
+        super.onDestroy()
     }
 
     override fun onFrame(bitmap: Bitmap?) {
@@ -146,7 +169,22 @@ class MainFlowFragment: Fragment(),
     }
 
 
-    //TODO change to a single function with view, and state as params
+
+    fun setPrediction(viewButton: Button, isAwake: Boolean){
+        if (isAwake){
+            viewButton.text = R.string.awake.toString()
+            viewButton.setBackgroundResource(R.color.grass_green)
+        } else {
+            viewButton.text = R.string.sleeping.toString()
+            viewButton.setBackgroundResource(R.color.red)
+        }
+    }
+
+}
+
+
+/*
+
     fun setCameraPredictionSleeping(){
         binding.tvMainCameraPrediction.text = R.string.sleeping.toString()
         binding.tvMainCameraPrediction.setBackgroundResource(R.color.red)
@@ -177,8 +215,7 @@ class MainFlowFragment: Fragment(),
         binding.tvMainState.setBackgroundResource(R.color.grass_green)
     }
 
-}
-
+ */
 
 
 /*Thread{

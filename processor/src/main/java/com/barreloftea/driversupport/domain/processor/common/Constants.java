@@ -44,7 +44,7 @@ public class Constants {
 
 
     //broadcasting
-    public static final String UPDATE_EOP_ACTION = "com.barreloftea.driversupport.UPDATE_EOP_ACTION";
+    public static final String SERVICE_DESTROYED_ACTION = "com.barreloftea.driversupport.SERVICE_DESTROYED_ACTION";
 
 
     //processor

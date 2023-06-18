@@ -20,4 +20,8 @@ public class LedController {
 
     }
 
+    public void init(){
+        //TODO
+    }
+
 }
