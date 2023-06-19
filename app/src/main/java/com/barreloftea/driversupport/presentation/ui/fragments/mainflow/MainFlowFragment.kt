@@ -118,15 +118,15 @@ class MainFlowFragment: Fragment(),
         super.onViewCreated(view, savedInstanceState)
 
         //TODO
-        if (newServiceRequired && !isBound) {
+        if (newServiceRequired) {
             val serviceIntent = Intent(requireActivity(), DriverSupportService::class.java)
             ContextCompat.startForegroundService(requireActivity(), serviceIntent)
-            requireActivity().bindService(serviceIntent, dsConnection, Context.BIND_AUTO_CREATE)
+            //requireActivity().bindService(serviceIntent, dsConnection, Context.BIND_AUTO_CREATE)
 
             newServiceRequired=false
 
             Log.v(TAG, "NEW SERVICE IS CREATED")
-        } else if (newServiceRequired && isBound){
+        } /*else if (newServiceRequired && isBound){
             val filter = IntentFilter(Constants.SERVICE_DESTROYED_ACTION)
             requireActivity().registerReceiver(receiver, filter)
             isReceiverRegistered = true
@@ -134,7 +134,7 @@ class MainFlowFragment: Fragment(),
             requireActivity().stopService(serviceIntent)
 
             Log.v(TAG, "DESTROYING SERVICE TO RESTART")
-        }
+        }*/
 
         Intent(requireActivity(), DriverSupportService::class.java).also {intent->
             requireActivity().bindService(intent, dsConnection, Context.BIND_AUTO_CREATE)
@@ -151,17 +151,20 @@ class MainFlowFragment: Fragment(),
 
     override fun onStop() {
         super.onStop()
-        Intent(requireActivity(), DriverSupportService::class.java).also { intent ->
-            requireActivity().unbindService(dsConnection)
+        if (isBound) {
+            Intent(requireActivity(), DriverSupportService::class.java).also { intent ->
+                requireActivity().unbindService(dsConnection)
+            }
+            isBound = false
         }
     }
 
     override fun onDestroy() {
-        imageBuffer.unsetFrameListener()
+        /*imageBuffer.unsetFrameListener()
         if (isReceiverRegistered) {
             requireActivity().unregisterReceiver(receiver)
             isReceiverRegistered = false
-        }
+        }*/
         Log.v("aaa", "mainfragment is destroyed");
         super.onDestroy()
     }

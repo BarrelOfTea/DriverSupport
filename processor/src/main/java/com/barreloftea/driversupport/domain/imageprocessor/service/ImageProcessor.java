@@ -20,6 +20,7 @@ import com.google.mlkit.vision.face.FaceDetectorOptions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -130,15 +131,15 @@ public class ImageProcessor extends Thread {
                                         float rotZ = face.getHeadEulerAngleZ();  // Counter-clockwise to the camera
                                         float rotX = face.getHeadEulerAngleX();  // Upward
 
-                                        List<PointF> leftEyeContour = face.getContour(FaceContour.LEFT_EYE).getPoints();
+                                        List<PointF> leftEyeContour = Objects.requireNonNull(face.getContour(FaceContour.LEFT_EYE)).getPoints();
                                         //bitmap = drawer.drawContours(bitmap, leftEyeContour);
-                                        List<PointF> rightEyeContour = face.getContour(FaceContour.RIGHT_EYE).getPoints();
+                                        List<PointF> rightEyeContour = Objects.requireNonNull(face.getContour(FaceContour.RIGHT_EYE)).getPoints();
                                         bitmap = drawer.drawContours(bitmap, rightEyeContour);
-                                        List<PointF> upperLipCon = face.getContour(FaceContour.UPPER_LIP_TOP).getPoints();
+                                        List<PointF> upperLipCon = Objects.requireNonNull(face.getContour(FaceContour.UPPER_LIP_TOP)).getPoints();
                                         bitmap = drawer.drawContours(bitmap, upperLipCon);
-                                        List<PointF> lowerLipCon = face.getContour(FaceContour.LOWER_LIP_BOTTOM).getPoints();
+                                        List<PointF> lowerLipCon = Objects.requireNonNull(face.getContour(FaceContour.LOWER_LIP_BOTTOM)).getPoints();
                                         bitmap = drawer.drawContours(bitmap, lowerLipCon);
-                                        List<PointF> noseCon = face.getContour(FaceContour.NOSE_BRIDGE).getPoints();
+                                        List<PointF> noseCon = Objects.requireNonNull(face.getContour(FaceContour.NOSE_BRIDGE)).getPoints();
                                         bitmap = drawer.drawContours(bitmap, noseCon);
 
 
