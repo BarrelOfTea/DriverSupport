@@ -10,7 +10,7 @@ import com.barreloftea.driversupport.domain.imageprocessor.utils.DrawContours;
 import com.barreloftea.driversupport.domain.processor.Processor;
 import com.barreloftea.driversupport.domain.processor.common.Constants;
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer;
-import com.google.android.gms.tasks.Task;
+import com.barreloftea.driversupport.domain.usecases.interfaces.SharedPrefRepository;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceContour;
@@ -18,16 +18,11 @@ import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ImageProcessor extends Thread {
 
@@ -35,33 +30,38 @@ public class ImageProcessor extends Thread {
 
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
     VideoRepository videoRepository;
+    SharedPrefRepository sharedPrefRepository;
     ArrayBlockingQueue<Bitmap> queue;
     ImageBuffer imageBuffer;
     Processor processor;
-    int eyeFlag;
-    int mouthFlag;
-    int noseFlag;
-    int notBlinkFlag;
-    volatile boolean isBusy = false;
-    static final int EYE_THRESH = 4;
-    static final int MOUTH_THRESH = 18;
-    static final int NO_BLINK_TH = 80;
-    static final float ROUND = 0.6f;
 
-    public float EOP_ = 0.5f;
-    public float MOR_ = 0.5f;
-    public float NL_ = 0.5f;
+    volatile boolean isBusy = false;
+
+    //these thresholds will be measured in milliseconds
+    static final int CLOSED_THRESH = 2500;
+    static final int MOUTH_OPEN_THRESH = 4000;
+    static final int OPEN_THRESH = 12000;
+    static final float ROUND = 0.9f;
+
+    public float EOP;
+    public float MOR;
+    public int EULER_X;
+    public int EULER_Z;
+
     private float lastEOP;
     private float lastMOR;
-    private float lastNL;
+    long closedEyesTime;
+    long mouthOpenTime;
+    long notBlinkTime;
 
     private DrawContours drawer = new DrawContours();
 
     private Bitmap bitmap;
     InputImage inputImage;
 
-    public ImageProcessor(VideoRepository rep){
+    public ImageProcessor(VideoRepository rep, SharedPrefRepository prefRepository){
         videoRepository = rep;
+        sharedPrefRepository = prefRepository;
     }
 
     public void init(String rtsp, String username, String password, Processor processor) {
@@ -69,13 +69,18 @@ public class ImageProcessor extends Thread {
         videoRepository.setParams(rtsp, username, password);
         videoRepository.prepare();
         imageBuffer = ImageBuffer.getInstance();
+
+        EOP = sharedPrefRepository.getEOP();
+        MOR = sharedPrefRepository.getMOR();
+        EULER_X = sharedPrefRepository.getEulerX();
+        EULER_Z = sharedPrefRepository.getEulerZ();
     }
 
     private FaceDetectorOptions realTimeOpts = new FaceDetectorOptions.Builder()
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
             .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
-             .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
-            //.setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+            //.setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+            .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
             .build();
     private FaceDetector detector = FaceDetection.getClient(realTimeOpts);
 
@@ -92,33 +97,21 @@ public class ImageProcessor extends Thread {
         queue = videoRepository.getVideoQueue();
         Log.v(TAG, "camera thread started");
 
+        AtomicLong closedStartTime = new AtomicLong(System.currentTimeMillis());
+        AtomicLong openStartTime = new AtomicLong(System.currentTimeMillis());
+
         while(!exitFlag.get()){
-            //ByteBuffer byteBuffer; //NOTICE you can change overload of method here too
-            //Image image;
-            //ImageByteData ibd = null;
-            //InputImage inputImage = null;
+
             try {
-                //byteBuffer = queue.take();
                 bitmap = queue.take();
                 Log.v(TAG, "image is taken from queue");
-                //Log.v(TAG, String.valueOf(bitmap.getByteCount()));
             } catch (InterruptedException e) {
-                //throw new RuntimeException(e);
                 Log.v(TAG, "no bitmap available in queue");
             }
-            /*InputImage inputImage = InputImage.fromByteBuffer(
-                    byteBuffer,1280, 720, 0,
-                    InputImage.IMAGE_FORMAT_NV21 // or IMAGE_FORMAT_YV12
-            );
-            bitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
-            bitmap.copyPixelsFromBuffer(byteBuffer);*/
 
+            long startTime = System.nanoTime();
 
             inputImage = InputImage.fromBitmap(bitmap, 0);
-            //InputImage inputImage = InputImage.fromByteArray(ibd.getBytes(), ibd.getWidth(), ibd.getHeight(), ibd.getRotationDegrees(), ibd.getFormat());
-
-            //bitmap = inputImage.getBitmapInternal();
-            long startTime = System.nanoTime();
 
             if (!isBusy) {
                 isBusy = true;
@@ -153,66 +146,51 @@ public class ImageProcessor extends Thread {
                                         float LEOP = getOneEOP(leftEyeContour);
 
 
-                                        notBlinkFlag++;
+                                        notBlinkTime++;
 
                                         lastEOP = (LEOP + REOP) / 2;
 
                                         Log.v(TAG, "last eop is" + lastEOP);
 
-                                        if ((LEOP + REOP) / 2 < EOP_) {
-                                            eyeFlag++;
-                                            notBlinkFlag = 0;
+                                        if (lastEOP < EOP) {
+                                            closedEyesTime = System.currentTimeMillis() - closedStartTime.get();;
+                                            notBlinkTime = 0;
+                                            openStartTime.set(System.currentTimeMillis());
                                             Log.v(null, "you blinked");
                                         } else {
-                                            eyeFlag = 0;
+                                            closedStartTime.set(System.currentTimeMillis());
+                                            closedEyesTime = 0;
+                                            closedEyesTime = System.currentTimeMillis() - closedStartTime.get();
                                         }
 
-                                        if (eyeFlag >= EYE_THRESH) {
+                                        if (closedEyesTime >= CLOSED_THRESH) {
                                             processor.setCamState(Constants.SLEEPING);
                                             Log.v(null, "REASON closed eyes");
                                         }
-                                        if (notBlinkFlag > NO_BLINK_TH) {
-                                            //processor.setCamState(Processor.DROWSY);
+                                        if (notBlinkTime > OPEN_THRESH) {
+                                            processor.setCamState(Constants.SLEEPING);
                                             Log.v(null, "REASON always open eyes");
                                         }
 
+                                        float mor = getMOR(upperLipCon, lowerLipCon);
+                                        lastMOR = mor;
 
-                                            /*float MOR = getMOR(upperLipCon, lowerLipCon);
-                                            lastMOR = MOR;
+                                        /*if (mor > MOR) mouthFlag++;
+                                        else {
+                                            mouthFlag = 0;
+                                        }
+                                        Log.v(null, "mouthflag is "+mouthFlag+" with mor "+MOR);
+                                        if (mouthFlag>=MOUTH_THRESH){
+                                            processor.setCamState(Processor.DROWSY);
+                                            Log.v(null, "REASON yawn");
+                                        }*/
 
-                                            if (MOR > MOR_) mouthFlag++;
-                                            else {
-                                                mouthFlag = 0;
-                                            }
-                                            Log.v(null, "mouthflag is "+mouthFlag+" with mor "+MOR);
-                                            if (mouthFlag>=MOUTH_THRESH){
-                                                processor.setCamState(Processor.DROWSY);
-                                                Log.v(null, "REASON yawn");
-                                            }*/
+                                        if (closedEyesTime < CLOSED_THRESH && notBlinkTime < OPEN_THRESH/*&& mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH*/) {
 
-                                        if (eyeFlag < EYE_THRESH /*&& mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH*/) {
-
-//                                                new Thread(new Runnable() {
-//                                                    @Override
-//                                                    public void run() {
                                             Log.v(null, "awake again");
                                             processor.setCamState(Constants.AWAKE);
-//                                                    }
-//                                                }).start();
+
                                         }
-
-                                            /*float nl = getNL(noseCon);
-                                            lastNL = nl;
-
-                                            if (nl < NL_) noseFlag++;
-                                            else {
-                                                noseFlag = 0;
-                                            }
-                                            Log.v(null, "nose flag is "+noseFlag+" with nose length "+nl);
-                                            if (noseFlag >= EYE_THRESH){
-                                                processor.setCamState(Processor.SLEEPING);
-                                                Log.v(null, "REASON dosed off");
-                                            }*/
 
                                         //log(LEOP, REOP, MOR, rotY, rotZ, nl);
 
@@ -225,9 +203,7 @@ public class ImageProcessor extends Thread {
                                 e -> Log.v(TAG, "IMAGE PROCESSING FAILED" + Arrays.toString(e.getStackTrace()) + e.getMessage()))
                         .addOnCompleteListener(
                                 task -> {
-                                    //imageBuffer.imageQueue.offer(bitmap);
-                                    Log.v(TAG, "IMGAE IS PROCESSED SUCCESSFULLY");
-                                    //image.close();
+                                    Log.v(TAG, "IMAGE IS PROCESSED SUCCESSFULLY");
                                     long endTime = System.nanoTime();
                                     long timePassed = endTime - startTime;
                                     Log.v(null, "Execution time in milliseconds: " + timePassed / 1000000);
@@ -263,36 +239,6 @@ public class ImageProcessor extends Thread {
 
 
         return ver/hor;
-
-        /*
-        PointF upper = new PointF(0,0);
-        PointF lower= new PointF(0,0);
-        //these are points for calculating width of a mouth
-        PointF leftCorner = new PointF(0,0);
-        PointF rightCorner = new PointF(0,0);
-
-        boolean mouthOpen = false;
-
-        for (int i = 0; i < 8; i++){
-            if (i==0){
-                leftCorner = ul.iterator().next();
-            }
-            if (i==4) {
-                upper = ul.iterator().next();
-                lower = ll.iterator().next();
-            }
-            if (i==8){
-                rightCorner = ul.iterator().next();
-            }
-        }
-
-        float mouthDistVert = (float) Math.sqrt((upper.x - lower.x) * (upper.x - lower.x) + (upper.y - lower.y) * (upper.y - lower.y));
-        float mouthDistHor = (float) Math.sqrt(Math.pow(leftCorner.x - rightCorner.x, 2) + Math.pow(leftCorner.y - rightCorner.y, 2));
-        float MOR = mouthDistVert/mouthDistHor;
-
-        Log.v(null, "calculated MOR is "+ MOR);
-        return MOR;
-           */
     }
 
     //re = right eye, ru = right upper
@@ -304,27 +250,26 @@ public class ImageProcessor extends Thread {
         float rVer = (float) Math.sqrt(Math.pow(points[4].x - points[12].x, 2) + Math.pow(points[4].y - points[12].y, 2));
         float rHor = (float) Math.sqrt(Math.pow(points[0].x - points[8].x, 2) + Math.pow(points[0].y - points[8].y, 2));
 
-
         return rVer/rHor;
-
     }
 
+    public void onEOPupdate(){
+        EOP = lastEOP * ROUND;
+        sharedPrefRepository.saveEOP(EOP);
+        Log.v(TAG, "new eop is set to" + EOP);
+        MOR = lastMOR;
+        Log.v(TAG, "new mor is set to" + MOR);
+        sharedPrefRepository.saveMOR(MOR);
+    }
+
+}
+
+
+/*
     float getNL(List<PointF> contour){
         PointF [] points = new PointF[contour.size()];
         contour.toArray(points);
 
-        float nl = (float) Math.sqrt(Math.pow(points[0].x - points[1].x, 2) + Math.pow(points[0].y - points[1].y, 2));
-
-        return nl;
+        return (float) Math.sqrt(Math.pow(points[0].x - points[1].x, 2) + Math.pow(points[0].y - points[1].y, 2));
     }
-
-    public void onEOPupdate(){
-        EOP_ = lastEOP;
-        Log.v(TAG, "new eop is set to" + EOP_);
-        MOR_ = lastMOR;
-        Log.v(TAG, "new eop is set to" + MOR_);
-        NL_ = lastNL;
-        Log.v(TAG, "new eop is set to" + NL_);
-    }
-
-}
+ */

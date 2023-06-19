@@ -160,4 +160,53 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
     }
 
 
+    @Override
+    public int getAverPulse() {
+        return sharedPreferences.getInt(Constants.PULSE, 75);
+    }
+
+    @Override
+    public float getEOP() {
+        return sharedPreferences.getFloat(Constants.EOP, 0.4f);
+    }
+
+    @Override
+    public float getMOR() {
+        return sharedPreferences.getFloat(Constants.MOR, 0.4f);
+    }
+
+    @Override
+    public int getEulerX() {
+        return sharedPreferences.getInt(Constants.EULER_X, 15);
+    }
+
+    @Override
+    public int getEulerZ() {
+        return sharedPreferences.getInt(Constants.EULER_Z, 25);
+    }
+
+    @Override
+    public void saveAverPulse(int pulse) {
+        sharedPreferences.edit().putInt(Constants.PULSE, pulse).apply();
+    }
+
+    @Override
+    public void saveEOP(float eop) {
+        sharedPreferences.edit().putFloat(Constants.EOP, eop).apply();
+    }
+
+    @Override
+    public void saveMOR(float mor) {
+        sharedPreferences.edit().putFloat(Constants.MOR, mor).apply();
+    }
+
+    @Override
+    public void saveEulerX(int eulerx) {
+        sharedPreferences.edit().putInt(Constants.EULER_X, eulerx).apply();
+    }
+
+    @Override
+    public void saveEulerZ(int eulerz) {
+        sharedPreferences.edit().putInt(Constants.EULER_Z, eulerz).apply();
+    }
 }

@@ -23,6 +23,7 @@ import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
 import com.barreloftea.driversupport.domain.imageprocessor.interfaces.FrameListener
 import com.barreloftea.driversupport.domain.processor.common.Constants
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer
+import com.barreloftea.driversupport.domain.processor.interfaces.PulseListener
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,7 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainFlowFragment: Fragment(),
-    FrameListener {
+    FrameListener, PulseListener {
 
     private val TAG = MainFlowFragment::class.java.simpleName
 
@@ -61,6 +62,7 @@ class MainFlowFragment: Fragment(),
                 val newServiceIntent = Intent(requireActivity(), DriverSupportService::class.java)
                 ContextCompat.startForegroundService(requireActivity(), newServiceIntent)
                 newServiceRequired=false
+                Log.v(TAG, "RESTARTED SERVICE AFTER DESTROYING")
             }
         }
     }
@@ -115,22 +117,28 @@ class MainFlowFragment: Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //TODO
         if (newServiceRequired && !isBound) {
             val serviceIntent = Intent(requireActivity(), DriverSupportService::class.java)
             ContextCompat.startForegroundService(requireActivity(), serviceIntent)
             requireActivity().bindService(serviceIntent, dsConnection, Context.BIND_AUTO_CREATE)
 
             newServiceRequired=false
+
+            Log.v(TAG, "NEW SERVICE IS CREATED")
         } else if (newServiceRequired && isBound){
             val filter = IntentFilter(Constants.SERVICE_DESTROYED_ACTION)
             requireActivity().registerReceiver(receiver, filter)
             isReceiverRegistered = true
             val serviceIntent = Intent(requireActivity(), DriverSupportService::class.java)
             requireActivity().stopService(serviceIntent)
+
+            Log.v(TAG, "DESTROYING SERVICE TO RESTART")
         }
 
         Intent(requireActivity(), DriverSupportService::class.java).also {intent->
             requireActivity().bindService(intent, dsConnection, Context.BIND_AUTO_CREATE)
+            Log.v(TAG, "BOUND TO SERVICE")
         }
     }
 
@@ -178,6 +186,10 @@ class MainFlowFragment: Fragment(),
             viewButton.text = R.string.sleeping.toString()
             viewButton.setBackgroundResource(R.color.red)
         }
+    }
+
+    override fun onPulseReceived(pulse: Int) {
+        binding.tvMainPulse.text = pulse.toString()
     }
 
 }

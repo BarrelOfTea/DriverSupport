@@ -37,12 +37,8 @@ public class DriverSupportService extends Service {
 
     public static final String TAG = DriverSupportService.class.getSimpleName();
 
-    public MutableLiveData<Integer> cameraStateSleepingLD = new MutableLiveData<>(Constants.AWAKE);
-    public MutableLiveData<Integer> bandStateSleepingLD = new MutableLiveData<>(Constants.AWAKE);
-
-
     @Inject
-    Processor processor;
+    public Processor processor;
 
 
     @Override

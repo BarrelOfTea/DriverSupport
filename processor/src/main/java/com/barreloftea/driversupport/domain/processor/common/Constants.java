@@ -48,8 +48,18 @@ public class Constants {
 
 
     //processor
-
     public static final int AWAKE = 0;
     public static final int DROWSY = 1;
     public static final int SLEEPING = 2;
+
+
+    //image processor
+    public static final String EOP = "eop";
+    public static final String MOR = "mor";
+    public static final String EULER_X = "euler_x";
+    public static final String EULER_Z = "euler_z";
+
+
+    //pulse processor
+    public static final String PULSE = "pulse";
 }

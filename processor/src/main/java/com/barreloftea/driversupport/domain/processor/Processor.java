@@ -3,10 +3,13 @@ package com.barreloftea.driversupport.domain.processor;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.barreloftea.driversupport.domain.R;
 import com.barreloftea.driversupport.domain.imageprocessor.service.ImageProcessor;
 import com.barreloftea.driversupport.domain.ledcontroller.service.LedController;
+import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
+import com.barreloftea.driversupport.domain.models.WiFiDeviceM;
 import com.barreloftea.driversupport.domain.processor.common.Constants;
 import com.barreloftea.driversupport.domain.pulseprocessor.service.PulseProcessor;
 import com.barreloftea.driversupport.domain.soundcontroller.SoundController;
@@ -32,18 +35,14 @@ public class Processor extends Thread {
 
     @Inject
     public ImageProcessor imageProcessor;
-
     @Inject
     PulseProcessor pulseProcessor;
     @Inject
     volatile SoundController alertSoundController;
-
     @Inject
     volatile SoundController warningSoundController;
-
     @Inject
     SharedPrefRepository sharedPrefRepository;
-
     @Inject
     LedController ledController;
 
@@ -66,7 +65,7 @@ public class Processor extends Thread {
     public void init(Context context){
         this.context = context;
 
-        imageProcessor.init("rtsp://192.168.0.1:554/livestream/12", "", "", this);
+        initCamera();
         warningSoundController.init(context, R.raw.notification);
 
         isBandRequired = checkBandRequired();
@@ -116,18 +115,28 @@ public class Processor extends Thread {
         this.stateBand = s;
     }
 
+    private void initCamera(){
+        WiFiDeviceM cameraHotspot = sharedPrefRepository.getSavedWifiDevice();
+        if (!cameraHotspot.getRtsp_link().equals(""))
+            imageProcessor.init(cameraHotspot.getRtsp_link(), cameraHotspot.getUsername(), cameraHotspot.getPassword(), this);
+        else
+            Toast.makeText(context, "The camera is not set up", Toast.LENGTH_SHORT).show(); //NOTICE as you check this param at the Devices this will never be called
+    }
+
     boolean checkBandRequired(){
-        boolean available = sharedPrefRepository.getSavedBlueDevice(Constants.TYPE_BAND).isSaved();
-        if (available) pulseProcessor.init("D7:71:B3:98:F8:57", this);
-        return available;
+        BluetoothDeviceM bandDevice = sharedPrefRepository.getSavedBlueDevice(Constants.TYPE_BAND);
+        boolean connected = bandDevice.isSaved();
+        if (connected) pulseProcessor.init(bandDevice.getAddress(), this);
+        return connected;
     }
 
     boolean checkLedRequired(){
-        boolean connected = sharedPrefRepository.getSavedBlueDevice(Constants.TYPE_LED).isSaved();
-        boolean required = sharedPrefRepository.getIsSignalOn(Constants.IS_LED_SIGNAL_ON);
-        boolean available = (connected && required);
-        if (available) ledController.init();
-        return available;
+        BluetoothDeviceM ledDevice = sharedPrefRepository.getSavedBlueDevice(Constants.TYPE_LED);
+        boolean connected = ledDevice.isSaved();
+        boolean preferred = sharedPrefRepository.getIsSignalOn(Constants.IS_LED_SIGNAL_ON);
+        boolean required = (connected && preferred);
+        if (required) ledController.init(ledDevice.getAddress());
+        return required;
     }
 
     boolean checkSoundRequired(){

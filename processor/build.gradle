@@ -37,11 +37,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
-
     //implementation 'org.tensorflow:tensorflow-lite-task-vision-play-services:0.4.2'
     //implementation 'com.google.android.gms:play-services-tflite-gpu:16.1.0'
-    //TODO return tglite dependency
-
+    //TODO return tflite dependency
 
     implementation 'com.google.android.gms:play-services-mlkit-face-detection:17.1.0'
     implementation 'com.google.mlkit:vision-common:17.3.0'

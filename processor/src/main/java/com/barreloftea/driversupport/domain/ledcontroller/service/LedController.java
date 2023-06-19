@@ -20,7 +20,7 @@ public class LedController {
 
     }
 
-    public void init(){
+    public void init(String address){
         //TODO
     }
 

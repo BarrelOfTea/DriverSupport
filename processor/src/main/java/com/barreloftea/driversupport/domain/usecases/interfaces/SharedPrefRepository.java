@@ -24,4 +24,16 @@ public interface SharedPrefRepository {
 
     boolean getIsSignalOn(String signalName);
     void setSignalOn(String signal, boolean isSignalOn);
+
+    int getAverPulse();
+    float getEOP();
+    float getMOR();
+    int getEulerX();
+    int getEulerZ();
+
+    void saveAverPulse(int pulse);
+    void saveEOP(float eop);
+    void saveMOR(float mor);
+    void saveEulerX(int eulerx);
+    void saveEulerZ(int eulerz);
 }

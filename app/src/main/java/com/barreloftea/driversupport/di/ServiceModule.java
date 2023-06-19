@@ -36,8 +36,8 @@ public class ServiceModule {
 
     @Provides
     //@Singleton
-    public static ImageProcessor provideImageProcessor(VideoRepository rep){
-        return new ImageProcessor(rep);
+    public static ImageProcessor provideImageProcessor(VideoRepository rep, SharedPrefRepository prefRepository){
+        return new ImageProcessor(rep, prefRepository);
     }
 
 
