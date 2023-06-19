@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -21,9 +22,9 @@ import androidx.fragment.app.viewModels
 import com.barreloftea.driversupport.R
 import com.barreloftea.driversupport.databinding.FlowFragmentMainBinding
 import com.barreloftea.driversupport.domain.imageprocessor.interfaces.FrameListener
-import com.barreloftea.driversupport.domain.processor.common.Constants
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer
 import com.barreloftea.driversupport.domain.processor.interfaces.PulseListener
+import com.barreloftea.driversupport.domain.processor.interfaces.StateListener
 import com.barreloftea.driversupport.presentation.service.DriverSupportService
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,7 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainFlowFragment: Fragment(),
-    FrameListener, PulseListener {
+    FrameListener, PulseListener, StateListener {
 
     private val TAG = MainFlowFragment::class.java.simpleName
 
@@ -49,6 +50,7 @@ class MainFlowFragment: Fragment(),
         override fun onServiceConnected(name: ComponentName?, b: IBinder?) {
             val binder = b as DriverSupportService.DriverSupportBinder
             driverSupportService = binder.service
+            driverSupportService.startService(this@MainFlowFragment, this@MainFlowFragment)
             isBound = true
         }
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -138,6 +140,7 @@ class MainFlowFragment: Fragment(),
 
         Intent(requireActivity(), DriverSupportService::class.java).also {intent->
             requireActivity().bindService(intent, dsConnection, Context.BIND_AUTO_CREATE)
+
             Log.v(TAG, "BOUND TO SERVICE")
         }
     }
@@ -181,18 +184,28 @@ class MainFlowFragment: Fragment(),
 
 
 
-    fun setPrediction(viewButton: Button, isAwake: Boolean){
+    private fun setPrediction(viewButton: Button, isAwake: Boolean){
         if (isAwake){
-            viewButton.text = R.string.awake.toString()
-            viewButton.setBackgroundResource(R.color.grass_green)
+            viewButton.text = getString(R.string.awake)
+            viewButton.setBackgroundColor(Color.GREEN)
         } else {
-            viewButton.text = R.string.sleeping.toString()
-            viewButton.setBackgroundResource(R.color.red)
+            viewButton.text = getString(R.string.sleeping)
+            viewButton.setBackgroundColor(Color.RED)
         }
     }
 
     override fun onPulseReceived(pulse: Int) {
-        binding.tvMainPulse.text = pulse.toString()
+        requireActivity().runOnUiThread {
+            binding.tvMainPulse.text = pulse.toString()
+        }
+    }
+
+    override fun onStateChanged(cameraAwake: Boolean, bandAwake: Boolean, fullAwake: Boolean) {
+        requireActivity().runOnUiThread {
+            setPrediction(binding.tvMainCameraPrediction, cameraAwake)
+            setPrediction(binding.tvMainBandPrediction, bandAwake)
+            setPrediction(binding.tvMainState, fullAwake)
+        }
     }
 
 }

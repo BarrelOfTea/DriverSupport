@@ -11,6 +11,8 @@ import com.barreloftea.driversupport.domain.ledcontroller.service.LedController;
 import com.barreloftea.driversupport.domain.models.BluetoothDeviceM;
 import com.barreloftea.driversupport.domain.models.WiFiDeviceM;
 import com.barreloftea.driversupport.domain.processor.common.Constants;
+import com.barreloftea.driversupport.domain.processor.interfaces.PulseListener;
+import com.barreloftea.driversupport.domain.processor.interfaces.StateListener;
 import com.barreloftea.driversupport.domain.pulseprocessor.service.PulseProcessor;
 import com.barreloftea.driversupport.domain.soundcontroller.SoundController;
 import com.barreloftea.driversupport.domain.usecases.interfaces.SharedPrefRepository;
@@ -29,14 +31,18 @@ public class Processor extends Thread {
     private int stateBand = 0;
     public Context context;
 
+    private int cameraStateBuffer;
+    private int bandStateBuffer;
+
     private boolean isBandRequired;
     private boolean isLedRequired;
     private boolean isSoundRequired;
 
+    StateListener stateListener;
     @Inject
     public ImageProcessor imageProcessor;
     @Inject
-    PulseProcessor pulseProcessor;
+    public PulseProcessor pulseProcessor;
     @Inject
     volatile SoundController alertSoundController;
     @Inject
@@ -62,15 +68,17 @@ public class Processor extends Thread {
         sharedPrefRepository = rep;
     }
 
-    public void init(Context context){
+    public void init(Context context, PulseListener pl, StateListener sl){
         this.context = context;
 
         initCamera();
         warningSoundController.init(context, R.raw.notification);
 
-        isBandRequired = checkBandRequired();
+        isBandRequired = checkBandRequired(pl);
         isLedRequired = checkLedRequired();
         isSoundRequired = checkSoundRequired();
+
+        stateListener = sl;
     }
 
     public void stopAsync(){
@@ -89,12 +97,23 @@ public class Processor extends Thread {
         startPulseProcessor();
 
         while(!exitFlag.get()){
-            if (stateCam == Constants.AWAKE && stateBand == Constants.AWAKE){
+            int sc = stateCam;
+            int sb = stateBand;
+
+            if (sc == Constants.AWAKE && sb == Constants.AWAKE){
                 disableSignals();
-            } else if (stateCam == Constants.SLEEPING) {
+            } else if (sc == Constants.SLEEPING) {
                 enableAlertSignals();
             } else {
                 enableWarningSignal();
+            }
+
+            if (sc!=cameraStateBuffer || sb!= bandStateBuffer){
+                boolean sca = sc==Constants.AWAKE;
+                boolean sba = sb==Constants.AWAKE;
+                stateListener.onStateChanged(sca, sba, (sca && sba));
+                cameraStateBuffer = sc;
+                bandStateBuffer = sb;
             }
         }
 
@@ -123,10 +142,10 @@ public class Processor extends Thread {
             Toast.makeText(context, "The camera is not set up", Toast.LENGTH_SHORT).show(); //NOTICE as you check this param at the Devices this will never be called
     }
 
-    boolean checkBandRequired(){
+    boolean checkBandRequired(PulseListener listener){
         BluetoothDeviceM bandDevice = sharedPrefRepository.getSavedBlueDevice(Constants.TYPE_BAND);
         boolean connected = bandDevice.isSaved();
-        if (connected) pulseProcessor.init(bandDevice.getAddress(), this);
+        if (connected) pulseProcessor.init(bandDevice.getAddress(), this, listener);
         return connected;
     }
 

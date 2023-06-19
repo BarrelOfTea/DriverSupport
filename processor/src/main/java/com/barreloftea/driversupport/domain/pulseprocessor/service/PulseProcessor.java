@@ -1,6 +1,7 @@
 package com.barreloftea.driversupport.domain.pulseprocessor.service;
 
 import android.Manifest;
+import android.app.Notification;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -10,11 +11,15 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 
 import com.barreloftea.driversupport.domain.processor.Processor;
+import com.barreloftea.driversupport.domain.processor.common.Constants;
 import com.barreloftea.driversupport.domain.processor.common.ImageBuffer;
+import com.barreloftea.driversupport.domain.processor.interfaces.PulseListener;
+import com.barreloftea.driversupport.domain.processor.interfaces.StateListener;
 import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.ActionCallback;
 import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.BluetoothRepository;
 import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.HeartRateNotifyListener;
 import com.barreloftea.driversupport.domain.pulseprocessor.interfaces.PulseRepository;
+import com.barreloftea.driversupport.domain.usecases.interfaces.SharedPrefRepository;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -24,23 +29,31 @@ public class PulseProcessor extends Thread {
 
     private AtomicBoolean exitFlag = new AtomicBoolean(false);
     private Processor processor;
+    PulseListener pulseListener;
 
-    private int NORMAL_PULSE = 90;
+    private int NORMAL_PULSE;
+    private int lastPulse;
 
     BluetoothRepository bluetoothRepository;
     PulseRepository pulseRepository;
+    SharedPrefRepository sharedPrefRepository;
     BluetoothDevice band;
     Context context;
 
-    public PulseProcessor(BluetoothRepository bluetoothRepository, PulseRepository pulseRepository) {
+    public PulseProcessor(BluetoothRepository bluetoothRepository, PulseRepository pulseRepository, SharedPrefRepository sharedPrefRepository) {
         this.bluetoothRepository = bluetoothRepository;
         this.pulseRepository = pulseRepository;
+        this.sharedPrefRepository = sharedPrefRepository;
     }
 
-    public void init(String address, Processor p){
+    public void init(String address, Processor p, PulseListener pl){
         prepare(address);
         processor = p;
         context = processor.context;
+        pulseListener = pl;
+
+        NORMAL_PULSE = sharedPrefRepository.getAverPulse();
+        lastPulse = NORMAL_PULSE;
     }
 
     public void stopAsync() {
@@ -76,11 +89,12 @@ public class PulseProcessor extends Thread {
         pulseRepository.setHeartListener(new HeartRateNotifyListener() {
             @Override
             public void onNotify(int heartRate) {
-                //if (heartRate < NORMAL_PULSE){
-                    //processor.setBandState(Processor.SLEEPING);
-                //}
+                if (heartRate < NORMAL_PULSE){
+                    processor.setBandState(Constants.SLEEPING);
+                }
                 Log.v(TAG, "pulse is " + heartRate);
-                //imageBuffer.updatePulse(heartRate);
+                pulseListener.onPulseReceived(heartRate);
+                lastPulse = heartRate;
             }
         });
     }
@@ -101,5 +115,10 @@ public class PulseProcessor extends Thread {
         pulseRepository = null;
         bluetoothRepository = null;
         exitFlag = null;
+    }
+
+    public void setNormalPulse(){
+        NORMAL_PULSE = lastPulse;
+        sharedPrefRepository.saveAverPulse(lastPulse);
     }
 }

@@ -22,6 +22,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.barreloftea.driversupport.R;
 import com.barreloftea.driversupport.domain.processor.common.Constants;
+import com.barreloftea.driversupport.domain.processor.interfaces.PulseListener;
+import com.barreloftea.driversupport.domain.processor.interfaces.StateListener;
 import com.barreloftea.driversupport.presentation.ui.activity.MainActivity;
 import com.barreloftea.driversupport.domain.processor.Processor;
 
@@ -59,7 +61,7 @@ public class DriverSupportService extends Service {
                 .setSmallIcon(R.drawable.ds)
                 .setContentIntent(pendingIntent)
                 .build();
-        startService();
+        //startService();
         startForeground(1, notification);
         Log.v(TAG, "service is created");
 
@@ -88,9 +90,9 @@ public class DriverSupportService extends Service {
         }
     }
 
-    public void startService(){
+    public void startService(PulseListener pulseListener, StateListener sl){
         processor.setName("processor thread");
-        processor.init(this);
+        processor.init(this, pulseListener, sl);
         if (!processor.isAlive())
             processor.start();
     }
@@ -98,6 +100,10 @@ public class DriverSupportService extends Service {
     public void setEOP(){
         processor.imageProcessor.onEOPupdate();
     }
-
+    /*
+    public void setPulse(){
+        if (processor.pulseProcessor!=null) processor.pulseProcessor.setNormalPulse();
+    }
+    */
 }
 

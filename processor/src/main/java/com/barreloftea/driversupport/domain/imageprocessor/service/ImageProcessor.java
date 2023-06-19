@@ -131,50 +131,52 @@ public class ImageProcessor extends Thread {
                                         float rotZ = face.getHeadEulerAngleZ();  // Counter-clockwise to the camera
                                         float rotX = face.getHeadEulerAngleX();  // Upward
 
-                                        List<PointF> leftEyeContour = Objects.requireNonNull(face.getContour(FaceContour.LEFT_EYE)).getPoints();
-                                        //bitmap = drawer.drawContours(bitmap, leftEyeContour);
-                                        List<PointF> rightEyeContour = Objects.requireNonNull(face.getContour(FaceContour.RIGHT_EYE)).getPoints();
-                                        bitmap = drawer.drawContours(bitmap, rightEyeContour);
-                                        List<PointF> upperLipCon = Objects.requireNonNull(face.getContour(FaceContour.UPPER_LIP_TOP)).getPoints();
-                                        bitmap = drawer.drawContours(bitmap, upperLipCon);
-                                        List<PointF> lowerLipCon = Objects.requireNonNull(face.getContour(FaceContour.LOWER_LIP_BOTTOM)).getPoints();
-                                        bitmap = drawer.drawContours(bitmap, lowerLipCon);
-                                        List<PointF> noseCon = Objects.requireNonNull(face.getContour(FaceContour.NOSE_BRIDGE)).getPoints();
-                                        bitmap = drawer.drawContours(bitmap, noseCon);
+                                        if (face.getContour(FaceContour.LEFT_EYE) != null) {
+                                            List<PointF> leftEyeContour = face.getContour(FaceContour.LEFT_EYE).getPoints();
+                                            //bitmap = drawer.drawContours(bitmap, leftEyeContour);
+                                            List<PointF> rightEyeContour = Objects.requireNonNull(face.getContour(FaceContour.RIGHT_EYE)).getPoints();
+                                            bitmap = drawer.drawContours(bitmap, rightEyeContour);
+                                            List<PointF> upperLipCon = Objects.requireNonNull(face.getContour(FaceContour.UPPER_LIP_TOP)).getPoints();
+                                            bitmap = drawer.drawContours(bitmap, upperLipCon);
+                                            List<PointF> lowerLipCon = Objects.requireNonNull(face.getContour(FaceContour.LOWER_LIP_BOTTOM)).getPoints();
+                                            bitmap = drawer.drawContours(bitmap, lowerLipCon);
+                                            List<PointF> noseCon = Objects.requireNonNull(face.getContour(FaceContour.NOSE_BRIDGE)).getPoints();
+                                            bitmap = drawer.drawContours(bitmap, noseCon);
 
 
-                                        float REOP = getOneEOP(rightEyeContour);
-                                        float LEOP = getOneEOP(leftEyeContour);
+                                            float REOP = getOneEOP(rightEyeContour);
+                                            float LEOP = getOneEOP(leftEyeContour);
 
 
-                                        notBlinkTime++;
+                                            notBlinkTime++;
 
-                                        lastEOP = (LEOP + REOP) / 2;
+                                            lastEOP = (LEOP + REOP) / 2;
 
-                                        Log.v(TAG, "last eop is" + lastEOP);
+                                            Log.v(TAG, "last eop is" + lastEOP);
 
-                                        if (lastEOP < EOP) {
-                                            closedEyesTime = System.currentTimeMillis() - closedStartTime.get();;
-                                            notBlinkTime = 0;
-                                            openStartTime.set(System.currentTimeMillis());
-                                            Log.v(null, "you blinked");
-                                        } else {
-                                            closedStartTime.set(System.currentTimeMillis());
-                                            closedEyesTime = 0;
-                                            closedEyesTime = System.currentTimeMillis() - closedStartTime.get();
-                                        }
+                                            if (lastEOP < EOP) {
+                                                closedEyesTime = System.currentTimeMillis() - closedStartTime.get();
+                                                ;
+                                                notBlinkTime = 0;
+                                                openStartTime.set(System.currentTimeMillis());
+                                                Log.v(null, "you blinked");
+                                            } else {
+                                                closedStartTime.set(System.currentTimeMillis());
+                                                closedEyesTime = 0;
+                                                closedEyesTime = System.currentTimeMillis() - closedStartTime.get();
+                                            }
 
-                                        if (closedEyesTime >= CLOSED_THRESH) {
-                                            processor.setCamState(Constants.SLEEPING);
-                                            Log.v(null, "REASON closed eyes");
-                                        }
-                                        if (notBlinkTime > OPEN_THRESH) {
-                                            processor.setCamState(Constants.SLEEPING);
-                                            Log.v(null, "REASON always open eyes");
-                                        }
+                                            if (closedEyesTime >= CLOSED_THRESH) {
+                                                processor.setCamState(Constants.SLEEPING);
+                                                Log.v(null, "REASON closed eyes");
+                                            }
+                                            if (notBlinkTime > OPEN_THRESH) {
+                                                processor.setCamState(Constants.SLEEPING);
+                                                Log.v(null, "REASON always open eyes");
+                                            }
 
-                                        float mor = getMOR(upperLipCon, lowerLipCon);
-                                        lastMOR = mor;
+                                            float mor = getMOR(upperLipCon, lowerLipCon);
+                                            lastMOR = mor;
 
                                         /*if (mor > MOR) mouthFlag++;
                                         else {
@@ -186,18 +188,16 @@ public class ImageProcessor extends Thread {
                                             Log.v(null, "REASON yawn");
                                         }*/
 
-                                        if (closedEyesTime < CLOSED_THRESH && notBlinkTime < OPEN_THRESH/*&& mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH*/) {
+                                            if (closedEyesTime < CLOSED_THRESH && notBlinkTime < OPEN_THRESH/*&& mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH*/) {
+                                                Log.v(null, "awake again");
+                                                processor.setCamState(Constants.AWAKE);
 
-                                            Log.v(null, "awake again");
-                                            processor.setCamState(Constants.AWAKE);
+                                            }
 
+                                            Log.v(null, rotY + " roty");
+                                            Log.v(null, rotZ + " rotz");
+                                            Log.v(null, rotX + " rotx");
                                         }
-
-                                        //log(LEOP, REOP, MOR, rotY, rotZ, nl);
-
-                                        Log.v(null, rotY + " roty");
-                                        Log.v(null, rotZ + " rotz");
-                                        Log.v(null, rotX + " rotx");
                                     }
                                 })
                         .addOnFailureListener(

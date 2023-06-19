@@ -55,8 +55,8 @@ public class ServiceModule {
 
     @Provides
     //@Singleton
-    public static PulseProcessor providePulseProcessor(BluetoothRepository blueRep, PulseRepository pulseRep){
-        return new PulseProcessor(blueRep, pulseRep);
+    public static PulseProcessor providePulseProcessor(BluetoothRepository blueRep, PulseRepository pulseRep, SharedPrefRepository sharedPrefRepository){
+        return new PulseProcessor(blueRep, pulseRep, sharedPrefRepository);
     }
 
     @Provides
