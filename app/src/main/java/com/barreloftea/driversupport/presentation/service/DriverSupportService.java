@@ -100,10 +100,12 @@ public class DriverSupportService extends Service {
     public void setEOP(){
         processor.imageProcessor.onEOPupdate();
     }
-    /*
-    public void setPulse(){
-        if (processor.pulseProcessor!=null) processor.pulseProcessor.setNormalPulse();
-    }
-    */
+
+//    public void setPulse(){
+//        if (processor.pulseProcessor!=null) processor.pulseProcessor.setNormalPulse();
+//        processor.setBandState(Constants.AWAKE);
+//    }
+
+
 }
 

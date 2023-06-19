@@ -111,7 +111,7 @@ public class Processor extends Thread {
             if (sc!=cameraStateBuffer || sb!= bandStateBuffer){
                 boolean sca = sc==Constants.AWAKE;
                 boolean sba = sb==Constants.AWAKE;
-                stateListener.onStateChanged(sca, sba, (sca && sba));
+                stateListener.onStateChanged(sca, sba, sca);
                 cameraStateBuffer = sc;
                 bandStateBuffer = sb;
             }

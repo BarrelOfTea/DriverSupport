@@ -182,7 +182,7 @@ public class SharedPrefRepositoryImpl implements SharedPrefRepository {
 
     @Override
     public int getEulerZ() {
-        return sharedPreferences.getInt(Constants.EULER_Z, 25);
+        return sharedPreferences.getInt(Constants.EULER_Z, 30);
     }
 
     @Override

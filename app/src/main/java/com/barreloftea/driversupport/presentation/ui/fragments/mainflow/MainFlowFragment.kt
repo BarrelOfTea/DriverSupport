@@ -111,6 +111,7 @@ class MainFlowFragment: Fragment(),
         imageBuffer.setFrameListener(this)
         binding.tvMainState.setOnClickListener {
             driverSupportService.setEOP()
+            //driverSupportService.setPulse()
         }
         holder = binding.videoView.holder
         return binding.root

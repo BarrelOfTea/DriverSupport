@@ -42,6 +42,7 @@ public class ImageProcessor extends Thread {
     static final int CLOSED_THRESH = 2500;
     static final int MOUTH_OPEN_THRESH = 4000;
     static final int OPEN_THRESH = 12000;
+    static final int HEAD_INCLINED_THRESH = 4000;
     static final float ROUND = 0.9f;
 
     public float EOP;
@@ -54,6 +55,7 @@ public class ImageProcessor extends Thread {
     long closedEyesTime;
     long mouthOpenTime;
     long notBlinkTime;
+    long headInclinedTime;
 
     private DrawContours drawer = new DrawContours();
 
@@ -100,6 +102,7 @@ public class ImageProcessor extends Thread {
 
         AtomicLong closedStartTime = new AtomicLong(System.currentTimeMillis());
         AtomicLong openStartTime = new AtomicLong(System.currentTimeMillis());
+        AtomicLong headInclinedStartTime = new AtomicLong(System.currentTimeMillis());
 
         while(!exitFlag.get()){
 
@@ -131,6 +134,18 @@ public class ImageProcessor extends Thread {
                                         float rotZ = face.getHeadEulerAngleZ();  // Counter-clockwise to the camera
                                         float rotX = face.getHeadEulerAngleX();  // Upward
 
+                                        if (Math.abs(rotX) >= EULER_X || Math.abs(rotZ) >= EULER_Z){
+                                            headInclinedTime = System.currentTimeMillis() - closedStartTime.get();
+                                        } else {
+                                            headInclinedStartTime.set(System.currentTimeMillis());
+                                            headInclinedTime=0;
+                                        }
+
+                                        if (headInclinedTime >= HEAD_INCLINED_THRESH){
+                                            processor.setCamState(Constants.SLEEPING);
+                                            Log.v(null, "REASON your head fell");
+                                        }
+
                                         if (face.getContour(FaceContour.LEFT_EYE) != null) {
                                             List<PointF> leftEyeContour = face.getContour(FaceContour.LEFT_EYE).getPoints();
                                             //bitmap = drawer.drawContours(bitmap, leftEyeContour);
@@ -143,20 +158,13 @@ public class ImageProcessor extends Thread {
                                             List<PointF> noseCon = Objects.requireNonNull(face.getContour(FaceContour.NOSE_BRIDGE)).getPoints();
                                             bitmap = drawer.drawContours(bitmap, noseCon);
 
-
                                             float REOP = getOneEOP(rightEyeContour);
                                             float LEOP = getOneEOP(leftEyeContour);
 
-
-                                            notBlinkTime++;
-
                                             lastEOP = (LEOP + REOP) / 2;
-
                                             Log.v(TAG, "last eop is" + lastEOP);
-
                                             if (lastEOP < EOP) {
                                                 closedEyesTime = System.currentTimeMillis() - closedStartTime.get();
-                                                ;
                                                 notBlinkTime = 0;
                                                 openStartTime.set(System.currentTimeMillis());
                                                 Log.v(null, "you blinked");
@@ -188,7 +196,7 @@ public class ImageProcessor extends Thread {
                                             Log.v(null, "REASON yawn");
                                         }*/
 
-                                            if (closedEyesTime < CLOSED_THRESH && notBlinkTime < OPEN_THRESH/*&& mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH*/) {
+                                            if (closedEyesTime < CLOSED_THRESH && notBlinkTime < OPEN_THRESH && headInclinedTime < HEAD_INCLINED_THRESH/*&& mouthFlag<MOUTH_THRESH && noseFlag<EYE_THRESH*/) {
                                                 Log.v(null, "awake again");
                                                 processor.setCamState(Constants.AWAKE);
 
